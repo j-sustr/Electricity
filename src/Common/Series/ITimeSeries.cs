@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Library.Series
+namespace Common.Series
 {
     public interface ITimeSeries<T, V>
     {
@@ -20,11 +20,11 @@ namespace Library.Series
 
         Tuple<T, V> EntryAt(int index);
 
-        IEnumerable<T> Times();
+        IEnumerable<T> GetTimes();
 
-        IEnumerable<V> Values();
+        IEnumerable<V> GetValues();
 
-        IEnumerable<Tuple<T, V>> Entries();
+        IEnumerable<Tuple<T, V>> GetEntries();
     }
 
     public interface ITimeSeries<V> : ITimeSeries<DateTime, V> { }

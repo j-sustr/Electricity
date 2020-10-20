@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Library.Series
+namespace Common.Series
 {
     internal class VariableIntervalTimeSeries<V> : ITimeSeries<V>
     {
@@ -23,7 +23,7 @@ namespace Library.Series
             _entries = entries;
         }
 
-        public IEnumerable<Tuple<DateTime, V>> Entries()
+        public IEnumerable<Tuple<DateTime, V>> GetEntries()
         {
             throw new NotImplementedException();
         }
@@ -38,7 +38,7 @@ namespace Library.Series
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DateTime> Times()
+        public IEnumerable<DateTime> GetTimes()
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace Library.Series
             throw new NotImplementedException();
         }
 
-        public IEnumerable<V> Values()
+        public IEnumerable<V> GetValues()
         {
             throw new NotImplementedException();
         }

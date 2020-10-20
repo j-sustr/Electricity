@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace Library.Series
+namespace Common.Series
 {
     public class FixedIntervalTimeSeries<V> : ITimeSeries<V>
     {
@@ -31,7 +31,7 @@ namespace Library.Series
             _interval = interval;
         }
 
-        public IEnumerable<Tuple<DateTime, V>> Entries()
+        public IEnumerable<Tuple<DateTime, V>> GetEntries()
         {
             return this._values.Select((v, i) => Tuple.Create(this.TimeAt(i), v));
         }
@@ -48,7 +48,7 @@ namespace Library.Series
             return this.StartTime.AddTicks(index * this._interval.Ticks);
         }
 
-        public IEnumerable<DateTime> Times()
+        public IEnumerable<DateTime> GetTimes()
         {
             throw new NotImplementedException();
         }
@@ -58,7 +58,7 @@ namespace Library.Series
             throw new NotImplementedException();
         }
 
-        public IEnumerable<V> Values()
+        public IEnumerable<V> GetValues()
         {
             throw new NotImplementedException();
         }

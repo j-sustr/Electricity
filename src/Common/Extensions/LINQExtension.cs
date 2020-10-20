@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Library.Extension
+namespace Common.Extension
 {
     public static class LINQExtension
     {
