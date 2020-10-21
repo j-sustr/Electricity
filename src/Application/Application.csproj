@@ -21,6 +21,21 @@
 
   <ItemGroup>
     <Folder Include="Common\Mappings\" />
+    <Folder Include="Groups\GetUserGroups\" />
+    <Folder Include="Series\GetPeakDemandSeries\" />
+    <Folder Include="Series\GetQuantitySeries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DataSource">
+      <HintPath>..\..\dll\DataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="DBDataSource">
+      <HintPath>..\..\dll\DBDataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="FileDataSource">
+      <HintPath>..\..\dll\FileDataSource.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
