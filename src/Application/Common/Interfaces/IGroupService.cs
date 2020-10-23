@@ -8,7 +8,6 @@ namespace Electricity.Application.Common.Interfaces
     {
         public Group[] GetUserGroups(Guid user);
 
-        public GroupTreeNode GetGroupTree(Guid root);
-
+        public GroupTreeNode GetUserGroupTree(Guid root);
     }
 }
