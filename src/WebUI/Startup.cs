@@ -33,13 +33,14 @@ namespace Electricity.WebUI
             services.AddInfrastructure(Configuration);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IUserProvider, CurrentUserService>();
 
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>();
 
-            services.AddControllersWithViews(options => 
+            services.AddControllersWithViews(options =>
                 options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();

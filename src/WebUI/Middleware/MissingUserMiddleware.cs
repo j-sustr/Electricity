@@ -9,10 +9,10 @@ namespace Electricity.WebUI.Middleware
         private readonly RequestDelegate _next;
         private readonly string _missingUserUrl;
 
-        public MissingUserMiddleware(RequestDelegate next, string missingTenantUrl)
+        public MissingUserMiddleware(RequestDelegate next, string missingUserUrl)
         {
             _next = next;
-            _missingUserUrl = missingTenantUrl;
+            _missingUserUrl = missingUserUrl;
         }
 
         public async Task Invoke(HttpContext httpContext, IUserProvider provider)

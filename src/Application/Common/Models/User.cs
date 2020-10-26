@@ -5,7 +5,8 @@ namespace Electricity.Application.Common.Models
 {
     public class User
     {
-        public Guid Id;
+        public Guid Id { get; }
+        public string Host { get; set; }
 
         public Guid CurrentDataSourceId { get; set; }
         public DBConnectionParams DBConnectionParams { get; set; }
