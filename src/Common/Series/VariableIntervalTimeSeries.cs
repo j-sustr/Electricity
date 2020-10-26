@@ -4,31 +4,22 @@ using System.Text;
 
 namespace Common.Series
 {
-    internal class VariableIntervalTimeSeries<V> : ITimeSeries<V>
+    public class VariableIntervalTimeSeries<TValue> : ITimeSeries<TValue>
     {
-        private Tuple<DateTime, V> _entries;
+        private readonly IEnumerable<Tuple<DateTime, TValue>> _entries;
 
         public int Size => throw new NotImplementedException();
-
-        public bool HasFixedInteval => throw new NotImplementedException();
-
-        public TimeSpan Interval => throw new NotImplementedException();
 
         public DateTime EndTime => throw new NotImplementedException();
 
         public DateTime StartTime => throw new NotImplementedException();
 
-        public VariableIntervalTimeSeries(Tuple<DateTime, V> entries)
+        public VariableIntervalTimeSeries(IEnumerable<Tuple<DateTime, TValue>> entries)
         {
             _entries = entries;
         }
 
-        public IEnumerable<Tuple<DateTime, V>> GetEntries()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Tuple<DateTime, V> EntryAt(int index)
+        public TValue ValueAt(int index)
         {
             throw new NotImplementedException();
         }
@@ -38,17 +29,22 @@ namespace Common.Series
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DateTime> GetTimes()
+        public Tuple<DateTime, TValue> EntryAt(int index)
         {
             throw new NotImplementedException();
         }
 
-        public V ValueAt(int index)
+        public IEnumerable<Tuple<DateTime, TValue>> Entries()
+        {
+            return _entries;
+        }
+
+        public IEnumerable<DateTime> Times()
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<V> GetValues()
+        public IEnumerable<TValue> Values()
         {
             throw new NotImplementedException();
         }

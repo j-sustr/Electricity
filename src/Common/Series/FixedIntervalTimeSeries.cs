@@ -6,37 +6,32 @@ using System.Text;
 
 namespace Common.Series
 {
-    public class FixedIntervalTimeSeries<V> : ITimeSeries<V>
+    public class FixedIntervalTimeSeries<TValue> : ITimeSeries<TValue>
     {
-        private int _size;
-        private V[] _values;
-        private DateTime _startTime;
-        private TimeSpan _interval;
+        private readonly TValue[] _values;
 
-        public bool HasFixedInteval => true;
+        public TimeSpan Interval { get; }
 
-        public TimeSpan Interval => this._interval;
+        public DateTime EndTime => this.TimeAt(this.Size + 1);
 
-        public DateTime EndTime => this.TimeAt(this._size + 1);
+        public DateTime StartTime { get; }
 
-        public DateTime StartTime => this._startTime;
+        public int Size { get; }
 
-        public int Size => this._size;
-
-        public FixedIntervalTimeSeries(V[] values, DateTime startTime, TimeSpan interval)
+        public FixedIntervalTimeSeries(TValue[] values, DateTime startTime, TimeSpan interval)
         {
-            _size = values.Length;
+            Size = values.Length;
             _values = values;
-            _startTime = startTime;
-            _interval = interval;
+            StartTime = startTime;
+            Interval = interval;
         }
 
-        public IEnumerable<Tuple<DateTime, V>> GetEntries()
+        public IEnumerable<Tuple<DateTime, TValue>> Entries()
         {
-            return this._values.Select((v, i) => Tuple.Create(this.TimeAt(i), v));
+            return _values.Select((v, i) => Tuple.Create(this.TimeAt(i), v));
         }
 
-        public Tuple<DateTime, V> EntryAt(int index)
+        public Tuple<DateTime, TValue> EntryAt(int index)
         {
             var value = this._values[index];
             var time = this.TimeAt(index);
@@ -45,20 +40,20 @@ namespace Common.Series
 
         public DateTime TimeAt(int index)
         {
-            return this.StartTime.AddTicks(index * this._interval.Ticks);
+            return this.StartTime.AddTicks(index * this.Interval.Ticks);
         }
 
-        public IEnumerable<DateTime> GetTimes()
+        public IEnumerable<DateTime> Times()
         {
             throw new NotImplementedException();
         }
 
-        public V ValueAt(int index)
+        public TValue ValueAt(int index)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<V> GetValues()
+        public IEnumerable<TValue> Values()
         {
             throw new NotImplementedException();
         }

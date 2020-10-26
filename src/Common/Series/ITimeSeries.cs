@@ -4,28 +4,25 @@ using System.Text;
 
 namespace Common.Series
 {
-    public interface ITimeSeries<T, V>
+    public interface ITimeSeries<TTime, TValue>
     {
         int Size { get; }
 
-        bool HasFixedInteval { get; }
-        TimeSpan Interval { get; }
+        TTime EndTime { get; }
+        TTime StartTime { get; }
 
-        T EndTime { get; }
-        T StartTime { get; }
+        TTime TimeAt(int index);
 
-        T TimeAt(int index);
+        TValue ValueAt(int index);
 
-        V ValueAt(int index);
+        Tuple<TTime, TValue> EntryAt(int index);
 
-        Tuple<T, V> EntryAt(int index);
+        IEnumerable<TTime> Times();
 
-        IEnumerable<T> GetTimes();
+        IEnumerable<TValue> Values();
 
-        IEnumerable<V> GetValues();
-
-        IEnumerable<Tuple<T, V>> GetEntries();
+        IEnumerable<Tuple<TTime, TValue>> Entries();
     }
 
-    public interface ITimeSeries<V> : ITimeSeries<DateTime, V> { }
+    public interface ITimeSeries<TValue> : ITimeSeries<DateTime, TValue> { }
 }
