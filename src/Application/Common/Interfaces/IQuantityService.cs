@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Electricity.Application.Common.Interfaces
 {
-    internal interface IQuantityService
+    public interface IQuantityService
     {
         Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range);
     }
