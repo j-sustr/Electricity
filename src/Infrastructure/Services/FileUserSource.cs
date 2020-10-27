@@ -12,7 +12,7 @@ namespace Electricity.Infrastructure.Services
     {
         public User[] ListUsers()
         {
-            var users = File.ReadAllText("users.json");
+            string users = File.ReadAllText("users.json");
 
             return JsonConvert.DeserializeObject<User[]>(users);
         }

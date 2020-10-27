@@ -1,0 +1,12 @@
+﻿[
+    {
+        "host": "localhost:5001",
+        "dataSourceType": 2,
+        "dbConnectionParams": {
+            "server": "DESKTOP-1PV2N80",
+            "dbName": "TestUsers",
+            "username": "jansustr",
+            "password": "dbPa$$word2020"
+        }
+    }
+]
