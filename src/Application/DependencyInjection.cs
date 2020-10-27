@@ -7,6 +7,9 @@ using System.Reflection;
 using DataSource;
 using System.ComponentModel;
 using Electricity.Application.Common.Converters;
+using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Services;
+using Electricity.Application.Common.SystemMonitoring;
 
 namespace Electricity.Application
 {
@@ -20,6 +23,9 @@ namespace Electricity.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+
+            services.AddScoped<MetricsStore>();
+            services.AddScoped<QuantitySeriesService>();
 
             return services;
         }

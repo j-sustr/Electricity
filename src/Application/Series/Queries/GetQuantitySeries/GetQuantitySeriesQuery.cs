@@ -31,6 +31,12 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
         private readonly QuantitySeriesService _service;
         private readonly IMapper _mapper;
 
+        public GetQuantitySeriesQueryHandler(QuantitySeriesService service, IMapper mapper)
+        {
+            _service = service;
+            _mapper = mapper;
+        }
+
         public Task<ITimeSeries<float>> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
         {
             var series = _service.GetSeries(request);

@@ -6,12 +6,12 @@ using System.Text;
 
 namespace Electricity.Application.Quantities.Queries.GetQuantities
 {
-    internal class QuantityDto : IMapFrom<Quantity>
+    public class QuantityDto : IMapFrom<Quantity>
     {
-        public string PropName;
-        public string Unit;
-        public string ReturnType;
-        public string Prop;
-        public object Value;
+        public string PropName { get; set; }
+        public string Unit { get; set; }
+        public string ReturnType { get; set; }
+        public string Prop { get; set; }
+        public object Value { get; set; }
     }
 }

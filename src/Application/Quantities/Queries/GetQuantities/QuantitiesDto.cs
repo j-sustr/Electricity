@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Electricity.Application.Quantities.Queries.GetQuantities
 {
-    internal class QuantitiesDto
+    public class QuantitiesDto
     {
-        private IList<QuantityDto> List { get; set; } = new List<QuantityDto>();
+        public IList<QuantityDto> List { get; set; } = new List<QuantityDto>();
     }
 }

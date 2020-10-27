@@ -1,4 +1,6 @@
 ﻿using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Services;
+using Electricity.Infrastructure.DataSource;
 using Electricity.Infrastructure.Files;
 using Electricity.Infrastructure.Identity;
 using Electricity.Infrastructure.Persistence;
@@ -29,11 +31,18 @@ namespace Electricity.Infrastructure
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
 
-                services.AddDefaultIdentity<ApplicationUser>()
-                    .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+
+            services.AddSingleton<IUserSource, FileUserSource>();
+            services.AddSingleton<IDataSourceManager, DataSourceManager>();
+
+            services.AddScoped<IGroupService, ApplicationDataSource>();
+            services.AddScoped<IQuantityService, ApplicationDataSource>();
+            services.AddScoped<IRowCollectionReader, ApplicationDataSource>();
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
