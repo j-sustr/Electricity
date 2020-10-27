@@ -14,7 +14,8 @@ namespace Electricity.WebUI.Services
 
         public CurrentUserService(IUserSource userSource, IHttpContextAccessor httpContextAccessor)
         {
-            _host = httpContextAccessor.HttpContext.Request.Host.ToString();
+            _userSource = userSource;
+            _host = httpContextAccessor.HttpContext?.Request.Host.ToString();
 
             UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         }

@@ -12,7 +12,7 @@ namespace Electricity.Application.Common.Interfaces
         byte Arch { get; }
 
         Quantity Quantity { get; }
-        DateRange Range { get; }
+        Tuple<DateTime, DateTime> Range { get; }
         AggregationMethod AggregationMethod { get; }
         TimeSpan AggregationInterval { get; }
     }

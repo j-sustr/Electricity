@@ -1,5 +1,6 @@
 ﻿using Common.Series;
 using DataSource;
+using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.SystemMonitoring;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,8 @@ namespace Electricity.Application.Common.Services
             int cnt = 0;
             int i;
             float val, sum;
-            using (var rc = _reader.GetRows(query.GroupId, query.Arch, query.Range, quants, 0))
+            var dateRange = DateRangeExtensions.FromTuple(query.Range);
+            using (var rc = _reader.GetRows(query.GroupId, query.Arch, dateRange, quants, 0))
             {
                 UniArchiveDefinition uad = null;
                 fixed (byte* p = rc.Buffer)

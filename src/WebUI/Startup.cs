@@ -2,6 +2,7 @@ using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure;
 using Electricity.Infrastructure.Persistence;
+using Electricity.Infrastructure.Services;
 using Electricity.WebUI.Filters;
 using Electricity.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
@@ -34,14 +35,15 @@ namespace Electricity.WebUI
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUserProvider, CurrentUserService>();
+            services.AddSingleton<IUserSource, FileUserSource>();
 
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>();
 
-            services.AddControllersWithViews(options =>
-                options.Filters.Add(new ApiExceptionFilter()));
+            // services.AddControllersWithViews(options =>
+            //     options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();
 
