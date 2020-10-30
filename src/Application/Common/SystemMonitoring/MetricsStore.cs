@@ -28,12 +28,12 @@ namespace Electricity.Application.Common.SystemMonitoring
 
     public class MetricsStore
     {
-        private readonly IUserProvider _userProvider;
+        private readonly ICurrentUserService _currentUser;
         private List<MetricRecord> records = new List<MetricRecord>();
 
-        public MetricsStore(IUserProvider userProvider)
+        public MetricsStore(ICurrentUserService currentUser)
         {
-            _userProvider = userProvider;
+            _currentUser = currentUser;
         }
 
         private IEnumerable<MetricRecord> GetRecords(MetricQuery query)
@@ -46,11 +46,11 @@ namespace Electricity.Application.Common.SystemMonitoring
 
         public void AddRecord(string name, object value, object info = null)
         {
-            var user = _userProvider.GetUser();
+            var userId = _currentUser.UserId;
 
             records.Add(new MetricRecord
             {
-                UserId = user.Id,
+                UserId = userId ?? Guid.Empty,
                 Name = name,
                 Time = DateTime.Now,
                 Value = value,

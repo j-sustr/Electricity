@@ -2,8 +2,8 @@ using Electricity.Application.Common.Models;
 
 namespace Electricity.Application.Common.Interfaces
 {
-    public interface IUserSource
+    public interface ITenantProvider
     {
-        public User[] ListUsers();
+        Tenant GetTenant();
     }
 }

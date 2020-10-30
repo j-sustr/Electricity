@@ -6,20 +6,20 @@ using Electricity.Application.Common.Models;
 
 namespace Electricity.Application.Common.Services
 {
-    public class ApplicationDataSource : IGroupService, IQuantityService, IRowCollectionReader
+    public class ApplicationDataSource : IGroupService, IQuantityService, IRowCollectionReader, IAuthenticationService
     {
-        private readonly User _user;
+        private readonly Tenant _tenant;
 
         private readonly DataSource.DataSource _dataSource;
 
-        public ApplicationDataSource(IDataSourceManager dsManager, IUserProvider userProvider)
+        public ApplicationDataSource(IDataSourceManager dsManager, ITenantProvider tenantProvider)
         {
-            _user = userProvider.GetUser();
-            _dataSource = dsManager.GetDataSource(_user.CurrentDataSourceId);
+            _tenant = tenantProvider.GetTenant();
+            _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
 
             if (_dataSource == null)
             {
-                dsManager.CreateDataSource(_user.DataSourceConfig);
+                dsManager.CreateDataSource(_tenant.DataSourceConfig);
             }
         }
 
@@ -62,6 +62,11 @@ namespace Electricity.Application.Common.Services
                 ReadGroupTree(node, g.ID);
                 return node;
             }).ToArray();
+        }
+
+        public Guid Login(string username, string password)
+        {
+            return _dataSource.Login(username, password);
         }
     }
 }

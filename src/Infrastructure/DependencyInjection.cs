@@ -37,12 +37,13 @@ namespace Electricity.Infrastructure
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddSingleton<IUserSource, FileUserSource>();
+            services.AddSingleton<ITenantSource, FileTenantSource>();
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
             services.AddScoped<IQuantityService, ApplicationDataSource>();
             services.AddScoped<IRowCollectionReader, ApplicationDataSource>();
+            services.AddScoped<Application.Common.Interfaces.IAuthenticationService, ApplicationDataSource>();
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();

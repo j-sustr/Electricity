@@ -1,19 +1,17 @@
-﻿using Electricity.Application.Common.Enums;
 using System;
+using Electricity.Application.Common.Enums;
 
 namespace Electricity.Application.Common.Models
 {
-    public class User
+    public class Tenant
     {
-        public Guid Id { get; }
+        Guid Id { get; set; }
         public string Host { get; set; }
+        public Guid DataSourceId { get; set; }
 
-        public Guid CurrentDataSourceId { get; set; }
         public DataSourceType DataSourceType { get; set; }
         public DBConnectionParams DBConnectionParams { get; set; }
         public string CEAFileName { get; set; }
-
-
 
         public DataSourceConfig DataSourceConfig
         {

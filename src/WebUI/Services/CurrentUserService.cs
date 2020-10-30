@@ -1,32 +1,33 @@
 ﻿using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Linq;
 using System.Security.Claims;
 
 namespace Electricity.WebUI.Services
 {
-    public class CurrentUserService : IUserProvider, ICurrentUserService
+    public class CurrentUserService : ICurrentUserService
     {
-        public readonly IUserSource _userSource;
-        private readonly string _host;
-        public string UserId { get; }
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CurrentUserService(IUserSource userSource, IHttpContextAccessor httpContextAccessor)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
-            _userSource = userSource;
-            _host = httpContextAccessor.HttpContext?.Request.Host.ToString();
-
-            UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public User GetUser()
+        public Guid? UserId
         {
-            var users = _userSource.ListUsers();
+            get
+            {
+                var idString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return users
-                    .Where(u => u.Host.ToLower() == _host.ToLower())
-                    .FirstOrDefault();
+                if (Guid.TryParse(idString, out Guid id))
+                {
+                    return id;
+                }
+                return null;
+            }
         }
     }
 }

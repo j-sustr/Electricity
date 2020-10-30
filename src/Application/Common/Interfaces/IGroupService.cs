@@ -6,8 +6,8 @@ namespace Electricity.Application.Common.Interfaces
 {
     public interface IGroupService
     {
-        public Group[] GetUserGroups(Guid user);
+        public Group[] GetUserGroups(Guid userId);
 
-        public GroupTreeNode GetUserGroupTree(Guid root);
+        public GroupTreeNode GetUserGroupTree(Guid userId);
     }
 }

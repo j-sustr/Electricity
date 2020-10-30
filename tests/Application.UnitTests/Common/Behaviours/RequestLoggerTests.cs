@@ -4,6 +4,7 @@ using Electricity.Application.TodoItems.Commands.CreateTodoItem;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace Electricity.Application.UnitTests.Common.Behaviours
         [Test]
         public async Task ShouldCallGetUserNameAsyncOnceIfAuthenticated()
         {
-            _currentUserService.Setup(x => x.UserId).Returns("Administrator");
+            _currentUserService.Setup(x => x.UserId).Returns(Guid.Empty);
 
             var requestLogger = new LoggingBehaviour<CreateTodoItemCommand>(_logger.Object, _currentUserService.Object, _identityService.Object);
 

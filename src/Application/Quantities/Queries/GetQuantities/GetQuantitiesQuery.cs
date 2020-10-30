@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DataSource;
-using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
-using Electricity.Application.Common.Services;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

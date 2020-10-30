@@ -15,7 +15,7 @@ namespace Electricity.Application.Common.Behaviours
         private readonly IIdentityService _identityService;
 
         public PerformanceBehaviour(
-            ILogger<TRequest> logger, 
+            ILogger<TRequest> logger,
             ICurrentUserService currentUserService,
             IIdentityService identityService)
         {
@@ -39,13 +39,13 @@ namespace Electricity.Application.Common.Behaviours
             if (elapsedMilliseconds > 500)
             {
                 var requestName = typeof(TRequest).Name;
-                var userId = _currentUserService.UserId ?? string.Empty;
+                var userId = _currentUserService.UserId;
                 var userName = string.Empty;
 
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    userName = await _identityService.GetUserNameAsync(userId);
-                }
+                // if (userId != null)
+                // {
+                //     userName = await _identityService.GetUserNameAsync(userId);
+                // }
 
                 _logger.LogWarning("Electricity Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}",
                     requestName, elapsedMilliseconds, userId, userName, request);

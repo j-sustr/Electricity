@@ -4,22 +4,22 @@ using Microsoft.AspNetCore.Http;
 
 namespace Electricity.WebUI.Middleware
 {
-    class MissingUserMiddleware
+    class MissingTenantMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly string _missingUserUrl;
+        private readonly string _missingTenantUrl;
 
-        public MissingUserMiddleware(RequestDelegate next, string missingUserUrl)
+        public MissingTenantMiddleware(RequestDelegate next, string missingUserUrl)
         {
             _next = next;
-            _missingUserUrl = missingUserUrl;
+            _missingTenantUrl = missingUserUrl;
         }
 
-        public async Task Invoke(HttpContext httpContext, IUserProvider provider)
+        public async Task Invoke(HttpContext httpContext, ITenantProvider tenant)
         {
-            if (provider.GetUser() == null)
+            if (tenant.GetTenant() == null)
             {
-                httpContext.Response.Redirect(_missingUserUrl);
+                httpContext.Response.Redirect(_missingTenantUrl);
                 return;
             }
 

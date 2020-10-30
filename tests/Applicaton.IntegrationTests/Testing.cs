@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 [SetUpFixture]
 public class Testing
-{   
+{
     private static IConfigurationRoot _configuration;
     private static IServiceScopeFactory _scopeFactory;
     private static Checkpoint _checkpoint;
@@ -54,13 +54,13 @@ public class Testing
 
         // Register testing version
         services.AddTransient(provider =>
-            Mock.Of<ICurrentUserService>(s => s.UserId == _currentUserId));
+            Mock.Of<ICurrentUserService>(s => s.UserId.ToString() == _currentUserId));
 
         _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
-        
+
         _checkpoint = new Checkpoint
         {
-            TablesToIgnore = new [] { "__EFMigrationsHistory" }
+            TablesToIgnore = new[] { "__EFMigrationsHistory" }
         };
 
         EnsureDatabase();

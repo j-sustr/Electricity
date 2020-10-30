@@ -22,13 +22,13 @@ namespace Electricity.Application.Common.Behaviours
         public async Task Process(TRequest request, CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
-            var userId = _currentUserService.UserId ?? string.Empty;
+            var userId = _currentUserService.UserId; // ?? string.Empty;
             string userName = string.Empty;
 
-            if (!string.IsNullOrEmpty(userId))
-            {
-                userName = await _identityService.GetUserNameAsync(userId);
-            }
+            // if (!string.IsNullOrEmpty(userId))
+            // {
+            //     userName = await _identityService.GetUserNameAsync(userId);
+            // }
 
             _logger.LogInformation("Electricity Request: {Name} {@UserId} {@UserName} {@Request}",
                 requestName, userId, userName, request);

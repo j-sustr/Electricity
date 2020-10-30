@@ -32,7 +32,7 @@ namespace Electricity.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<IUserProvider, CurrentUserService>();
+            services.AddScoped<ITenantProvider, WebTenantProvider>();
 
             services.AddApplication();
             services.AddInfrastructure(Configuration);
@@ -89,7 +89,7 @@ namespace Electricity.WebUI
                 app.UseHsts();
             }
 
-            app.UseMiddleware<MissingUserMiddleware>(Configuration["MissingTenantUrl"]);
+            app.UseMiddleware<MissingTenantMiddleware>(Configuration["MissingTenantUrl"]);
 
             app.UseHealthChecks("/health");
             app.UseHttpsRedirection();
