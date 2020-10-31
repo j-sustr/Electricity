@@ -15,11 +15,14 @@ namespace Electricity.Application.Common.Services
         public ApplicationDataSource(IDataSourceManager dsManager, ITenantProvider tenantProvider)
         {
             _tenant = tenantProvider.GetTenant();
+
             _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
 
             if (_dataSource == null)
             {
-                dsManager.CreateDataSource(_tenant.DataSourceConfig);
+                _tenant.DataSourceId = dsManager.CreateDataSource(_tenant.DataSourceConfig);
+
+                _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
             }
         }
 

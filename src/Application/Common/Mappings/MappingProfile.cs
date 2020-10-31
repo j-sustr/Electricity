@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -14,8 +15,10 @@ namespace Electricity.Application.Common.Mappings
 
         private void ApplyMappingsFromAssembly(Assembly assembly)
         {
+            var allTypes = assembly.GetExportedTypes();
+
             var types = assembly.GetExportedTypes()
-                .Where(t => t.GetInterfaces().Any(i => 
+                .Where(t => t.GetInterfaces().Any(i =>
                     i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
                 .ToList();
 
@@ -23,9 +26,9 @@ namespace Electricity.Application.Common.Mappings
             {
                 var instance = Activator.CreateInstance(type);
 
-                var methodInfo = type.GetMethod("Mapping") 
+                var methodInfo = type.GetMethod("Mapping")
                     ?? type.GetInterface("IMapFrom`1").GetMethod("Mapping");
-                
+
                 methodInfo?.Invoke(instance, new object[] { this });
 
             }

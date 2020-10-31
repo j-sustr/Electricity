@@ -5,10 +5,17 @@ using Newtonsoft.Json;
 
 public class FileTenantSource : ITenantSource
 {
+    private Tenant[] _tenants { get; set; } = null;
+
     public Tenant[] ListTenants()
     {
-        var tenants = File.ReadAllText("tenants.json");
+        if (_tenants == null)
+        {
+            var text = File.ReadAllText("tenants.json");
 
-        return JsonConvert.DeserializeObject<Tenant[]>(tenants);
+            _tenants = JsonConvert.DeserializeObject<Tenant[]>(text);
+        }
+
+        return _tenants;
     }
 }

@@ -7,8 +7,9 @@ namespace Electricity.WebUI.Controllers
 {
     public class GroupsController : ApiController
     {
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<UserGroupsDto>> GetUserGroups(Guid userId)
+        // [HttpGet("user/{userId}")]
+        [HttpGet]
+        public async Task<ActionResult<UserGroupsDto>> GetUserGroups([FromQuery] Guid userId)
         {
             return await Mediator.Send(new GetUserGroupsQuery
             {
