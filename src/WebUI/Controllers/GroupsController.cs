@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Groups.Queries.GetUserGroups;
+using Electricity.Application.Groups.Queries.GetUserGroupTree;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Electricity.WebUI.Controllers
@@ -17,10 +19,14 @@ namespace Electricity.WebUI.Controllers
             });
         }
 
-        [HttpGet("user-tree/{userId}")]
-        public Task GetUserGroupTree(Guid userId)
+        // [HttpGet("user-tree/{userId}")]
+        [HttpGet("tree")]
+        public async Task<ActionResult<GroupTreeNodeDto>> GetUserGroupTree([FromQuery] Guid userId)
         {
-            return Task.CompletedTask;
+            return await Mediator.Send(new GetUserGroupTreeQuery
+            {
+                UserId = userId,
+            });
         }
     }
 }
