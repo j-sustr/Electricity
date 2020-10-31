@@ -42,8 +42,8 @@ namespace Electricity.WebUI
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>();
 
-            // services.AddControllersWithViews(options =>
-            //     options.Filters.Add(new ApiExceptionFilter()));
+            services.AddControllersWithViews(options =>
+                options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();
 

@@ -7,8 +7,8 @@ namespace Electricity.WebUI.Controllers
 {
     public class QuantitiesController : ApiController
     {
-        [HttpGet("{groupId}")]
-        public async Task<ActionResult<QuantitiesDto>> GetQuantities(Guid groupId, [FromQuery] byte arch)
+        [HttpGet]
+        public async Task<ActionResult<QuantitiesDto>> GetQuantities([FromQuery] Guid groupId, [FromQuery] byte arch)
         {
             return await Mediator.Send(new GetQuantitiesQuery
             {

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using DataSource;
+using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using MediatR;
 using System;
@@ -29,9 +31,21 @@ namespace Electricity.Application.Quantities.Queries.GetQuantities
 
         public async Task<QuantitiesDto> Handle(GetQuantitiesQuery request, CancellationToken cancellationToken)
         {
-            // var dateRange = DateRangeExtensions.FromTuple(request.Range);
+            Quantity[] quants = null;
+            try
+            {
+                quants = _service.GetQuantities(request.GroupId, request.Arch, null);
+            }
+            catch (System.TypeInitializationException ex)
+            {
 
-            var quants = _service.GetQuantities(request.GroupId, request.Arch, null);
+                throw;
+            }
+
+            if (quants == null)
+            {
+                throw new NotFoundException(nameof(Group), request.GroupId);
+            }
 
             return await Task.FromResult(new QuantitiesDto
             {
