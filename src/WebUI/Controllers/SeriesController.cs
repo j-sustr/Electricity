@@ -18,7 +18,7 @@ namespace Electricity.WebUI.Controllers
             return Ok(hello);
         }
 
-        [HttpGet("quantity/{groupId}")]
+        [HttpGet("quantity")]
         public async Task<ActionResult<ITimeSeries<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
         {
             var quantityConverter = TypeDescriptor.GetConverter(typeof(Quantity));
