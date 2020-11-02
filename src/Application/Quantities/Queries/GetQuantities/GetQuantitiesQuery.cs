@@ -23,6 +23,7 @@ namespace Electricity.Application.Quantities.Queries.GetQuantities
     {
         private readonly IQuantityService _service;
         private readonly IMapper _mapper;
+
         public GetQuantitiesQueryHandler(IQuantityService service, IMapper mapper)
         {
             _service = service;
@@ -32,25 +33,19 @@ namespace Electricity.Application.Quantities.Queries.GetQuantities
         public async Task<QuantitiesDto> Handle(GetQuantitiesQuery request, CancellationToken cancellationToken)
         {
             Quantity[] quants = null;
-            try
-            {
-                quants = _service.GetQuantities(request.GroupId, request.Arch, null);
-            }
-            catch (System.TypeInitializationException ex)
-            {
 
-                throw;
-            }
+            quants = _service.GetQuantities(request.GroupId, request.Arch, null);
 
             if (quants == null)
             {
                 throw new NotFoundException(nameof(Group), request.GroupId);
             }
 
+            var quantsDto = _mapper.Map<Quantity[], QuantityDto[]>(quants);
+
             return await Task.FromResult(new QuantitiesDto
             {
-                List = Queryable.AsQueryable(quants)
-                                .ProjectTo<QuantityDto>(_mapper.ConfigurationProvider).ToList()
+                List = quantsDto.ToList()
             });
         }
     }
