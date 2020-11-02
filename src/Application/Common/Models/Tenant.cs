@@ -5,7 +5,9 @@ namespace Electricity.Application.Common.Models
 {
     public class Tenant
     {
-        Guid Id { get; set; }
+        private Guid Id { get; set; }
+
+        public string Key { get; set; }
         public string Host { get; set; }
         public Guid DataSourceId { get; set; }
 
