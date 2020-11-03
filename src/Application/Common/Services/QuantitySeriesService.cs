@@ -34,7 +34,7 @@ namespace Electricity.Application.Common.Services
             int cnt = 0;
             int i;
             float val, sum;
-            var dateRange = DateRangeExtensions.FromTuple(query.Range);
+            var dateRange = query.Range != null ? DateRangeExtensions.FromTuple(query.Range) : null;
             using (var rc = _reader.GetRows(query.GroupId, query.Arch, dateRange, quants, 0))
             {
                 UniArchiveDefinition uad = null;

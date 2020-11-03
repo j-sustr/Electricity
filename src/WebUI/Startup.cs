@@ -1,11 +1,8 @@
 using AutoMapper;
-using DataSource;
 using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure;
 using Electricity.Infrastructure.Persistence;
-using Electricity.Infrastructure.Services;
-using Electricity.WebUI.Filters;
 using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
@@ -19,7 +16,6 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Linq;
 using System.Reflection;
-using Electricity.Application.Common.Extensions;
 
 namespace Electricity.WebUI
 {
@@ -38,21 +34,22 @@ namespace Electricity.WebUI
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ITenantProvider, WebTenantProvider>();
 
-            services.AddApplication();
-            services.AddInfrastructure(Configuration);
-
             services.AddAutoMapper(cfg =>
             {
-                cfg.CreateMap<string, Quantity>().ConvertUsing(s => QuantityExtensions.FromString(s));
+                cfg.AddProfile<Application.Common.Mappings.MappingProfile>();
+                cfg.AddProfile<WebUI.Mappings.MappingProfile>();
             }, Assembly.GetExecutingAssembly());
+
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
 
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>();
 
-            services.AddControllersWithViews(options =>
-                options.Filters.Add(new ApiExceptionFilter()));
+            // services.AddControllersWithViews(options =>
+            //     options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();
 

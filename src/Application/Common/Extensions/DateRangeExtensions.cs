@@ -1,4 +1,5 @@
 using System;
+using Ardalis.GuardClauses;
 using DataSource;
 
 namespace Electricity.Application.Common.Extensions
@@ -7,6 +8,8 @@ namespace Electricity.Application.Common.Extensions
     {
         public static DateRange FromTuple(Tuple<DateTime, DateTime> range)
         {
+            Guard.Against.Null(range, nameof(range));
+
             return new DateRange(range.Item1, range.Item2);
         }
     }

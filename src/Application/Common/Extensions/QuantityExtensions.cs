@@ -10,7 +10,7 @@ namespace Electricity.Application.Common.Extensions
             Guard.Against.NullOrWhiteSpace(value, nameof(value));
 
             string[] parts = value.Split('[');
-            parts[1].TrimEnd(']');
+            parts[1] = parts[1].TrimEnd(']');
             var propName = parts[0];
             var unit = parts[1];
 

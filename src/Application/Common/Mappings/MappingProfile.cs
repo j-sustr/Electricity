@@ -10,6 +10,8 @@ namespace Electricity.Application.Common.Mappings
     {
         public MappingProfile()
         {
+            var assembly = Assembly.GetExecutingAssembly();
+
             ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
         }
 

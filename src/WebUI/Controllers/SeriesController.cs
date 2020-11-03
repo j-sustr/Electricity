@@ -19,7 +19,6 @@ namespace Electricity.WebUI.Controllers
             this._mapper = mapper;
         }
 
-
         [HttpGet("hello")]
         public async Task<ActionResult> GetHello()
         {
@@ -30,12 +29,11 @@ namespace Electricity.WebUI.Controllers
         [HttpGet("quantity")]
         public async Task<ActionResult<ITimeSeries<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
         {
-            var query = _mapper.Map<GetQuantitySeriesApiModel, GetQuantitySeriesQuery>(req);
+            var query = _mapper.Map<GetQuantitySeriesQuery>(req);
 
             var series = await Mediator.Send(query);
 
             return Ok(series);
         }
-
     }
 }
