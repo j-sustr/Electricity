@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common.Series;
 using DataSource;
 using Electricity.Application.Series.Queries.GetQuantitySeries;
@@ -11,6 +12,14 @@ namespace Electricity.WebUI.Controllers
 {
     public class SeriesController : ApiController
     {
+        private readonly IMapper _mapper;
+
+        public SeriesController(IMapper mapper)
+        {
+            this._mapper = mapper;
+        }
+
+
         [HttpGet("hello")]
         public async Task<ActionResult> GetHello()
         {
@@ -21,15 +30,7 @@ namespace Electricity.WebUI.Controllers
         [HttpGet("quantity")]
         public async Task<ActionResult<ITimeSeries<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
         {
-            var quantityConverter = TypeDescriptor.GetConverter(typeof(Quantity));
-
-            var query = new GetQuantitySeriesQuery
-            {
-                GroupId = req.GroupId,
-                Arch = req.Arch,
-                Quantity = (Quantity)quantityConverter.ConvertFromString(req.Qty),
-
-            };
+            var query = _mapper.Map<GetQuantitySeriesApiModel, GetQuantitySeriesQuery>(req);
 
             var series = await Mediator.Send(query);
 

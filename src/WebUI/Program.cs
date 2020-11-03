@@ -10,7 +10,6 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using DataSource;
-using Electricity.Application.Common.Converters;
 
 namespace Electricity.WebUI
 {
@@ -18,8 +17,6 @@ namespace Electricity.WebUI
     {
         public async static Task Main(string[] args)
         {
-            AddAttributes();
-
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
@@ -59,10 +56,5 @@ namespace Electricity.WebUI
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        public static void AddAttributes()
-        {
-            TypeDescriptor.AddAttributes(typeof(Quantity), new TypeConverterAttribute(typeof(QuantityConverter)));
-        }
     }
 }

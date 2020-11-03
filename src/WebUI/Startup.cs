@@ -1,3 +1,5 @@
+using AutoMapper;
+using DataSource;
 using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure;
@@ -16,6 +18,8 @@ using Microsoft.Extensions.Hosting;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Linq;
+using System.Reflection;
+using Electricity.Application.Common.Extensions;
 
 namespace Electricity.WebUI
 {
@@ -36,6 +40,11 @@ namespace Electricity.WebUI
 
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<string, Quantity>().ConvertUsing(s => QuantityExtensions.FromString(s));
+            }, Assembly.GetExecutingAssembly());
 
             services.AddHttpContextAccessor();
 
