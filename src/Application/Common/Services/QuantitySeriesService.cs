@@ -31,35 +31,19 @@ namespace Electricity.Application.Common.Services
             PropValueFloatBase[] floatsQ = null;
 
             var entries = new List<Tuple<DateTime, float>>();
-            int cnt = 0;
-            int i;
-            float val, sum;
+            float? val;
             var dateRange = query.Range != null ? DateRangeExtensions.FromTuple(query.Range) : null;
-            using (var rc = _reader.GetRows(query.GroupId, query.Arch, dateRange, quants, 0))
+            using (var rc = _reader.GetRows(query.GroupId, query.Arch, dateRange, quants, 3600000, EEnergyAggType.Profile))
             {
-                UniArchiveDefinition uad = null;
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);
                     foreach (RowInfo row in rc)
                     {
-                        if (uad != row.uad)
-                        {
-                            // if (uad == null) Len = row.uad.tbd.Len;//tohle mam jen na testovani
-                            uad = row.uad;//funguje momentalne jen bez agregace, s agregaci je null
-                            floatsQ = quants.Select(a => a.Value as PropValueFloatBase).Where(a => a != null).ToArray();//tady se vyberou jen float hodnoty a vytvori se pole PropValueFloat
-                            cnt = floatsQ.Length;
-                        }
-                        sum = 0;
                         sw.Start();
-                        for (i = 0; i < cnt; i++)
-                        {
-                            //val = (float)quants[i].Value.GetValue();
-                            val = floatsQ[i].GetValueDirect();//nacitam floaty jednotlivych Quantity
-                            if (!ByteArray.IsNaNInfinityOrMaxMin(val)) sum += val;
-                        }
+                        val = quants[0].Value.GetValue() as float?;
                         sw.Stop();
-                        entries.Add(Tuple.Create(row.TimeLocal, sum));
+                        entries.Add(Tuple.Create(row.TimeLocal, val ?? float.NaN));
                     }
                 }
             }

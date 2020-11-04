@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Common.Series;
+using Electricity.Application.Common.Models.Dtos;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +13,6 @@ namespace Electricity.Application.Common.Mappings
     {
         public MappingProfile()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
             ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
@@ -32,7 +33,6 @@ namespace Electricity.Application.Common.Mappings
                     ?? type.GetInterface("IMapFrom`1").GetMethod("Mapping");
 
                 methodInfo?.Invoke(instance, new object[] { this });
-
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Common.Series
@@ -8,7 +9,7 @@ namespace Common.Series
     {
         private readonly IEnumerable<Tuple<DateTime, TValue>> _entries;
 
-        public int Size => throw new NotImplementedException();
+        public int Size { get; }
 
         public DateTime EndTime => throw new NotImplementedException();
 
@@ -16,6 +17,7 @@ namespace Common.Series
 
         public VariableIntervalTimeSeries(IEnumerable<Tuple<DateTime, TValue>> entries)
         {
+            Size = entries.Count();
             _entries = entries;
         }
 

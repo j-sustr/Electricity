@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Common.Series;
 using DataSource;
+using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Series.Queries.GetQuantitySeries;
 using Electricity.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace Electricity.WebUI.Controllers
         }
 
         [HttpGet("quantity")]
-        public async Task<ActionResult<ITimeSeries<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
+        public async Task<ActionResult<TimeSeriesDto<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
         {
             var query = _mapper.Map<GetQuantitySeriesQuery>(req);
 

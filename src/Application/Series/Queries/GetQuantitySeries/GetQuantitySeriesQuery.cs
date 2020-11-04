@@ -6,12 +6,13 @@ using Common.Series;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Services;
 using MediatR;
 
 namespace Electricity.Application.Series.Queries.GetQuantitySeries
 {
-    public class GetQuantitySeriesQuery : IRequest<ITimeSeries<float>>, IGetQuantitySeriesQuery
+    public class GetQuantitySeriesQuery : IRequest<TimeSeriesDto<float>>, IGetQuantitySeriesQuery
     {
         public Guid GroupId { get; set; }
 
@@ -26,7 +27,7 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
         public TimeSpan AggregationInterval { get; set; }
     }
 
-    public class GetQuantitySeriesQueryHandler : IRequestHandler<GetQuantitySeriesQuery, ITimeSeries<float>>
+    public class GetQuantitySeriesQueryHandler : IRequestHandler<GetQuantitySeriesQuery, TimeSeriesDto<float>>
     {
         private readonly QuantitySeriesService _service;
         private readonly IMapper _mapper;
@@ -37,12 +38,13 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
             _mapper = mapper;
         }
 
-        public Task<ITimeSeries<float>> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
+        public Task<TimeSeriesDto<float>> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
         {
             var series = _service.GetSeries(request);
 
-            return Task.FromResult(series);
+            var dto = TimeSeriesDto<float>.FromTimeSeries(series);
+
+            return Task.FromResult(dto);
         }
     }
-
 }
