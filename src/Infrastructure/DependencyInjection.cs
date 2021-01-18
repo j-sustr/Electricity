@@ -1,7 +1,6 @@
 ﻿using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Services;
 using Electricity.Infrastructure.DataSource;
-using Electricity.Infrastructure.Files;
 using Electricity.Infrastructure.Identity;
 using Electricity.Infrastructure.Persistence;
 using Electricity.Infrastructure.Services;
@@ -47,7 +46,6 @@ namespace Electricity.Infrastructure
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
