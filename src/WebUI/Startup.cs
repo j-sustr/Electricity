@@ -90,7 +90,7 @@ namespace Electricity.WebUI
                 app.UseHsts();
             }
 
-            app.UseMiddleware<MissingTenantMiddleware>(Configuration["MissingTenantUrl"]);
+            app.UseMiddleware<MissingTenantMiddleware>(Configuration["MissingTenantLocation"]);
 
             app.UseHealthChecks("/health");
             app.UseHttpsRedirection();

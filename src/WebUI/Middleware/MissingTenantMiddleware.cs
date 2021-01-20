@@ -7,19 +7,19 @@ namespace Electricity.WebUI.Middleware
     class MissingTenantMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly string _missingTenantUrl;
+        private readonly string _missingTenantLocation;
 
-        public MissingTenantMiddleware(RequestDelegate next, string missingUserUrl)
+        public MissingTenantMiddleware(RequestDelegate next, string missingTenantLocation)
         {
             _next = next;
-            _missingTenantUrl = missingUserUrl;
+            _missingTenantLocation = missingTenantLocation;
         }
 
         public async Task Invoke(HttpContext httpContext, ITenantProvider tenant)
         {
             if (tenant.GetTenant() == null)
             {
-                httpContext.Response.Redirect(_missingTenantUrl);
+                httpContext.Response.Redirect(_missingTenantLocation);
                 return;
             }
 
