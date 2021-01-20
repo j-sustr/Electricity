@@ -2,7 +2,6 @@ using AutoMapper;
 using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure;
-using Electricity.Infrastructure.Persistence;
 using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
@@ -44,12 +43,6 @@ namespace Electricity.WebUI
             services.AddInfrastructure(Configuration);
 
             services.AddHttpContextAccessor();
-
-            services.AddHealthChecks()
-                .AddDbContextCheck<ApplicationDbContext>();
-
-            // services.AddControllersWithViews(options =>
-            //     options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();
 
