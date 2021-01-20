@@ -44,6 +44,8 @@ namespace Electricity.WebUI
 
             services.AddHttpContextAccessor();
 
+            services.AddHealthChecks();
+
             services.AddRazorPages();
 
             // Customise default API behaviour
@@ -107,7 +109,6 @@ namespace Electricity.WebUI
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

@@ -19,7 +19,7 @@ namespace Electricity.Infrastructure
             services.AddScoped<IRowCollectionReader, ApplicationDataSource>();
             services.AddScoped<Application.Common.Interfaces.IAuthenticationService, ApplicationDataSource>();
 
-            services.AddTransient<IIdentityService, IdentityService>();
+            // services.AddTransient<IIdentityService, IdentityService>();
 
             return services;
         }
