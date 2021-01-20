@@ -10,7 +10,7 @@ namespace Electricity.Application.IntegrationTests
         [SetUp]
         public async Task TestSetUp()
         {
-            await ResetState();
+
         }
     }
 }
