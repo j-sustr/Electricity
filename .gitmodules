@@ -1,0 +1,3 @@
+[submodule "src/WebUI/ClientApp"]
+	path = src/WebUI/ClientApp
+	url = https://github.com/jansustr11/angular-electricity-app.git
