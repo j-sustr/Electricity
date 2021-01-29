@@ -6,6 +6,11 @@
         <AssemblyName>Electricity.Infrastructure</AssemblyName>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <WarningLevel>0</WarningLevel>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="3.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
