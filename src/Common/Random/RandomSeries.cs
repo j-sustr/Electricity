@@ -6,19 +6,27 @@ namespace Common.Random
     {
         private System.Random _random;
 
-        public RandomSeries(int seed)
+        private float _next;
+
+        public RandomSeries(float start = 0, int? seed = null)
         {
-            _random = new System.Random(seed);
+            _next = start;
+
+            if (seed is int valueOfSeed)
+            {
+                _random = new System.Random(valueOfSeed);
+            }
+            else
+            {
+                _random = new System.Random()
+            }
         }
 
-        public IEnumerable<float> NextFloat(int length, float start = 0)
+        public float Next()
         {
-            float value = start;
-            for (int i = 0; i < length; i++)
-            {
-                yield return value;
-                value += (float)_random.NextDouble() * 2 - 1;
-            }
+            float value = _next;
+            _next += (float)_random.NextDouble() * 2 - 1;
+            return value;
         }
     }
 }
