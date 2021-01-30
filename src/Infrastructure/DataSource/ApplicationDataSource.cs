@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using DS = DataSource;
 
-namespace Electricity.Application.Common.Services
+namespace Electricity.Infrastructure.DataSource
 {
-    public class ApplicationDataSource : IGroupService, IQuantityService, IRowCollectionReader, IAuthenticationService
+    public class ApplicationDataSource : IGroupService, IQuantityService, ITableCollection, IAuthenticationService
     {
         private readonly Tenant _tenant;
 
-        private readonly DataSource.DataSource _dataSource;
+        private readonly DS.DataSource _dataSource;
 
         public ApplicationDataSource(IDataSourceManager dsManager, ITenantProvider tenantProvider)
         {
@@ -26,7 +27,7 @@ namespace Electricity.Application.Common.Services
             }
         }
 
-        public Group[] GetUserGroups(Guid userId)
+        public DS.Group[] GetUserGroups(Guid userId)
         {
             return _dataSource.GetUserGroups(userId).ToArray();
         }
@@ -45,14 +46,14 @@ namespace Electricity.Application.Common.Services
             return root;
         }
 
-        public Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range)
+        public DS.Quantity[] GetQuantities(Guid groupId, byte arch, DS.DateRange range)
         {
             return _dataSource.GetQuantities(groupId, arch, range);
         }
 
-        public RowCollection GetRows(Guid groupId, byte arch, DateRange range, Quantity[] quantities, uint aggregation, EEnergyAggType energyAggType = EEnergyAggType.Cumulative)
+        public ITable GetTable(Guid groupId, byte arch)
         {
-            return _dataSource.GetRows(groupId, arch, range, quantities, aggregation, energyAggType);
+            return new DataSourceTableReader(this._dataSource, groupId, arch);
         }
 
         private void ReadGroupTree(GroupTreeNode root, Guid rootId)
