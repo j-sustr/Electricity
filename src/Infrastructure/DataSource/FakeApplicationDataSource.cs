@@ -7,9 +7,16 @@ namespace Electricity.Infrastructure.DataSource
 {
     public class FakeApplicationDataSource : ITableCollection
     {
+        int _seed;
+
+        public FakeApplicationDataSource(int seed)
+        {
+            _seed = seed;
+        }
+
         public ITable GetTable(Guid groupId, byte arch)
         {
-            return new FakeDataSourceTableReader();
+            return new FakeDataSourceTableReader(_seed);
         }
     }
 }
