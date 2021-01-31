@@ -16,7 +16,7 @@ namespace Electricity.Infrastructure
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
             services.AddScoped<IQuantityService, ApplicationDataSource>();
-            services.AddScoped<IRowCollectionReader, ApplicationDataSource>();
+            services.AddScoped<ITableCollection, ApplicationDataSource>();
             services.AddScoped<Application.Common.Interfaces.IAuthenticationService, ApplicationDataSource>();
 
             // services.AddTransient<IIdentityService, IdentityService>();
