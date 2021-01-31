@@ -18,7 +18,7 @@ namespace Common.Random
             }
             else
             {
-                _random = new System.Random()
+                _random = new System.Random();
             }
         }
 
