@@ -1,18 +1,17 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Common.Series;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
-using Electricity.Application.Common.Models.Dtos;
-using Electricity.Application.Common.Services;
+using Electricity.Application.Common.Models.Queries;
 using MediatR;
 
 namespace Electricity.Application.Series.Queries.GetQuantitySeries
 {
-    public class GetQuantitySeriesQuery : IRequest<TimeSeriesDto<float>>, IGetQuantitySeriesQuery
+    public class GetQuantitySeriesQuery : IRequest<QuantitySeriesDto>
     {
         public Guid GroupId { get; set; }
 
@@ -27,22 +26,32 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
         public TimeSpan AggregationInterval { get; set; }
     }
 
-    public class GetQuantitySeriesQueryHandler : IRequestHandler<GetQuantitySeriesQuery, TimeSeriesDto<float>>
+    public class GetQuantitySeriesQueryHandler : IRequestHandler<GetQuantitySeriesQuery, QuantitySeriesDto>
     {
-        private readonly QuantitySeriesService _service;
+        private readonly ITableCollection _tables;
         private readonly IMapper _mapper;
 
-        public GetQuantitySeriesQueryHandler(QuantitySeriesService service, IMapper mapper)
+        public GetQuantitySeriesQueryHandler(ITableCollection tables, IMapper mapper)
         {
-            _service = service;
+            _tables = tables;
             _mapper = mapper;
         }
 
-        public Task<TimeSeriesDto<float>> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
+        public Task<QuantitySeriesDto> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
         {
-            var series = _service.GetSeries(request);
+            var table = _tables.GetTable(request.GroupId, request.Arch);
 
-            var dto = TimeSeriesDto<float>.FromTimeSeries(series);
+            var rows = table.GetRows(new GetRowsQuery
+            {
+                Quantities = new Quantity[] { request.Quantity },
+                Aggregation = (uint)Math.Floor(request.AggregationInterval.TotalMilliseconds),
+                Range = request.Range
+            });
+
+            var dto = new QuantitySeriesDto
+            {
+                Entries = rows.Select(r => Tuple.Create(r.Item1, r.Item2[0])).ToList()
+            };
 
             return Task.FromResult(dto);
         }
