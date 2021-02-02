@@ -1,7 +1,5 @@
 ﻿using Electricity.Application.Common.Interfaces;
-using Electricity.Application.Common.Services;
 using Electricity.Infrastructure.DataSource;
-using Electricity.Infrastructure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
