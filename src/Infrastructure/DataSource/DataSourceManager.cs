@@ -11,17 +11,18 @@ namespace Electricity.Infrastructure.DataSource
 
     public class DataSourceManager : IDataSourceManager
     {
+        private readonly IDataSourceFactory _dsFactory;
         private readonly ConcurrentDictionary<Guid, DS.DataSource> dataSources = new ConcurrentDictionary<Guid, DS.DataSource>();
         private readonly ConcurrentDictionary<Guid, DataSourceConfig> dataSourceConfigs = new ConcurrentDictionary<Guid, DataSourceConfig>();
 
-        public DataSourceManager()
+        public DataSourceManager(IDataSourceFactory dsFactory)
         {
-
+            _dsFactory = dsFactory;
         }
 
         public Guid CreateDataSource(DataSourceConfig config)
         {
-            DS.DataSource newDataSource = InstantiateDataSource(config);
+            DS.DataSource newDataSource = _dsFactory.CreateDataSource(config);
 
             var id = Guid.NewGuid();
             var configCopy = config.DeepClone();
@@ -45,27 +46,12 @@ namespace Electricity.Infrastructure.DataSource
             DataSourceConfig config = null;
             if (dataSourceConfigs.TryGetValue(id, out config))
             {
-                ds = InstantiateDataSource(config);
+                ds = _dsFactory.CreateDataSource(config);
                 dataSources.AddOrUpdate(id, (_) => ds, (_, __) => ds);
                 return ds;
             }
 
             return null;
-        }
-
-        private DS.DataSource InstantiateDataSource(DataSourceConfig config)
-        {
-            DS.DataSource ds = null;
-            if (config.DataSourceType == DataSourceType.DB)
-            {
-                var db = config.DBConnectionParams;
-                ds = new DS.DBDataSource(db.Server, db.DBName, db.Username, db.Password);
-            }
-            else if (config.DataSourceType == DataSourceType.File)
-            {
-                ds = new DS.FileDataSource(config.CEAFileName);
-            }
-            return ds;
         }
     }
 }
