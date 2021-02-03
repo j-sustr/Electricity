@@ -15,6 +15,8 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Linq;
 using System.Reflection;
+using Finbuckle.MultiTenant;
+using Electricity.Application.Common.Models;
 
 namespace Electricity.WebUI
 {
@@ -31,7 +33,7 @@ namespace Electricity.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<ITenantProvider, WebTenantProvider>();
+            services.AddScoped<ITenantProvider, TenantProvider>();
 
             services.AddAutoMapper(cfg =>
             {
@@ -73,6 +75,10 @@ namespace Electricity.WebUI
 
                 configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
+
+            services.AddMultiTenant<Tenant>()
+                    .WithConfigurationStore()
+                    .WithStaticStrategy("finbuckle");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,6 +113,7 @@ namespace Electricity.WebUI
             });
 
             app.UseRouting();
+            app.UseMultiTenant();
 
             app.UseAuthentication();
             app.UseAuthorization();
