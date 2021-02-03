@@ -16,18 +16,6 @@ namespace Electricity.WebUI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid? UserId
-        {
-            get
-            {
-                var idString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (Guid.TryParse(idString, out Guid id))
-                {
-                    return id;
-                }
-                return null;
-            }
-        }
+        public string UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
