@@ -1,14 +1,17 @@
 using System;
 using Electricity.Application.Common.Enums;
+using Finbuckle.MultiTenant;
 
 namespace Electricity.Application.Common.Models
 {
-    public class Tenant
+    public class Tenant : ITenantInfo
     {
-        private Guid Id { get; set; }
+        public string Id { get; set; }
 
-        public string Key { get; set; }
-        public string Host { get; set; }
+        public string Identifier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public Guid DataSourceId { get; set; }
 
         public DataSourceType DataSourceType { get; set; }
@@ -27,5 +30,6 @@ namespace Electricity.Application.Common.Models
                 };
             }
         }
+
     }
 }
