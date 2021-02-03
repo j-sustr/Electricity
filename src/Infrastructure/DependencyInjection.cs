@@ -9,7 +9,7 @@ namespace Electricity.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ITenantSource, FileTenantSource>();
+            services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
