@@ -19,8 +19,6 @@ namespace Electricity.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 
-            services.AddScoped<MetricsStore>();
-
             return services;
         }
     }
