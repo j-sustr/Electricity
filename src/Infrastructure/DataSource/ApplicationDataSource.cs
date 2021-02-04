@@ -27,14 +27,24 @@ namespace Electricity.Infrastructure.DataSource
             }
         }
 
-        public DS.Group[] GetUserGroups(Guid userId)
+        public DS.Group[] GetUserGroups(string userId)
         {
-            return _dataSource.GetUserGroups(userId).ToArray();
+            if (!Guid.TryParse(userId, out var userGuid))
+            {
+                return null;
+            }
+
+            return _dataSource.GetUserGroups(userGuid).ToArray();
         }
 
-        public GroupTreeNode GetUserGroupTree(Guid userId)
+        public GroupTreeNode GetUserGroupTree(string userId)
         {
-            var userGroups = _dataSource.GetUserGroups(userId);
+            if (!Guid.TryParse(userId, out var userGuid))
+            {
+                return null;
+            }
+
+            var userGroups = _dataSource.GetUserGroups(userGuid);
             var root = new GroupTreeNode();
             root.Nodes = userGroups.Select(g =>
             {

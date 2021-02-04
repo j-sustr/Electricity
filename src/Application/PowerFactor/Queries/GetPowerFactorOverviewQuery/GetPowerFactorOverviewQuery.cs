@@ -34,8 +34,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
         public Task<PowerFactorOverviewDto> Handle(GetPowerFactorOverviewQuery request, CancellationToken cancellationToken)
         {
-            Guid userId = _currentUserService.UserId ?? Guid.Empty;
-            if (userId == Guid.Empty)
+            string userId = _currentUserService.UserId;
+            if (userId == null)
             {
                 throw new UnauthorizedAccessException();
             }
