@@ -1,4 +1,5 @@
-﻿using Electricity.Application.Common.Interfaces;
+﻿using CleanArchitecture.Infrastructure.Identity;
+using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure.DataSource;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ namespace Electricity.Infrastructure
             services.AddScoped<ITableCollection, ApplicationDataSource>();
             services.AddScoped<Application.Common.Interfaces.IAuthenticationService, ApplicationDataSource>();
 
-            // services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IIdentityService, FakeIdentityService>();
 
             return services;
         }

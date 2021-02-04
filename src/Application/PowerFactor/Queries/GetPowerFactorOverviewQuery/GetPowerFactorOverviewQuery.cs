@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models.Queries;
 using MediatR;
 
 namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
@@ -46,12 +48,29 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
             {
                 var emTable = _tableCollection.GetTable(g.ID, (byte)Arch.ElectricityMeter);
 
+                var rows = emTable.GetRows(new GetRowsQuery
+                {
+                    Range = request.Interval1,
+                    Quantities = new Quantity[] {
+                        new Quantity("3EP", "Wh"),
+                        new Quantity("3EQL", "varh"),
+                        new Quantity("3EQC", "varh"),
+                    }
+                });
+
+                var firstRow = rows.First();
+                var lastRow = rows.Last();
+
+                var activeEnergy = lastRow.Item2[0] - firstRow.Item2[0];
+                var reactiveEnergyL = lastRow.Item2[1] - firstRow.Item2[1];
+                var reactiveEnergyC = lastRow.Item2[2] - firstRow.Item2[2];
+
                 return new PowerFactorOverviewItemDto
                 {
                     Interval = 0,
-                    ActiveEnergy = 0,
-                    ReactiveEnergyL = 0,
-                    ReactiveEnergyC = 0,
+                    ActiveEnergy = activeEnergy,
+                    ReactiveEnergyL = reactiveEnergyL,
+                    ReactiveEnergyC = reactiveEnergyC,
                     CosFi = 0
                 };
             }).ToList();

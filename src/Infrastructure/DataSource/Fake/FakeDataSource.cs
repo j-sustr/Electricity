@@ -13,6 +13,13 @@ namespace Electricity.Infrastructure.DataSource
     {
         int _seed;
 
+        List<Group> groups = new List<Group>{
+            new Group(Guid.NewGuid(), "group-1"),
+            new Group(Guid.NewGuid(), "group-2"),
+            new Group(Guid.NewGuid(), "group-3"),
+        };
+
+
         public FakeDataSource(int seed)
         {
             _seed = seed;
@@ -28,13 +35,18 @@ namespace Electricity.Infrastructure.DataSource
             throw new NotImplementedException();
         }
 
-        public override Quantity[] GetQuantities(Guid GroupID, byte arch, DateRange range)
+        public override Quantity[] GetQuantities(Guid groupID, byte arch, DateRange range)
         {
             throw new NotImplementedException();
         }
 
-        public override RowCollection GetRows(Guid GroupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, EEnergyAggType energyAggType = EEnergyAggType.Cumulative)
+        public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, EEnergyAggType energyAggType = EEnergyAggType.Cumulative)
         {
+            if (groups.FindIndex(g => g.ID == groupID) == -1)
+            {
+                throw new ArgumentException("invalid groupId");
+            }
+
             int rowLen = quantities.Length;
             var generators = Enumerable.Range(0, rowLen).Select((i) =>
             {
@@ -69,7 +81,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public override List<Group> GetUserGroups(Guid user)
         {
-            throw new NotImplementedException();
+            return groups;
         }
 
         public override Guid Login(string ENVISUser, string ENVISPassword)
