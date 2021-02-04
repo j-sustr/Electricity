@@ -13,20 +13,14 @@ namespace Electricity.WebUI.Controllers
         [HttpGet]
         public async Task<ActionResult<UserGroupsDto>> GetUserGroups([FromQuery] Guid userId)
         {
-            return await Mediator.Send(new GetUserGroupsQuery
-            {
-                UserId = userId,
-            });
+            return await Mediator.Send(new GetUserGroupsQuery());
         }
 
         // [HttpGet("user-tree/{userId}")]
         [HttpGet("tree")]
         public async Task<ActionResult<GroupTreeNodeDto>> GetUserGroupTree([FromQuery] Guid userId)
         {
-            return await Mediator.Send(new GetUserGroupTreeQuery
-            {
-                UserId = userId,
-            });
+            return await Mediator.Send(new GetUserGroupTreeQuery());
         }
     }
 }
