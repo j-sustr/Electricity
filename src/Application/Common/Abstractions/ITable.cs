@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Electricity.Application.Common.Interfaces.Queries;
+using Electricity.Application.Common.Models.Queries;
 
 namespace Electricity.Application.Common.Interfaces
 {
     public interface ITable
     {
-        public IEnumerable<Tuple<DateTime, float[]>> GetRows(IGetRowsQuery query);
+        public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query);
     }
 }

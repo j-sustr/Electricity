@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
-using Electricity.Application.Common.Interfaces.Queries;
+using Electricity.Application.Common.Models.Queries;
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
@@ -20,7 +20,7 @@ namespace Electricity.Infrastructure.DataSource
             _arch = arch;
         }
 
-        unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(IGetRowsQuery query)
+        unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
