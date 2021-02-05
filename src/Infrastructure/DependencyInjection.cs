@@ -1,6 +1,7 @@
 ﻿using CleanArchitecture.Infrastructure.Identity;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure.DataSource;
+using Electricity.Infrastructure.DataSource.Fake;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,7 @@ namespace Electricity.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
+            services.AddSingleton<IDataSourceFactory, FakeDataSourceFactory>();
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
