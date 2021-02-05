@@ -27,6 +27,8 @@ public class Testing
 
     private static string _currentUserId;
 
+    private static FakeDataSourceFactory _fakeDataSourceFactory;
+
     private static FakeIdentityService _fakeIdentityService;
 
     [OneTimeSetUp]
@@ -76,7 +78,9 @@ public class Testing
 
         services.Remove(dsFactoryDescriptor);
 
-        var dataSourceFactory = new FakeDataSourceFactory(0);
+        var interval = new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 31));
+
+        var dataSourceFactory = new FakeDataSourceFactory(0, interval);
         services.AddSingleton<IDataSourceFactory>(provider => dataSourceFactory);
     }
 
@@ -92,7 +96,8 @@ public class Testing
         tc.TenantInfo = ti;
 
         var requestServices = new ServiceCollection();
-        requestServices.AddScoped<IMultiTenantContextAccessor<Tenant>>(_ => new MultiTenantContextAccessor<Tenant> { MultiTenantContext = tc });
+        requestServices.AddTransient<IMultiTenantContextAccessor<Tenant>>(_ =>
+            new MultiTenantContextAccessor<Tenant> { MultiTenantContext = tc });
         var sp = requestServices.BuildServiceProvider();
 
         // var claimsIdentiy = new ClaimsIdentity(new Claim[] {

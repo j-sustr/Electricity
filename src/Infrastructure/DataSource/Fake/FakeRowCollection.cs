@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DataSource;
+
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource.Fake
@@ -8,6 +9,11 @@ namespace Electricity.Infrastructure.DataSource.Fake
     public class FakeRowCollection : DS.RowCollection
     {
         private IEnumerable<RowInfo> _rows;
+
+        public FakeRowCollection()
+        {
+            _rows = new RowInfo[] { };
+        }
 
         public FakeRowCollection(IEnumerable<RowInfo> rows)
         {
@@ -18,7 +24,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
 
         public override bool IsLast => throw new System.NotImplementedException();
 
-        public override byte[] Buffer => throw new System.NotImplementedException();
+        public override byte[] Buffer => new byte[1];
 
         public override IEnumerator<RowInfo> GetEnumerator()
         {
@@ -27,7 +33,6 @@ namespace Electricity.Infrastructure.DataSource.Fake
 
         public override unsafe void SetPointer(byte* BufferP)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

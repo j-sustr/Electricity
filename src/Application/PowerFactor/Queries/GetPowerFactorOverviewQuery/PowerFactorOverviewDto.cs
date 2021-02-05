@@ -10,12 +10,13 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
         public float ActiveEnergy { get; set; }
         public float ReactiveEnergyL { get; set; }
         public float ReactiveEnergyC { get; set; }
-        public float CosFi { get; set; }
+        public float TanFi { get; set; }
     }
 
 
     public class PowerFactorOverviewDto
     {
-        public IList<PowerFactorOverviewItemDto> Items { get; set; } = new List<PowerFactorOverviewItemDto>();
+        public IList<PowerFactorOverviewItemDto> Interval1Items { get; set; } = new List<PowerFactorOverviewItemDto>();
+        public IList<PowerFactorOverviewItemDto> Interval2Items { get; set; } = new List<PowerFactorOverviewItemDto>();
     }
 }

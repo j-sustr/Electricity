@@ -32,6 +32,11 @@ namespace Electricity.Infrastructure.DataSource
             float[] arr;
             using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, query.EnergyAggType))
             {
+                if (rc == null)
+                {
+                    return entries;
+                }
+
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);

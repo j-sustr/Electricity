@@ -4,25 +4,30 @@ using System.IO;
 using System.Linq;
 using Common.Random;
 using DataSource;
+using Electricity.Application.Common.Enums;
+using Electricity.Application.Common.Models;
 using Electricity.Infrastructure.DataSource.Fake;
+
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
 {
     public class FakeDataSource : DS.DataSource
     {
-        int _seed;
+        private int _seed;
 
-        List<Group> groups = new List<Group>{
+        private Interval _interval { get; set; }
+
+        private List<Group> groups = new List<Group>{
             new Group(Guid.NewGuid(), "group-1"),
             new Group(Guid.NewGuid(), "group-2"),
             new Group(Guid.NewGuid(), "group-3"),
         };
 
-
-        public FakeDataSource(int seed)
+        public FakeDataSource(int seed, Interval interval)
         {
             _seed = seed;
+            _interval = interval;
         }
 
         public override void Dispose()
@@ -47,10 +52,14 @@ namespace Electricity.Infrastructure.DataSource
                 throw new ArgumentException("invalid groupId");
             }
 
+            bool cumulative = arch == (byte)Arch.ElectricityMeter;
+
             int rowLen = quantities.Length;
             var generators = Enumerable.Range(0, rowLen).Select((i) =>
             {
-                return new RandomSeries(_seed + i);
+                var g = new RandomSeries(0, _seed + i);
+                g.Cumulative = cumulative;
+                return g;
             }).ToArray();
 
             foreach (var q in quantities)
@@ -58,12 +67,23 @@ namespace Electricity.Infrastructure.DataSource
                 q.Value = new FakePropValueFloat();
             }
 
+            var interval = _interval;
+
+            if (range != null)
+            {
+                interval = _interval.GetOverlap(Interval.FromDateRange(range));
+            }
+
+            if (interval == null)
+            {
+                return new FakeRowCollection();
+            }
 
             IEnumerable<RowInfo> GenerateRows()
             {
-                DateTime time = range.DateMin;
-                TimeSpan interval = new TimeSpan(0, 0, 10);
-                while (time < range.DateMin)
+                DateTime time = interval.Start;
+                TimeSpan duration = new TimeSpan(0, 0, 10);
+                while (time < interval.End)
                 {
                     var rowValues = generators.Select(g => g.Next()).ToArray();
                     for (int i = 0; i < generators.Length; i++)
@@ -72,7 +92,7 @@ namespace Electricity.Infrastructure.DataSource
                         propValue.Value = generators[i].Next();
                     }
                     yield return new RowInfo(time, 0, null);
-                    time += interval;
+                    time += duration;
                 }
             }
 
