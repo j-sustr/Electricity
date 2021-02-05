@@ -8,9 +8,9 @@ namespace Electricity.Application.Common.Models
     {
         public string Id { get; set; }
 
-        public string Identifier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Identifier { get; set; }
+        public string Name { get; set; }
+        public string ConnectionString { get; set; }
 
         public Guid DataSourceId { get; set; }
 
