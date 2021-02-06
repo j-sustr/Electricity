@@ -1,5 +1,7 @@
-﻿using CleanArchitecture.Infrastructure.Identity;
+﻿using System;
+using CleanArchitecture.Infrastructure.Identity;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models;
 using Electricity.Infrastructure.DataSource;
 using Electricity.Infrastructure.DataSource.Fake;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +13,10 @@ namespace Electricity.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IDataSourceFactory, FakeDataSourceFactory>();
+            services.AddSingleton<IDataSourceFactory>((provider) =>
+            {
+                return new FakeDataSourceFactory(0, new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 3, 1)));
+            });
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
