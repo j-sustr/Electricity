@@ -110,7 +110,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "ClientApp/src/app/Electricity-api.ts"
+      "output": "ClientApp/src/app/web-api-api.ts"
     }
   }
 }
