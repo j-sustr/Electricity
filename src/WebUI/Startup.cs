@@ -1,13 +1,12 @@
 using AutoMapper;
 using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models;
 using Electricity.Infrastructure;
-using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +14,6 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Linq;
 using System.Reflection;
-using Finbuckle.MultiTenant;
-using Electricity.Application.Common.Models;
 
 namespace Electricity.WebUI
 {
@@ -62,6 +59,13 @@ namespace Electricity.WebUI
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.AddMultiTenant<Tenant>()
+                    .WithConfigurationStore()
+                    .WithStaticStrategy("finbuckle");
+
+            services.AddMvcCore()
+                .AddApiExplorer();
+
             services.AddOpenApiDocument(configure =>
             {
                 configure.Title = "Electricity API";
@@ -75,10 +79,6 @@ namespace Electricity.WebUI
 
                 configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
-
-            services.AddMultiTenant<Tenant>()
-                    .WithConfigurationStore()
-                    .WithStaticStrategy("finbuckle");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,6 +106,7 @@ namespace Electricity.WebUI
                 app.UseSpaStaticFiles();
             }
 
+            // app.UseOpenApi();
             app.UseSwaggerUi3(settings =>
             {
                 settings.Path = "/api";
