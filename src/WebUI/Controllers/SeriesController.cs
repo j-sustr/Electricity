@@ -20,13 +20,6 @@ namespace Electricity.WebUI.Controllers
             this._mapper = mapper;
         }
 
-        [HttpGet("hello")]
-        public async Task<ActionResult> GetHello()
-        {
-            var hello = await Task.FromResult("hello");
-            return Ok(hello);
-        }
-
         [HttpGet("quantity")]
         public async Task<ActionResult<TimeSeriesDto<float>>> GetQuantity([FromQuery] GetQuantitySeriesApiModel req)
         {
