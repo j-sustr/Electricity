@@ -3,6 +3,7 @@
 src/WebUI/wwwroot/api/specification.json
 dll
 .vscode/settings.json
+src/WebUI/update.sh
 
 # User-specific files
 *.suo
@@ -232,3 +233,4 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
