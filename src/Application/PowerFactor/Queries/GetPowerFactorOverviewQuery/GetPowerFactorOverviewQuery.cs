@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
 
@@ -13,8 +14,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 {
     public class GetPowerFactorOverviewQuery : IRequest<PowerFactorOverviewDto>
     {
-        public Tuple<DateTime, DateTime> Interval1 { get; set; }
-        public Tuple<DateTime, DateTime> Interval2 { get; set; }
+        public Interval?[] Intervals { get; set; }
 
         public Guid[] GroupIds { get; set; }
     }
@@ -43,27 +43,36 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
                 throw new UnauthorizedAccessException();
             }
 
+            if (request.Intervals == null)
+            {
+                throw new ArgumentException("intervals is null");
+            }
+
+            var dto = new PowerFactorOverviewDto();
+
             var userGroups = _groupService.GetUserGroups(userId);
 
-            var data1 = GetDataForInterval(userGroups, request.Interval1);
-            var data2 = GetDataForInterval(userGroups, request.Interval2);
+            var dataList = new List<PowerFactorOverviewIntervalData>();
 
-            var result = new PowerFactorOverviewDto
+            foreach (var interval in request.Intervals)
             {
-                Interval1Items = data1?.ToList(),
-                Interval2Items = data2?.ToList(),
-            };
-            return Task.FromResult(result);
+                var data = GetDataForInterval(userGroups, interval);
+
+                dataList.Add(data);
+            }
+
+            dto.Data = dataList;
+            return Task.FromResult(dto);
         }
 
-        public IEnumerable<PowerFactorOverviewItemDto> GetDataForInterval(Group[] userGroups, Tuple<DateTime, DateTime> interval)
+        public PowerFactorOverviewIntervalData GetDataForInterval(Group[] userGroups, Interval interval)
         {
-            if (interval == null)
+            if (userGroups == null)
             {
                 return null;
             }
 
-            return userGroups.Select(g =>
+            var items = userGroups.Select(g =>
             {
                 var emTable = _tableCollection.GetTable(g.ID, (byte)Arch.ElectricityMeter);
                 var quantities = new Quantity[] {
@@ -72,19 +81,21 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
                     new Quantity("3EQC", "varh"),
                 };
 
-                var rows1 = emTable.GetRows(new GetRowsQuery
+                var rows = emTable.GetRows(new GetRowsQuery
                 {
                     Range = interval,
                     Quantities = quantities,
                 });
 
-                if (rows1.Count() == 0)
+                if (rows.Count() == 0)
                 {
                     return null;
                 }
 
-                var firstRow = rows1.First();
-                var lastRow = rows1.Last();
+                var rowsInterval = GetRowsInterval(rows);
+
+                var firstRow = rows.First();
+                var lastRow = rows.Last();
 
                 var activeEnergy = lastRow.Item2[0] - firstRow.Item2[0];
                 var reactiveEnergyL = lastRow.Item2[1] - firstRow.Item2[1];
@@ -92,16 +103,29 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
                 var tanFi = reactiveEnergyL / activeEnergy;
 
-                return new PowerFactorOverviewItemDto
+                return new PowerFactorOverviewItem
                 {
                     DeviceName = g.Name,
-                    Interval = 0,
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,
                     ReactiveEnergyC = reactiveEnergyC,
-                    TanFi = tanFi
+                    TanFi = tanFi,
+                    Interval = rowsInterval
                 };
             });
+
+            return new PowerFactorOverviewIntervalData
+            {
+                Interval = null,
+                Items = items.ToList()
+            };
+        }
+
+        public Interval GetRowsInterval(IEnumerable<Tuple<DateTime, float[]>> rows)
+        {
+            var start = rows.First().Item1;
+            var end = rows.Last().Item1;
+            return new Interval(start, end);
         }
     }
 }

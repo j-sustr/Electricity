@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using DS = DataSource;
 
@@ -20,15 +21,18 @@ namespace Electricity.Infrastructure.DataSource
             _arch = arch;
         }
 
+        public Interval GetInterval()
+        {
+            throw new NotImplementedException();
+        }
+
         unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query)
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-
             var quants = query.Quantities;
             int rowLen = quants.Length;
 
             var entries = new List<Tuple<DateTime, float[]>>();
-            var dateRange = query.Range != null ? DateRangeExtensions.FromTuple(query.Range) : null;
+            var dateRange = query.Range?.ToDateRange();
             float[] arr;
             using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, query.EnergyAggType))
             {

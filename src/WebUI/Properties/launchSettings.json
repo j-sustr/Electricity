@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:44312/api",
+      "launchUrl": "https://localhost:44312",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }

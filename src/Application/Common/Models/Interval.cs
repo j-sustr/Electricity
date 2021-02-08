@@ -11,6 +11,11 @@ namespace Electricity.Application.Common.Models
 
         public Interval(DateTime start, DateTime end)
         {
+            if (start > end)
+            {
+                throw new ArgumentException("start is after end");
+            }
+
             Start = start;
             End = end;
         }
@@ -28,14 +33,19 @@ namespace Electricity.Application.Common.Models
             return new Interval(min, max);
         }
 
-        public static Interval FromDateRange(DateRange dateRange)
-        {
-            return new Interval(dateRange.DateMin, dateRange.DateMax);
-        }
-
         public bool Equals(Interval other)
         {
             return Start == other.Start && End == other.End;
+        }
+
+        public DateRange ToDateRange()
+        {
+            return new DateRange(Start, End);
+        }
+
+        public static Interval FromDateRange(DateRange dateRange)
+        {
+            return new Interval(dateRange.DateMin, dateRange.DateMax);
         }
     }
 }

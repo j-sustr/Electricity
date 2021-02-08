@@ -5,7 +5,7 @@ namespace Electricity.Application.Common.Models.Queries
 {
     public class GetRowsQuery
     {
-        public Tuple<DateTime, DateTime> Range { get; set; }
+        public Interval? Range { get; set; } = null;
 
         public Quantity[] Quantities { get; set; }
 

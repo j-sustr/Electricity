@@ -5,6 +5,8 @@ using NUnit.Framework;
 using FluentAssertions;
 using System.Linq;
 using System.Collections.Generic;
+using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Exceptions;
 
 namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 {
@@ -13,68 +15,119 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
     public class GetPowerFactorOverviewTest
     {
         [Test]
-        public async Task ShouldReturnEmptyResult()
+        public async Task ShouldRequireIntervals()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery();
 
-            var result = await SendAsync(query);
-
-            result.Interval1Items.Should().BeNull();
-            result.Interval2Items.Should().BeNull();
+            FluentActions.Invoking(() =>
+                SendAsync(query)).Should().Throw<ValidationException>();
         }
 
         [Test]
-        public async Task ShouldReturnPowerFactorOverview()
+        public async Task ShouldRequireIntervalsToNotBeEmpty()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Interval1 = Tuple.Create(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
+                Intervals = new Interval[] { }
+            };
+
+            FluentActions.Invoking(() =>
+                SendAsync(query)).Should().Throw<ValidationException>();
+        }
+
+        [Test]
+        public async Task ShouldReturnPowerFactorOverviewWhenNullIntervalProvided()
+        {
+            var userId = await RunAsDefaultUserAsync();
+
+            var query = new GetPowerFactorOverviewQuery
+            {
+                Intervals = new Interval[] { null }
             };
 
             var result = await SendAsync(query);
 
-            result.Interval1Items.Should().HaveCount(3);
+            result.Data.Should().HaveCount(1);
 
-            foreach (var group in result.Interval1Items)
+            foreach (var data in result.Data)
             {
-                group.DeviceName.Should().NotBeNullOrWhiteSpace();
-                group.Interval.Should().Be(0);
-                group.ActiveEnergy.Should().BePositive();
-                group.ReactiveEnergyL.Should().BePositive();
-                group.ReactiveEnergyC.Should().BePositive();
-                group.TanFi.Should().BePositive();
+                data.Items.Should().HaveCount(3);
+
+                foreach (var group in data.Items)
+                {
+                    group.DeviceName.Should().NotBeNullOrWhiteSpace();
+
+                    group.ActiveEnergy.Should().BePositive();
+                    group.ReactiveEnergyL.Should().BePositive();
+                    group.ReactiveEnergyC.Should().BePositive();
+                    group.TanFi.Should().BePositive();
+                }
             }
         }
 
         [Test]
-        public async Task ShouldReturnPowerFactorOverviewComparison()
+        public async Task ShouldReturnPowerFactorOverviewWhen1IntervalProvided()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Interval1 = Tuple.Create(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
-                Interval2 = Tuple.Create(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
+                Intervals = new Interval[]
+                {
+                    new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
+                }
             };
 
             var result = await SendAsync(query);
 
-            result.Interval1Items.Should().HaveCount(3);
-            result.Interval2Items.Should().HaveCount(3);
+            result.Data.Should().HaveCount(1);
 
-            CheckIntervalItems(result.Interval1Items);
-            CheckIntervalItems(result.Interval1Items);
-
-            void CheckIntervalItems(IList<PowerFactorOverviewItemDto> items)
+            foreach (var data in result.Data)
             {
-                foreach (var group in items)
+                data.Items.Should().HaveCount(3);
+
+                foreach (var group in data.Items)
                 {
                     group.DeviceName.Should().NotBeNullOrWhiteSpace();
-                    group.Interval.Should().Be(0);
+
+                    group.ActiveEnergy.Should().BePositive();
+                    group.ReactiveEnergyL.Should().BePositive();
+                    group.ReactiveEnergyC.Should().BePositive();
+                    group.TanFi.Should().BePositive();
+                }
+            }
+        }
+
+        [Test]
+        public async Task ShouldReturnPowerFactorOverviewFor2Intervals()
+        {
+            var userId = await RunAsDefaultUserAsync();
+
+            var query = new GetPowerFactorOverviewQuery
+            {
+                Intervals = new Interval[]
+                {
+                    new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
+                    new Interval(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
+                }
+            };
+
+            var result = await SendAsync(query);
+
+            result.Data.Should().HaveCount(2);
+
+            foreach (var data in result.Data)
+            {
+                data.Items.Should().HaveCount(3);
+
+                foreach (var group in data.Items)
+                {
+                    group.DeviceName.Should().NotBeNullOrWhiteSpace();
+
                     group.ActiveEnergy.Should().BePositive();
                     group.ReactiveEnergyL.Should().BePositive();
                     group.ReactiveEnergyC.Should().BePositive();

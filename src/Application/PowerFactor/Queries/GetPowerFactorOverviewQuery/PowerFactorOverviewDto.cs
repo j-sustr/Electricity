@@ -1,22 +1,29 @@
+using Electricity.Application.Common.Models;
 using System.Collections.Generic;
 
 namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
 {
-    public class PowerFactorOverviewItemDto
+    public class PowerFactorOverviewItem
     {
         public string DeviceName { get; set; }
-        public int Interval { get; set; }
 
         public float ActiveEnergy { get; set; }
         public float ReactiveEnergyL { get; set; }
         public float ReactiveEnergyC { get; set; }
         public float TanFi { get; set; }
+
+        public Interval Interval { get; set; }
     }
 
+    public class PowerFactorOverviewIntervalData
+    {
+        public Interval Interval { get; set; }
+
+        public IList<PowerFactorOverviewItem> Items { get; set; } = new List<PowerFactorOverviewItem>();
+    }
 
     public class PowerFactorOverviewDto
     {
-        public IList<PowerFactorOverviewItemDto> Interval1Items { get; set; } = new List<PowerFactorOverviewItemDto>();
-        public IList<PowerFactorOverviewItemDto> Interval2Items { get; set; } = new List<PowerFactorOverviewItemDto>();
+        public IList<PowerFactorOverviewIntervalData> Data { get; set; } = new List<PowerFactorOverviewIntervalData>();
     }
 }

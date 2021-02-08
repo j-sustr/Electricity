@@ -6,6 +6,7 @@ using AutoMapper;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
 
@@ -19,7 +20,7 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
 
         public Quantity Quantity { get; set; }
 
-        public Tuple<DateTime, DateTime> Range { get; set; }
+        public Interval Range { get; set; }
 
         public AggregationMethod AggregationMethod { get; set; }
 
