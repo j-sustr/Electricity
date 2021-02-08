@@ -17,4 +17,4 @@ jobs:
       with:
         dotnet-version: 5.0.102
     - name: Build with dotnet
-      run: dotnet build --configuration Release CleanArchitecture.sln
+      run: dotnet build --configuration Release Electricity.sln
