@@ -3,7 +3,9 @@ using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Infrastructure;
+using Electricity.WebUI.Filters;
 using Electricity.WebUI.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +46,10 @@ namespace Electricity.WebUI
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks();
+
+            services.AddControllersWithViews(options =>
+                options.Filters.Add<ApiExceptionFilterAttribute>())
+                    .AddFluentValidation();
 
             services.AddRazorPages();
 
