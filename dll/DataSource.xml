@@ -1,0 +1,1388 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataSource</name>
+    </assembly>
+    <members>
+        <member name="T:DataSource.ArchiveList">
+            <summary>
+            Sdruzuje seznam archivu, rozdeluje dle identifikace pristroje
+            </summary>
+        </member>
+        <member name="F:DataSource.ArchiveList.list">
+            <summary>
+            List of archives for device by SmpIdentify
+            </summary>
+        </member>
+        <member name="M:DataSource.ArchiveList.#ctor(DataSource.CIdentification)">
+            <summary>
+            Create list of Archive by SmpIdentify
+            </summary>
+            <param name="Id">SmpIdentify</param>
+        </member>
+        <member name="M:DataSource.ArchiveList.GetByNumber(System.Int32)">
+            <summary>
+            Return archive desription by archive number
+            </summary>
+            <param name="Number">Archive number</param>
+            <returns>Retur archive desription by archive number</returns>
+        </member>
+        <member name="T:DataSource.ArchiveDescription">
+            <summary>
+            Describe archive
+            </summary>
+        </member>
+        <member name="F:DataSource.ArchiveDescription.ArchiveType">
+            <summary> Archive type  </summary>    
+        </member>
+        <member name="M:DataSource.ArchiveDescription.#ctor(DataSource.EArchiveType)">
+            <summary> Describe archive by archive type  </summary>    
+            <param name="ArchiveType">Archive type</param>
+        </member>
+        <member name="T:DataSource.EArchiveType">
+            <summary>
+            Defines archive types available in some devices.
+            </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.MainArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.SProfile">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.MProfile">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.LOG">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.PQMainArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.PQEvents">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.ElmerArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.PmaxArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.PQOscilogram">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.PQEventTrendArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.HDOArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.VLNYArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.GOTArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.HistArchive">
+            <summary> Archive </summary>
+        </member>
+        <member name="F:DataSource.EArchiveType.Undefined">
+            <summary> Undefined Archive </summary>
+        </member>
+        <member name="T:DataSource.ByteArray">
+            <summary>
+            This structure represents byte[] array with all the functionality required for operations over this array in regard to the KMB messages and structures.
+            </summary>
+        </member>
+        <member name="F:DataSource.ByteArray._bytes">
+            <summary>holds the bytes of the ByteArray</summary>
+        </member>
+        <member name="P:DataSource.ByteArray.bytes">
+            <summary>actual bytes of this ByteArray, readonly</summary>
+        </member>
+        <member name="F:DataSource.ByteArray.counter">
+            <summary> Current position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.#ctor">
+            <summary>Is used by serialization and to instantiate child classes.</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.#ctor(System.Byte[])">
+            <summary>creates instance of ByteArray with bytes set to the specified array</summary>
+            <param name="bytes">body of the ByteArrray</param>
+        </member>
+        <member name="M:DataSource.ByteArray.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>Creates instance of ByteArray with bytes copied from bytes from start to stop.</summary>
+            <param name="bytes">source of bytes for bytearray</param>
+            <param name="start">starting index</param>
+            <param name="stop">stop index</param>
+        </member>
+        <member name="M:DataSource.ByteArray.#ctor(System.Int32)">
+            <summary>Creates empty ByteArray of the specified size.</summary>
+            <param name="length">size of the ByteArray</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_double(System.Int32,System.Double)">
+            <summary>Overwrite content of the array with double on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_float(System.Int32,System.Single)">
+            <summary>Overwrite content of the array with float on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u64(System.Int32,System.UInt64)">
+            <summary>Overwrite content of the array with unsigned long on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u32(System.Int32,System.UInt32)">
+            <summary>Overwrite content of the array with unsigned int on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u16(System.Int32,System.UInt16)">
+            <summary>Overwrite content of the array with unsigned short on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u8(System.Int32,System.Byte)">
+            <summary>Overwrite content of the array with byte on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s64(System.Int32,System.Int64)">
+            <summary>Overwrite content of the array with signed long on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s32(System.Int32,System.Int32)">
+            <summary>Overwrite content of the array with signed int on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s16(System.Int32,System.Int16)">
+            <summary>Overwrite content of the array with signed short on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s8(System.Int32,System.SByte)">
+            <summary>Overwrite content of the array with signed byte on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_DateTime(System.Int32,System.DateTime)">
+            <summary>Overwrite content of the array with u64 LittleEndian encoded time as miliseconds since y2000 on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value"></param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_doubles(System.Int32,System.Double[],System.Int32)">
+            <summary>Overwrite content of the array with double array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_floats(System.Int32,System.Single[],System.Int32)">
+            <summary>Overwrite content of the array with float array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_Bytes(System.Int32,System.Byte[],System.Int32)">
+            <summary>Overwrite content of the array with byte array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_double(System.Double)">
+            <summary>Overwrite content of the array with double on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_float(System.Single)">
+            <summary>Overwrite content of the array with float on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u64(System.UInt64)">
+            <summary>Overwrite content of the array with unsigned long on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u32(System.UInt32)">
+            <summary>Overwrite content of the array with unsigned int on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u16(System.UInt16)">
+            <summary>Overwrite content of the array with unsigned short on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u8(System.Byte)">
+            <summary>Overwrite content of the array with byte on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s64(System.Int64)">
+            <summary>Overwrite content of the array with signed long on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s32(System.Int32)">
+            <summary>Overwrite content of the array with signed int on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s16(System.Int16)">
+            <summary>Overwrite content of the array with signed short on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s8(System.SByte)">
+            <summary>Overwrite content of the array with signed byte on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_DateTime(System.DateTime)">
+            <summary>Overwrite content of the array with u64 LittleEndian encoded time as miliseconds since y2000 on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_doubles(System.Double[],System.Int32)">
+            <summary>Overwrite content of the array with double array on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_floats(System.Single[],System.Int32)">
+            <summary>Overwrite content of the array with float array on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_Bytes(System.Byte[],System.Int32)">
+            <summary>Overwrite content of the array with byte array on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_double_BE(System.Int32,System.Double)">
+            <summary>Overwrite content of the array with double on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_float_BE(System.Int32,System.Single)">
+            <summary>Overwrite content of the array with float on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u64_BE(System.Int32,System.UInt64)">
+            <summary>Overwrite content of the array with unsigned long on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u32_BE(System.Int32,System.UInt32)">
+            <summary>Overwrite content of the array with unsigned int on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u16_BE(System.Int32,System.UInt16)">
+            <summary>Overwrite content of the array with unsigned short on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s64_BE(System.Int32,System.Int64)">
+            <summary>Overwrite content of the array with signed long on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s32_BE(System.Int32,System.Int32)">
+            <summary>Overwrite content of the array with signed int on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s16_BE(System.Int32,System.Int16)">
+            <summary>Overwrite content of the array with signed short on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_DateTime_BE(System.Int32,System.DateTime)">
+            <summary>Overwrite content of the array with u64 BigEndian encoded time as miliseconds since y2000 on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value"></param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_doubles_BE(System.Int32,System.Double[],System.Int32)">
+            <summary>Overwrite content of the array with double array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_floats_BE(System.Int32,System.Single[],System.Int32)">
+            <summary>Overwrite content of the array with float array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_double_BE(System.Double)">
+            <summary>Overwrite content of the array with double on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_float_BE(System.Single)">
+            <summary>Overwrite content of the array with float on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u64_BE(System.UInt64)">
+            <summary>Overwrite content of the array with unsigned long on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u32_BE(System.UInt32)">
+            <summary>Overwrite content of the array with unsigned int on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_u16_BE(System.UInt16)">
+            <summary>Overwrite content of the array with unsigned short on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s64_BE(System.Int64)">
+            <summary>Overwrite content of the array with signed long on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s32_BE(System.Int32)">
+            <summary>Overwrite content of the array with signed int on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_s16_BE(System.Int16)">
+            <summary>Overwrite content of the array with signed short on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_DateTime_BE(System.DateTime)">
+            <summary>Overwrite content of the array with u64 LittleEndian encoded time as miliseconds since y2000 on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_doubles_BE(System.Double[],System.Int32)">
+            <summary>Overwrite content of the array with double array on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.append_floats_BE(System.Single[],System.Int32)">
+            <summary>Overwrite content of the array with float array on <see cref="F:DataSource.ByteArray.counter"/> position and increase <see cref="F:DataSource.ByteArray.counter"/></summary>
+            <param name="value">value</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_double(System.Int32)">
+            <summary>Read double from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_float(System.Int32)">
+            <summary>Read float from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u64(System.Int32)">
+            <summary>Read unsigned long from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u32(System.Int32)">
+            <summary>Read unsigned integer from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u16(System.Int32)">
+            <summary>Read unsigned short from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u8(System.Int32)">
+            <summary>Read byte from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s64(System.Int32)">
+            <summary>Read signed long from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s32(System.Int32)">
+            <summary>Read signed integer from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s16(System.Int32)">
+            <summary>Read signed short from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s8(System.Int32)">
+            <summary>Read signed byte from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_DateTime(System.Int32)">
+            <summary>Reads u64 LittleEndian encoded time as miliseconds since y2000 on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_doubles(System.Int32,System.Int32)">
+            <summary>Read double array from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="count">count of doubles to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_floats(System.Int32,System.Int32)">
+            <summary>Read float array from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="count">count of floats to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_Bytes(System.Int32,System.Int32)">
+            <summary>Read byte array from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_double">
+            <summary>Read double from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_float">
+            <summary>Read float from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u64">
+            <summary>Read unsigned long from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u32">
+            <summary>Read unsigned integer from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u16">
+            <summary>Read unsigned short from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u8">
+            <summary>Read byte from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s64">
+            <summary>Read signed long from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s32">
+            <summary>Read signed integer from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s16">
+            <summary>Read signed short from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s8">
+            <summary>Read signed byte from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_DateTime">
+            <summary>Reads u64 LittleEndian encoded time as miliseconds since y2000 on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_doubles(System.Int32)">
+            <summary>Read double array from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="count">count of doubles to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_floats(System.Int32)">
+            <summary>Read float array from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="count">count of floats to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_Bytes(System.Int32)">
+            <summary>Read byte array from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="count">count of doubles to copy</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_double_BE(System.Int32)">
+            <summary>Read double from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_float_BE(System.Int32)">
+            <summary>Read float from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u64_BE(System.Int32)">
+            <summary>Read unsigned long from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u32_BE(System.Int32)">
+            <summary>Read unsigned integer from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u16_BE(System.Int32)">
+            <summary>Read unsigned short from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s64_BE(System.Int32)">
+            <summary>Read signed long from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s32_BE(System.Int32)">
+            <summary>Read signed integer from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s16_BE(System.Int32)">
+            <summary>Read signed short from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_DateTime_BE(System.Int32)">
+            <summary>Reads u64 LittleEndian encoded time as miliseconds since y2000 on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_doubles_BE(System.Int32,System.Int32)">
+            <summary>Read double array from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="count">count of doubles to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_floats_BE(System.Int32,System.Int32)">
+            <summary>Read float array from array on <paramref name="where"/> position</summary>
+            <param name="where">position</param>
+            <param name="count">count of floats to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_double_BE">
+            <summary>Read double from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_float_BE">
+            <summary>Read float from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u64_BE">
+            <summary>Read unsigned long from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u32_BE">
+            <summary>Read unsigned integer from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_u16_BE">
+            <summary>Read unsigned short from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s64_BE">
+            <summary>Read signed long from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s32_BE">
+            <summary>Read signed integer from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_s16_BE">
+            <summary>Read signed short from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_DateTime_BE">
+            <summary>Reads u64 LittleEndian encoded time as miliseconds since y2000 on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+        </member>
+        <member name="M:DataSource.ByteArray.read_doubles_BE(System.Int32)">
+            <summary>Read double array from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="count">count of doubles to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.read_floats_BE(System.Int32)">
+            <summary>Read float array from array on <see cref="F:DataSource.ByteArray.counter"/> position</summary>
+            <param name="count">count of floats to read</param>
+        </member>
+        <member name="M:DataSource.ByteArray.op_Addition(DataSource.ByteArray,DataSource.ByteArray)">
+            <summary>joins two byte arrays</summary>
+            <param name="ba1">1st ByteArray</param>
+            <param name="ba2">2nd ByteArray</param>
+            <returns>bytearray ba1+ba2</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.SetBytes(System.Byte[])">
+            <summary>Set byte array</summary>
+            <param name="bytes">byte array</param>
+        </member>
+        <member name="M:DataSource.ByteArray.Resize(System.Int32)">
+            <summary>hange size of array</summary>
+            <param name="nsize">new size</param>
+        </member>
+        <member name="M:DataSource.ByteArray.toHexString">
+            <summary>Converts each byte in ByteArray to a string that represents hexadecimal values of the bytes.</summary>
+            <returns>String that contains hexadecimal dump of the array.</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.calcCrc(System.Int32,System.Int32)">
+            <summary>
+            Calculates and returns CRC of the message
+            </summary>
+            <returns>The ushort value of 16-bit CRC CCITT</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.genSum(System.Int32,System.Int32)">
+            <summary>
+            Calculates the checksum of the interval in the structure and stores the result as a unsigned short to the stracture after stop index.
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.genSum">
+            <summary>
+            generates checksum of the bytearray and stores the result at the 
+            end of this ByteArray
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.genCrc">
+            <summary>
+            Calculates the CRC of the structure -2 bytes and stores the result as a unsigned short to the last two bytes of structure.
+            </summary>
+            <returns>void</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.genCrc_BE">
+            <summary>
+            Calculates the CRC of the structure -2 bytes and stores the result as a unsigned short to the last two bytes of structure.
+            </summary>
+            <returns>void</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.calcSum(System.Int32,System.Int32)">
+            <summary>
+            Calculates and returns checksum of the message
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.checkCrc(System.Int32,System.Int32)">
+            <summary>
+            Checks wherther calculated CRC is equal to the two byte value in the structure right after the interval.
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.checkCrc">
+            <summary>
+            Checks wherther calculated CRC of the whole ByteArray (last two bytes) is correct
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.checkSum(System.Int32,System.Int32)">
+            <summary>
+            Checks whether calculated checksum is equal to the two byte value in the structure right after the interval.
+            </summary>
+        </member>
+        <member name="M:DataSource.ByteArray.checkSum">
+            <summary>
+            Tests if this ByaeArray has a correct check sum at the 
+            end of the array
+            </summary>
+            <returns>true if checksum is OK</returns>
+        </member>
+        <member name="M:DataSource.ByteArray.checkNullAndLength(DataSource.ByteArray,System.String,System.Int32[])">
+            <summary>
+            Basic structure test of null and Length
+            </summary>
+            <param name="structure">ByteArray with the SmpInputOutpuConfigUdalost data</param>
+            <param name="structureName">Class name string</param>
+            <param name="length">struct length</param>
+            <exception cref="T:DataSource.InvalidStructureException">thrown if the structure is not of a correct size</exception>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP">
+            <summary> SMP type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_SIMON_PLUS">
+            <summary> SMP_SIMON_PLUS </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_SIMON_PQ">
+            <summary> SMP_SIMON_PQ </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_BRAVO">
+            <summary> SMP_BRAVO </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_SMV">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_SMP">
+            <summary> SMP_SMP </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMP_SMPQ">
+            <summary> SMP_SMPQ </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KLASA">
+            <summary> KLASA </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KLASA1">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KLASA2">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMK">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMD118">
+            <summary> SMP9SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_PA118">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMC112">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMD112">
+            <summary> SMP9SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_PA112">
+            <summary> SMP_SMV </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMY_SMZ">
+            <summary> SMY/SMZ type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMY">
+            <summary> SMY type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMZ">
+            <summary> SMZ type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_NOVAR">
+            <summary> NOVAR type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_M_NOVAR">
+            <summary> M NOVAR type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMM_SML_SMN">
+            <summary> SMM,SML,SMN type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KM_GPRS">
+            <summary> KM GPRS type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_ES_MODULE">
+            <summary> ES_MODULE type of device is connected </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KWZ">
+            <summary> KWZ_elektromer </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_ZPA">
+            <summary> ZPA_elektromer </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_NZR">
+            <summary> NZR_elektrome </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_UNIVERSAL">
+            <summary> UNIVERSAL </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_VIRTUAL">
+            <summary> UNIVERSAL </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_PA33">
+            <summary> PA33 </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMC">
+            <summary> SMC/COMAR </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMCA">
+            <summary> SMC/Amper </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMD">
+            <summary> SMD/Amper </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_SMC144">
+            <summary> SMC144 </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_NRC">
+            <summary> NRC </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_IOd">
+            <summary> IOd </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_KMB_SHORT">
+            <summary> KMB_SHORT communication </summary>
+        </member>
+        <member name="F:DataSource.EDeviceType.DT1_None">
+            <summary> Nedefinovano </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.SM">
+            <summary> SM </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Simon">
+            <summary> Simon </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Novar">
+            <summary> Novar </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.SMC_Comar">
+            <summary> SMC_Comar </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.SMD">
+            <summary> SMD </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.EM">
+            <summary> EM </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Modem">
+            <summary> Modem </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.KLASA">
+            <summary> KLASA </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.KWZ">
+            <summary> KWZ </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.ZPA">
+            <summary> ZPA </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.NZR">
+            <summary> NZR </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.IOd">
+            <summary> IOd </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.MBUS">
+            <summary> MBUS </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.REST">
+            <summary> REST </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Universal">
+            <summary> Universal </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.UniversalF4">
+            <summary> Universal </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Virtual">
+            <summary> Virtual </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.RC">
+            <summary> RC </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Pegas">
+            <summary> Pegas </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.PQT">
+            <summary> PQT </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Sydam">
+            <summary> Sydam </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Peggy">
+            <summary> Peggy </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Hades">
+            <summary> Hades </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.AFR">
+            <summary> AFR </summary>
+        </member>
+        <member name="F:DataSource.EPropsType.Undefined">
+            <summary> Nedefinovano </summary>
+        </member>
+        <member name="M:DataSource.DataSource.Login(System.String,System.String)">
+            <summary>Get GUID for ENVIS user</summary>
+            <param name="ENVISUser">Name of ENVIS user</param>
+            <param name="ENVISPassword">Password of ENVIS user</param>
+            <returns>Guid of user</returns>
+        </member>
+        <member name="M:DataSource.DataSource.GetUserGroups(System.Guid)">
+            <summary>Get groups for user</summary>
+            <param name="user">Guid of user</param>
+            <returns>List of Guid of groups</returns>
+        </member>
+        <member name="M:DataSource.DataSource.GetGroups(System.Guid)">
+            <summary>Get subgroups of parent group</summary>
+            <param name="parent">Guid of parent group</param>
+            <returns>List of Guid of groups</returns>
+        </member>
+        <member name="M:DataSource.DataSource.GetQuantities(System.Guid,System.Byte,DataSource.DateRange)">
+            <summary>Get quantities for entered parameters</summary>
+            <param name="GroupID">Guid of group</param>
+            <param name="arch">Archive number</param>
+            <param name="range">DateRange range</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSource.DataSource.GetRows(System.Guid,System.Byte,DataSource.DateRange,DataSource.Quantity[],System.UInt32,DataSource.EEnergyAggType)">
+            <summary>Return collection of rows
+            <example>Example - Get avg.U1 from archive arch, groupID in all date range:
+            <code>
+            List&lt;float&gt; u1 = new List&lt;float&gt;();<br/>
+            Quantity qU1 = new Quantity("U_avg_U1", "V");<br/>
+            PropValueFloatBase PropVal = null;<br/>
+            using (RowCollection rc = ds.GetRows(groupID, arch, null, qU1, 0))<br/>
+            {<br/>
+                UniArchiveDefinition uad = null;<br/>
+                fixed (byte* p = rc.Buffer)<br/>
+                {<br/>
+                    rc.SetPointer(p);<br/>
+                    foreach (RowInfo row in rc)<br/>
+                    {<br/>
+                        if (uad != row.uad)<br/>
+                        {<br/>
+                            uad = row.uad;<br/>
+                            PropVal = qU1.Value as PropValueFloatBase;<br/>
+                        }<br/>
+                        if (PropVal != null) u1.Add(PropVal.GetValueFloat());<br/>
+                    }<br/>
+                }<br/>
+            }
+            </code>
+            </example>
+            </summary>
+            <param name="GroupID">Guid of group</param>
+            <param name="arch">Archive number</param>
+            <param name="range">Date range</param>
+            <param name="quantities">Quantities</param>
+            <param name="aggregation">Aggregation in ms. 0 = no aggregation</param>
+            <param name="energyAggType">Aggregation type for counters (electricity meter atc.). Does not apply when aggregation = 0</param>
+            <returns>Collection of rows</returns>
+        </member>
+        <member name="T:DataSource.DateRange">
+            <summary>
+            Defines a date range as minimal and maximal date
+            </summary>
+        </member>
+        <member name="M:DataSource.DateRange.#ctor">
+            <summary>
+            Empty constructor for serialization atc.
+            </summary>
+        </member>
+        <member name="M:DataSource.DateRange.#ctor(System.DateTime,System.DateTime)">
+            <summary>
+            Creates instance of DateRange class with its respective parameters
+            </summary>
+            <param name="minDate">lower data</param>
+            <param name="maxDate">higher date</param>
+        </member>
+        <member name="M:DataSource.DateRange.#ctor(System.DateTime,System.DateTime,System.Boolean)">
+            <summary>
+            Creates instance of DateRange class with its respective parameters
+            </summary>
+            <param name="minDate">lower data</param>
+            <param name="maxDate">higher date</param>
+            <param name="sort">true to sort date</param>
+        </member>
+        <member name="F:DataSource.DateRange.DateMin">
+            <summary>
+            Lower limit of the date range
+            </summary>
+        </member>
+        <member name="F:DataSource.DateRange.DateMax">
+            <summary>
+            upper limit of the date range
+            </summary>
+        </member>
+        <member name="M:DataSource.DateRange.Sort">
+            <summary>
+            do DateMin lower then DateMax
+            </summary>
+        </member>
+        <member name="M:DataSource.DateRange.Intersects(DataSource.DateRange)">
+            <summary>
+            Return if ranges Intersects
+            </summary>
+            <param name="range">Date range</param>
+            <returns>true if intersects</returns>
+        </member>
+        <member name="P:DataSource.DateRange.timeSpan">
+            <summary>
+            return time span of this DateRange
+            </summary>
+        </member>
+        <member name="T:DataSource.InvalidStructureException">
+            <summary>
+            Thrown when parsing structure from KMB lib and the process fails for some reason.
+            </summary>
+        </member>
+        <member name="M:DataSource.InvalidStructureException.#ctor(System.String,System.Exception,DataSource.ByteArray)">
+            <summary>
+            Creates instance of the exception with message and structure bytes filled in.
+            </summary>
+            <param name="message">the exceptions Message</param>
+            <param name="ex">The inner exception</param>
+            <param name="structure">actual bytes of the structure</param>
+        </member>
+        <member name="M:DataSource.InvalidStructureException.#ctor(System.String,DataSource.ByteArray)">
+            <summary>
+            Creates instance of the exception with message and structure bytes filled in.
+            </summary>
+            <param name="message">the exceptions Message</param>
+            <param name="structure">actual bytes of the structure</param>
+        </member>
+        <member name="M:DataSource.InvalidStructureException.#ctor">
+            <summary>
+            Noop constructor.
+            </summary>
+        </member>
+        <member name="M:DataSource.InvalidStructureException.#ctor(System.String)">
+            <summary>
+            creates instance of the exception with Message filled in.
+            </summary>
+            <param name="message">Message of the exception</param>
+        </member>
+        <member name="M:DataSource.InvalidStructureException.#ctor(System.String,System.Exception)">
+            <summary>
+            creates instance of the exception with Message and inner exception filled in.
+            </summary>
+            <param name="message">Message of the exception</param>
+            <param name="ex">exeption</param>
+        </member>
+        <member name="T:DataSource.IInstrumentList">
+            <summary>
+            Marking Interface. 
+            All objects (object name, identification and record name)
+            that builds instrument tree do implement this interface.
+            </summary>
+        </member>
+        <member name="T:DataSource.SmpMeasNameDB">
+            <summary>
+            holds information about recordName
+            </summary>
+        </member>
+        <member name="F:DataSource.SmpMeasNameDB.log">
+            <summary>log4net log for this class</summary>
+        </member>
+        <member name="P:DataSource.SmpMeasNameDB.MeasurementPath">
+            <summary>
+            Returns string representation of the short path with
+            logical localization of the actual measurement
+            </summary>
+        </member>
+        <member name="P:DataSource.SmpMeasNameDB.MeasurementPathFull">
+            <summary>
+            Returns string representation of the full path with
+            logical localization of the actual measurement
+            </summary>
+        </member>
+        <member name="T:DataSource.SmpObjectDB">
+            <summary>
+            defines object where device is installed
+            </summary>
+        </member>
+        <member name="M:DataSource.SmpObjectDB.#ctor">
+            <summary>creates empty instance usin default session</summary>
+        </member>
+        <member name="M:DataSource.SmpObjectDB.#ctor(System.String)">
+            <summary>
+            creates an instance using given session
+            </summary>
+            <param name="path">string holding the object path ("obj1\obj2\obj3")</param>
+        </member>
+        <member name="T:DataSource.SmpIdentify">
+            <summary>Structure for identification of a device.</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.Id">
+            <summary>key ID</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.objekt">
+            <summary>object/measure name holder class</summary>
+        </member>
+        <member name="M:DataSource.SmpIdentify.GetLength">
+            <summary>
+            returns length of the Identify message
+            </summary>
+            <returns>ushort structure length</returns>
+        </member>
+        <member name="M:DataSource.SmpIdentify.#ctor">
+            <summary>
+            creates empty Identify structure
+            </summary>
+        </member>
+        <member name="M:DataSource.SmpIdentify.#ctor(DataSource.ByteArray,DataSource.SmpObjectDB)">
+            <summary>Create instance of device identification</summary>
+            <param name="structure">ByteArray holding the Identify structure</param>
+            <param name="obj">Object where the unit is installed</param>
+        </member>
+        <member name="M:DataSource.SmpIdentify.ToString">
+            <summary>
+            converts /object/device/measure name to string representation
+            </summary>
+            <returns>string path of the measurement</returns>
+        </member>
+        <member name="P:DataSource.SmpIdentify.IdentifyString">
+            <summary>
+            Identify to string 
+            </summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.DeviceNo">
+            <summary>Device manufacturing number</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify._Identification">
+            <summary>Contain PropsType and DeviceType of Device</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.SoftwareVersion">
+            <summary>Firmware version number</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.HardwareVersion">
+            <summary>Hardware version number</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.SoftwareModules">
+            <summary>Binary mask of enabled modular software features</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.DeviceAddr">
+            <summary>Device communication</summary>
+        </member>
+        <member name="F:DataSource.SmpIdentify.BootloaderVersion">
+            <summary>Bootloader version</summary>
+        </member>
+        <member name="M:DataSource.SmpIdentify.fromByteArray(DataSource.ByteArray)">
+            <summary>fills internal properties with value from ByeArray </summary>
+            <param name="structure">ByteArray structure containing the install data.</param>
+        </member>
+        <member name="M:DataSource.SmpIdentify.toByteArray">
+            <summary>
+            converts identification class to ByteArray
+            </summary>
+            <returns>ByteArray with corresponding data</returns>
+        </member>
+        <member name="T:DataSource.KMBConvert">
+            <summary>
+            include static functions that are used to data conversions
+            </summary>
+        </member>
+        <member name="M:DataSource.KMBConvert.TimeSpanToString(System.TimeSpan)">
+            <summary>
+            Convert timespan to string
+            </summary>
+            <param name="timeSpan">input</param>
+            <returns>output</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.TimeSpanToStringFFFF(System.TimeSpan)">
+            <summary>
+            Convert timespan to string
+            </summary>
+            <param name="timeSpan">input</param>
+            <returns>output</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.DoubleToString(System.Single,System.Int32)">
+            <summary>
+            Convert DOuble to String
+            </summary>
+            <param name="f">input</param>
+            <param name="cislis">cislic</param>
+            <returns>output</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.DoubleToString(System.Double,System.Int32)">
+            <summary>
+            Convert DOuble to String
+            </summary>
+            <param name="f">input</param>
+            <param name="cislis">cislic</param>
+            <returns>formated string. If input is NAN return "", Infinity return "- -"</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.DoubleToString2(System.Double,System.Int32)">
+            <summary>
+            Convert DOuble to String
+            </summary>
+            <param name="f">input</param>
+            <param name="cislis">cislic</param>
+            <returns>formated string. If input is NAN or infinity return "- -"</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.GetPrefixUnit(System.String,System.Single,System.Single@)">
+            <summary>
+            Convert base unit to unit with prefix.
+            </summary>
+            <param name="velicina">base unit</param>
+            <param name="max">number to convert</param>
+            <param name="mul">multiple</param>
+            <returns>unit with prefix</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.GetPrefix(System.String,System.Single,System.Single@)">
+            <summary>
+            Return prefix.
+            </summary>
+            <param name="velicina">base unit</param>
+            <param name="max">number to convert</param>
+            <param name="mul">multiple</param>
+            <returns>prefix</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.GetPrefixUnit(System.String,System.Single,System.Double@)">
+            <summary>
+            Convert base unit to unit with prefix.
+            </summary>
+            <param name="velicina">base unit</param>
+            <param name="max">number to convert</param>
+            <param name="mul">multiple</param>
+            <returns>unit with prefix</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.ULongToStr(System.UInt64)">
+            <summary>
+            Convert Ulong to String
+            </summary>
+            <param name="ul">input</param>
+            <returns>output</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.OsetriFloat(System.Single)">
+            <summary>
+            Convert float to float usable for Database
+            </summary>
+        </member>
+        <member name="M:DataSource.KMBConvert.DbToFloat(System.Single)">
+            <summary>
+            Convert float from DB to standart float(-1E38 to folat.NaN)
+            </summary>
+        </member>
+        <member name="M:DataSource.KMBConvert.AngelToInterval(System.Single)">
+            <summary>
+            Convert angle to interval (-180°,180°>
+            </summary>
+            <param name="fi">input angel</param>
+            <returns>angel</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.IsNaNorInfinity(System.Single)">
+            <summary>Return if float is NaN or Infinity</summary>
+            <param name="f">Value</param>
+            <returns>if float is NaN or Infinity</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.IsNaNInfinityOrMaxMin(System.Single)">
+            <summary>Return if float is NaN,Infinity,Maximal or Minimal Value</summary>
+            <param name="f">Value</param>
+            <returns>if float is NaN,Infinity,Maximal or Minimal Value</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.IsNaN(System.Single)">
+            <summary>Return if float is NaN (if float is NaN ,this is 20xfaster then float.isNaN())</summary>
+            <param name="f">Value</param>
+            <returns>if float is NaN,Infinity,Maximal or Minimal Value</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.calculateTHD(System.Byte)">
+            <summary>Calculate THD from byte</summary>
+            <param name="b">value</param>
+            <returns>calculated value</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.calculateHarm(System.Byte)">
+            <summary>Calculate Harmonic from byte</summary>
+            <param name="b">value</param>
+            <returns>calculated value</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.IPAdressToString(System.UInt32)">
+            <summary>
+            Convert IPAdress in uint to string
+            </summary>
+            <param name="IP">IP adress in uint</param>
+            <returns>IP adress as string</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.TryParseEnum``1(System.String,``0@)">
+            <summary>
+            Convert String to Enum
+            </summary>
+            <typeparam name="T">Type of Enum</typeparam>
+            <param name="text">string to convert</param>
+            <param name="obj">returned enum object</param>
+            <returns>true if succeed</returns>
+        </member>
+        <member name="M:DataSource.KMBConvert.StringToBytes(System.String,System.Byte[])">
+            <summary>
+            Convert String to Byte array using Default(if IsSingleByte) or Windows-1252 encoding. If String is much long then is cutted to fit byte array. If Byte array is null throw exception.
+            </summary>
+            <param name="str">input string</param>
+            <param name="bytes">byte array. if null throw exception</param>
+        </member>
+        <member name="M:DataSource.KMBConvert.StringToUTF8Bytes(System.String,System.Byte[])">
+            <summary>
+            Convert String to Byte array using UTF8 encoding ended with 0. If String is much long then is cutted to fit byte array. If Byte array is null throw exception.
+            </summary>
+            <param name="str">input string</param>
+            <param name="bytes">byte array. if null throw exception</param>
+        </member>
+        <member name="T:DataSource.KmbStructure">
+            <summary>
+            The predecessor of all device structures.
+            </summary>     
+        </member>
+        <member name="F:DataSource.KmbStructure.log">
+            <summary>
+            log4net log for this class
+            </summary>
+        </member>
+        <member name="M:DataSource.KmbStructure.#ctor">
+            <summary>
+            session constructor, for the sake of XPO
+            </summary>
+            <param name="session">XPO session</param>
+        </member>
+        <member name="M:DataSource.KmbStructure.toByteArray">
+            <summary>
+            converts this structure to ByteArray
+            </summary>
+            <returns>respective ByteArraay</returns>
+        </member>
+        <member name="M:DataSource.KmbStructure.fromByteArray(DataSource.ByteArray)">
+            <summary>
+            fills this structure to the internal properties.
+            </summary>
+            <returns>respective ByteArraay</returns>        
+        </member>
+        <member name="M:DataSource.KmbStructure.loadStructureFromStream(System.IO.Stream,System.Type)">
+            <summary>
+            deserialize the structure from specified stream
+            </summary>
+            <param name="stream">stream to read the structure bytes from</param>
+            <param name="structureType">type of the desrialized structure</param>
+            <returns>null if some problem happens, descendant of KMBStructure otherwise</returns>    
+        </member>
+        <member name="M:DataSource.KmbStructure.saveStructureToStream(System.IO.Stream,DataSource.KmbStructure)">
+            <summary>
+            Serializes KMBStructure to a stream.
+            </summary>
+            <param name="stream">stream where the structure should be saved</param>
+            <param name="serializableStructure">the structure to be saved. </param>
+            <exception cref="T:System.Exception">when structure is not supported.</exception>        
+        </member>
+        <member name="M:DataSource.KmbStructure.GetRecordPeriod">
+            <summary>return record period in 0.1s, if return 0 then record don't have fixed interval</summary>
+            <returns>period in 0.1s</returns>
+        </member>
+        <member name="F:DataSource.KMBTime.Log">
+            <summary>
+            Create a logger for use in this class
+            </summary>
+        </member>
+        <member name="M:DataSource.KMBTime.KmbDateTimeToSqlTime(System.DateTime)">
+            <summary>
+            SqlDateTime must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM.
+            KMB Time is larger than 2000, so this function rounds all supplied dates to this TimeSpan
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="F:DataSource.KMBTime.KmbInvalidTime">
+            <summary>
+            Ivalid time is defined as 1 second to midnight of y2k.
+            </summary>
+        </member>
+        <member name="M:DataSource.KMBTime.packedTimeToDateTime(System.Byte[],System.Byte)">
+            <summary>
+            conversSMU packed time to .NET DateTime
+            </summary>
+            <param name="TPTime">packed time in byte array</param>
+            <param name="second">additional second</param>
+            <returns>the time as DateTime object or invelidTime</returns>
+        </member>
+        <member name="M:DataSource.KMBTime.dateTimeToPackedTime(System.DateTime,System.Boolean)">
+            <summary>
+            converts >NET DateTime to SMU PackedTime
+            </summary>
+            <param name="time">time to be converted</param>
+            <param name="withSeconds">whether to convert including seconds</param>
+            <returns>byte array of packed time with or without seconds.</returns>
+        </member>
+        <member name="M:DataSource.KMBTime.TimeToMiliseconds(System.DateTime)">
+            <summary>
+            converts .NEt time to SMP miliseconds since 2k time
+            </summary>
+            <param name="time">date and time to convert</param>
+            <returns>result as number of miliseconds since 2000</returns>
+        </member>
+        <member name="M:DataSource.KMBTime.MilisecondsToTime(System.UInt64)">
+            <summary>
+            converts SMP time to .NET DateTime
+            </summary>
+            <param name="miliseconds">time in milliseconds since 2000</param>
+            <returns>resulting DateTime valueor invalid time if 0xfff...fff is given.</returns>
+        </member>
+        <member name="M:DataSource.KMBTime.SetTimeZoneOffset">
+            <summary>Set TimeZone Offset by Current TimeZone. It is used for calculation Time for SMY</summary>
+        </member>
+        <member name="P:DataSource.RowCollection.Count">
+            <summary> Count of rows </summary>
+        </member>
+        <member name="M:DataSource.RowCollection.GetEnumerator">
+            <summary>
+            return Enumerator that return blocks of archive
+            </summary>
+            <returns>return Enumerator</returns>
+        </member>
+        <member name="T:DataSource.SmpArchiveTypes">
+            <summary>
+            this enum declares types of archives in SMP device.
+            </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_MAIN">
+            <summary> Main archive code</summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_SPROFILE">
+            <summary> S profile archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_MPROFILE">
+            <summary> M profile archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_LOG">
+            <summary> LOG archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_PQMAIN">
+            <summary> PQ Main archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_PQEVENTS">
+            <summary> PQ Events archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_ELMER">
+            <summary> Elelctricity meter reading archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_PMAX">
+            <summary> PQ Events archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_PQEVENTWAVE">
+            <summary> Elelctricity meter reading archive code </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_PQEVENTTREND">
+            <summary> Trend of voltage by PQ Event </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_HDO">
+            <summary> HDO </summary>
+        </member>
+        <member name="F:DataSource.SmpArchiveTypes.ARCH_RAWWAVE">
+            <summary> RawWave archive code </summary>
+        </member>
+        <member name="M:DataSource.UniArchiveDefinition.#ctor">
+            <summary>For serialization only</summary>
+        </member>
+        <member name="F:DataSource.UniTypeDescription.Log">
+            <summary>log4net log for this class</summary>
+        </member>
+        <member name="M:DataSource.UniversalConfigs.#ctor">
+            <summary>constructor for serialization only</summary>
+        </member>
+        <member name="M:DataSource.UniversalConfigs.InfoArchiveC.#ctor">
+            <summary>constructor for serialization only</summary>
+        </member>
+        <member name="M:DataSource.UniversalConfigs.InfoData.#ctor">
+            <summary>constructor for serialization only</summary>
+        </member>
+        <member name="M:DataSource.UniversalConfigs.InfoArchiveD.#ctor">
+            <summary>constructor for serialization only</summary>
+        </member>
+    </members>
+</doc>
