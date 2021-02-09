@@ -1,7 +1,9 @@
+using AutoMapper;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
 using Newtonsoft.Json;
@@ -16,25 +18,30 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 {
     public class GetPowerFactorOverviewQuery : IRequest<PowerFactorOverviewDto>
     {
-        public Interval[] Intervals { get; set; }
+        public IntervalDto Interval1 { get; set; }
+
+        public IntervalDto Interval2 { get; set; }
 
         public Guid[] GroupIds { get; set; }
     }
 
     public class GetPowerFactorOverviewQueryHandler : IRequestHandler<GetPowerFactorOverviewQuery, PowerFactorOverviewDto>
     {
-        private ICurrentUserService _currentUserService;
-        private IGroupService _groupService;
-        private ITableCollection _tableCollection;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IGroupService _groupService;
+        private readonly ITableCollection _tableCollection;
+        private readonly IMapper _mapper;
 
         public GetPowerFactorOverviewQueryHandler(
             ICurrentUserService currentUserService,
             IGroupService groupService,
-            ITableCollection tableCollection)
+            ITableCollection tableCollection,
+            IMapper mapper)
         {
             _currentUserService = currentUserService;
             _groupService = groupService;
             _tableCollection = tableCollection;
+            _mapper = mapper;
         }
 
         public Task<PowerFactorOverviewDto> Handle(GetPowerFactorOverviewQuery request, CancellationToken cancellationToken)
@@ -45,9 +52,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
                 throw new UnauthorizedAccessException();
             }
 
-            if (request.Intervals == null)
+            var interval1 = _mapper.Map<Interval>(request.Interval1);
+            var interval2 = _mapper.Map<Interval>(request.Interval2);
+
+            if (request.Interval1 == null)
             {
-                throw new ArgumentException("intervals is null");
+                throw new ArgumentException("interval1 is null");
             }
 
             var dto = new PowerFactorOverviewDto();
@@ -56,10 +66,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
             var dataList = new List<PowerFactorOverviewIntervalData>();
 
-            foreach (var interval in request.Intervals)
-            {
-                var data = GetDataForInterval(userGroups, interval);
+            var data = GetDataForInterval(userGroups, interval1);
+            dataList.Add(data);
 
+            if (request.Interval2 != null)
+            {
+                data = GetDataForInterval(userGroups, interval1);
                 dataList.Add(data);
             }
 

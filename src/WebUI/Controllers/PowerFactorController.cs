@@ -1,5 +1,7 @@
+using Electricity.Application.Common.Models;
 using Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace Electricity.WebUI.Controllers

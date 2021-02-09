@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Exceptions;
+using Electricity.Application.Common.Models.Dtos;
 
 namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 {
@@ -15,41 +16,13 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
     public class GetPowerFactorOverviewTest
     {
         [Test]
-        public async Task ShouldRequireIntervals()
+        public async Task ShouldRequireInterval1()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Intervals = null
-            };
-
-            FluentActions.Invoking(() =>
-                SendAsync(query)).Should().Throw<ValidationException>();
-        }
-
-        [Test]
-        public async Task ShouldRequireIntervalsToNotBeEmpty()
-        {
-            var userId = await RunAsDefaultUserAsync();
-
-            var query = new GetPowerFactorOverviewQuery
-            {
-                Intervals = new Interval[] { }
-            };
-
-            FluentActions.Invoking(() =>
-                SendAsync(query)).Should().Throw<ValidationException>();
-        }
-
-        [Test]
-        public async Task ShouldRequireIntervalsToNotContainNull()
-        {
-            var userId = await RunAsDefaultUserAsync();
-
-            var query = new GetPowerFactorOverviewQuery
-            {
-                Intervals = new Interval[] { null }
+                Interval1 = null
             };
 
             FluentActions.Invoking(() =>
@@ -63,9 +36,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Intervals = new Interval[] {
-                    Interval.Unbounded
-                }
+                Interval1 = new IntervalDto(null, null)
             };
 
             var result = await SendAsync(query);
@@ -89,16 +60,13 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         }
 
         [Test]
-        public async Task ShouldReturnPowerFactorOverviewWhen1IntervalProvided()
+        public async Task ShouldReturnPowerFactorOverviewWhenInterval1Provided()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Intervals = new Interval[]
-                {
-                    new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
-                }
+                Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
             };
 
             var result = await SendAsync(query);
@@ -122,17 +90,14 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         }
 
         [Test]
-        public async Task ShouldReturnPowerFactorOverviewFor2Intervals()
+        public async Task ShouldReturnPowerFactorOverviewWhen2IntervalsProvided()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
-                Intervals = new Interval[]
-                {
-                    new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
-                    new Interval(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
-                }
+                Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
+                Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
             };
 
             var result = await SendAsync(query);

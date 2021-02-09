@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DataSource;
 using Electricity.Application.Common.Extensions;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Series.Queries.GetQuantitySeries;
 using Electricity.WebUI.Models;
 using System;

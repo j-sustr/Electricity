@@ -10,11 +10,9 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
     {
         public GetPowerFactorOverviewQueryValidator()
         {
-            RuleFor(x => x.Intervals)
+            RuleFor(x => x.Interval1)
                .NotNull()
-               .NotEmpty()
-               .Must(collection => collection != null && collection.All(item => item != null))
-               .WithMessage("Intervals are required.");
+               .WithMessage("Interval1 is required.");
         }
     }
 }

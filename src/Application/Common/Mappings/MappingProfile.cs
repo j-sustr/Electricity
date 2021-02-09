@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Series;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace Electricity.Application.Common.Mappings
         public MappingProfile()
         {
             ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
+
+            CreateMap<IntervalDto, Interval>();
         }
 
         private void ApplyMappingsFromAssembly(Assembly assembly)
