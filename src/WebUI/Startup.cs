@@ -4,6 +4,7 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Infrastructure;
 using Electricity.WebUI.Filters;
+using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -92,6 +93,7 @@ namespace Electricity.WebUI
         {
             if (env.IsDevelopment())
             {
+                app.UseMiddleware<AutoAuthorizeMiddleware>();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
