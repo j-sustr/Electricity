@@ -1,6 +1,7 @@
 using System;
 using DataSource;
 using Electricity.Application.Common.Utils;
+using Newtonsoft.Json;
 
 namespace Electricity.Application.Common.Models
 {
@@ -9,6 +10,7 @@ namespace Electricity.Application.Common.Models
         public virtual DateTime? Start { get; set; }
         public virtual DateTime? End { get; set; }
 
+        [JsonIgnore]
         public bool IsFinite
         {
             get
@@ -17,6 +19,7 @@ namespace Electricity.Application.Common.Models
             }
         }
 
+        [JsonIgnore]
         public bool IsHalfBounded
         {
             get
