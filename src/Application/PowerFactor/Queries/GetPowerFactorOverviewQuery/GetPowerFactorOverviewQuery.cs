@@ -1,20 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
+using Newtonsoft.Json;
+using NJsonSchema.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
 {
     public class GetPowerFactorOverviewQuery : IRequest<PowerFactorOverviewDto>
     {
-        public Interval?[] Intervals { get; set; }
+        public Interval[] Intervals { get; set; }
 
         public Guid[] GroupIds { get; set; }
     }
