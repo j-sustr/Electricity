@@ -28,6 +28,11 @@ namespace Electricity.Application.Common.Models
             }
         }
 
+        public Interval()
+        {
+
+        }
+
         public Interval(DateTime? start, DateTime? end)
         {
             if (start > end)
