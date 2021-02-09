@@ -7,8 +7,8 @@ namespace Electricity.Application.Common.Models
 {
     public class Interval : IEquatable<Interval>
     {
-        public virtual DateTime? Start { get; set; }
-        public virtual DateTime? End { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
 
         [JsonIgnore]
         public bool IsFinite
