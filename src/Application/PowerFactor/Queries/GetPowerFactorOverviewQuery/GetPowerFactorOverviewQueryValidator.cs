@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
@@ -11,7 +12,9 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
         {
             RuleFor(x => x.Intervals)
                .NotNull()
-               .NotEmpty().WithMessage("Intervals are required.");
+               .NotEmpty()
+               .Must(collection => collection != null && collection.All(item => item != null))
+               .WithMessage("Intervals are required.");
         }
     }
 }

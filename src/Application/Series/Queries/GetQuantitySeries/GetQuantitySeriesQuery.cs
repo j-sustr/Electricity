@@ -46,7 +46,7 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
             {
                 Quantities = new Quantity[] { request.Quantity },
                 Aggregation = (uint)Math.Floor(request.AggregationInterval.TotalMilliseconds),
-                Range = request.Range
+                Interval = request.Range
             });
 
             var dto = new QuantitySeriesDto

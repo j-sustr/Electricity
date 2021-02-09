@@ -16,7 +16,7 @@ namespace Electricity.Infrastructure.DataSource
     {
         private int _seed;
 
-        private Interval _interval { get; set; }
+        private BoundedInterval _interval { get; set; }
 
         private List<Group> groups = new List<Group>{
             new Group(Guid.NewGuid(), "group-1"),
@@ -24,7 +24,7 @@ namespace Electricity.Infrastructure.DataSource
             new Group(Guid.NewGuid(), "group-3"),
         };
 
-        public FakeDataSource(int seed, Interval interval)
+        public FakeDataSource(int seed, BoundedInterval interval)
         {
             _seed = seed;
             _interval = interval;
@@ -67,21 +67,21 @@ namespace Electricity.Infrastructure.DataSource
                 q.Value = new FakePropValueFloat();
             }
 
-            var interval = _interval;
+            var interval = _interval.ToInterval();
 
             if (range != null)
             {
-                interval = _interval.GetOverlap(Interval.FromDateRange(range));
-            }
+                interval = interval.GetOverlap(Interval.FromDateRange(range));
 
-            if (interval == null)
-            {
-                return new FakeRowCollection();
+                if (interval == null)
+                {
+                    return new FakeRowCollection();
+                }
             }
 
             IEnumerable<RowInfo> GenerateRows()
             {
-                DateTime time = interval.Start;
+                DateTime time = interval.Start ?? _interval.Start;
                 TimeSpan duration = new TimeSpan(0, 0, 10);
                 while (time < interval.End)
                 {

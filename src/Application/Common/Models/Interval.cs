@@ -6,10 +6,26 @@ namespace Electricity.Application.Common.Models
 {
     public class Interval : IEquatable<Interval>
     {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public virtual DateTime? Start { get; set; }
+        public virtual DateTime? End { get; set; }
 
-        public Interval(DateTime start, DateTime end)
+        public bool IsFinite
+        {
+            get
+            {
+                return Start != null && End != null;
+            }
+        }
+
+        public bool IsHalfBounded
+        {
+            get
+            {
+                return !IsFinite && Start != End;
+            }
+        }
+
+        public Interval(DateTime? start, DateTime? end)
         {
             if (start > end)
             {
@@ -22,8 +38,8 @@ namespace Electricity.Application.Common.Models
 
         public Interval GetOverlap(Interval other)
         {
-            var max = DateTimeUtil.Earliest(End, other.End);
-            var min = DateTimeUtil.Latest(Start, other.Start);
+            var max = DateTimeUtil.Earliest(End ?? DateTime.MaxValue, other.End ?? DateTime.MaxValue);
+            var min = DateTimeUtil.Latest(Start ?? DateTime.MinValue, other.Start ?? DateTime.MinValue);
 
             if (min >= max)
             {
@@ -40,7 +56,20 @@ namespace Electricity.Application.Common.Models
 
         public DateRange ToDateRange()
         {
-            return new DateRange(Start, End);
+            if (!IsFinite)
+            {
+                return null;
+            }
+
+            return new DateRange((DateTime)Start, (DateTime)End);
+        }
+
+        public static Interval Unbounded
+        {
+            get
+            {
+                return new Interval(null, null);
+            }
         }
 
         public static Interval FromDateRange(DateRange dateRange)

@@ -28,11 +28,16 @@ namespace Electricity.Infrastructure.DataSource
 
         unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query)
         {
+            if (query.Interval == null)
+            {
+                throw new ArgumentNullException(nameof(query.Interval));
+            }
+
             var quants = query.Quantities;
             int rowLen = quants.Length;
 
             var entries = new List<Tuple<DateTime, float[]>>();
-            var dateRange = query.Range?.ToDateRange();
+            var dateRange = query.Interval.ToDateRange();
             float[] arr;
             using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, query.EnergyAggType))
             {
@@ -56,7 +61,17 @@ namespace Electricity.Infrastructure.DataSource
                 }
             }
 
+            if (query.Interval.IsHalfBounded)
+            {
+                return Slice(entries, query.Interval);
+            }
+
             return entries;
+        }
+
+        public IEnumerable<Tuple<DateTime, float[]>> Slice(IEnumerable<Tuple<DateTime, float[]>> rows, Interval interval)
+        {
+            throw new NotImplementedException();
         }
     }
 }

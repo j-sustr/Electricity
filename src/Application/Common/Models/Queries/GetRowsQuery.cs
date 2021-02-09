@@ -5,7 +5,7 @@ namespace Electricity.Application.Common.Models.Queries
 {
     public class GetRowsQuery
     {
-        public Interval? Range { get; set; } = null;
+        public Interval Interval { get; set; } = Interval.Unbounded;
 
         public Quantity[] Quantities { get; set; }
 

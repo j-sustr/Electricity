@@ -19,7 +19,10 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         {
             var userId = await RunAsDefaultUserAsync();
 
-            var query = new GetPowerFactorOverviewQuery();
+            var query = new GetPowerFactorOverviewQuery
+            {
+                Intervals = null
+            };
 
             FluentActions.Invoking(() =>
                 SendAsync(query)).Should().Throw<ValidationException>();
@@ -40,13 +43,29 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         }
 
         [Test]
-        public async Task ShouldReturnPowerFactorOverviewWhenNullIntervalProvided()
+        public async Task ShouldRequireIntervalsToNotContainNull()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorOverviewQuery
             {
                 Intervals = new Interval[] { null }
+            };
+
+            FluentActions.Invoking(() =>
+                SendAsync(query)).Should().Throw<ValidationException>();
+        }
+
+        [Test]
+        public async Task ShouldReturnPowerFactorOverviewWhenUnboundedIntervalProvided()
+        {
+            var userId = await RunAsDefaultUserAsync();
+
+            var query = new GetPowerFactorOverviewQuery
+            {
+                Intervals = new Interval[] {
+                    Interval.Unbounded
+                }
             };
 
             var result = await SendAsync(query);

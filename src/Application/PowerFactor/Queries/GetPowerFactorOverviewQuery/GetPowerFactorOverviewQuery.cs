@@ -85,7 +85,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
                 var rows = emTable.GetRows(new GetRowsQuery
                 {
-                    Range = interval,
+                    Interval = interval,
                     Quantities = quantities,
                 });
 

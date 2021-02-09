@@ -78,7 +78,7 @@ public class Testing
 
         services.Remove(dsFactoryDescriptor);
 
-        var interval = new Interval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 31));
+        var interval = new BoundedInterval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 31));
 
         var dataSourceFactory = new FakeDataSourceFactory(0, interval);
         services.AddSingleton<IDataSourceFactory>(provider => dataSourceFactory);
@@ -114,7 +114,6 @@ public class Testing
             Mock.Of<IHttpContextAccessor>(a =>
                 a.HttpContext == mockHttpContext));
     }
-
 
     public static void AddFakeIdentityService(ServiceCollection services)
     {

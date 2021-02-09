@@ -8,9 +8,9 @@ namespace Electricity.Infrastructure.DataSource.Fake
     {
         private int _seed;
 
-        private Interval _interval { get; set; }
+        private BoundedInterval _interval { get; set; }
 
-        public FakeDataSourceFactory(int seed, Interval interval)
+        public FakeDataSourceFactory(int seed, BoundedInterval interval)
         {
             _seed = seed;
             _interval = interval;
