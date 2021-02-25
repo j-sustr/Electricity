@@ -10,7 +10,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
         public float ActiveEnergy { get; set; }
         public float ReactiveEnergyL { get; set; }
         public float ReactiveEnergyC { get; set; }
-        public float TanFi { get; set; }
+        public float CosFi { get; set; }
 
         public Interval Interval { get; set; }
     }

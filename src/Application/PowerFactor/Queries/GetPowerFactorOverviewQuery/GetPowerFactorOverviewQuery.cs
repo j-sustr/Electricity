@@ -117,13 +117,15 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
                 var tanFi = reactiveEnergyL / activeEnergy;
 
+                var cosFi = (float)Math.Cos(Math.Atan(tanFi));
+
                 return new PowerFactorOverviewItem
                 {
                     DeviceName = g.Name,
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,
                     ReactiveEnergyC = reactiveEnergyC,
-                    TanFi = tanFi,
+                    CosFi = cosFi,
                     Interval = rowsInterval
                 };
             });

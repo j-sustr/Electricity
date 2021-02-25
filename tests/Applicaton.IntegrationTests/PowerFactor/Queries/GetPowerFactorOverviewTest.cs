@@ -54,7 +54,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
                     group.ActiveEnergy.Should().BePositive();
                     group.ReactiveEnergyL.Should().BePositive();
                     group.ReactiveEnergyC.Should().BePositive();
-                    group.TanFi.Should().BePositive();
+                    group.CosFi.Should().BePositive();
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
                     group.ActiveEnergy.Should().BePositive();
                     group.ReactiveEnergyL.Should().BePositive();
                     group.ReactiveEnergyC.Should().BePositive();
-                    group.TanFi.Should().BePositive();
+                    group.CosFi.Should().BePositive();
                 }
             }
         }
@@ -115,7 +115,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
                     group.ActiveEnergy.Should().BePositive();
                     group.ReactiveEnergyL.Should().BePositive();
                     group.ReactiveEnergyC.Should().BePositive();
-                    group.TanFi.Should().BePositive();
+                    group.CosFi.Should().BePositive();
                 }
             }
         }
