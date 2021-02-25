@@ -15,8 +15,6 @@ namespace Electricity.Application.Common.Mappings
         public MappingProfile()
         {
             ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
-
-            CreateMap<IntervalDto, Interval>();
         }
 
         private void ApplyMappingsFromAssembly(Assembly assembly)
