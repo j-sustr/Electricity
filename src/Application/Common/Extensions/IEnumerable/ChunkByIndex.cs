@@ -35,7 +35,6 @@ namespace Electricity.Application.Common.Extensions
                 int index = indexResolver(element, i);
                 if (index != prevIndex)
                 {
-                    buffer.Add(element);
                     yield return buffer.ToArray();
                     buffer.Clear();
                     if (index != prevIndex + 1)

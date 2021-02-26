@@ -17,46 +17,49 @@ namespace Electricity.Application.UnitTests.Common.Extensions.Enumerable
         private static IntTestData[] _intTestData = new[]{
             new IntTestData(){
                 Source = new int[] {
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    1,
-                    1,
-                    2,
-                    2,
-                    2,
-                    2,
-                    2,
-                    4,
-                    4,
-                    4,
+                    0,0,0,0,0,
+                    1,1,1,
+                    2,2,2,2,2,
+                    3,3,3,3,
+                    4,4,4,
                 },
                 ExpectedResult = new int[][]
                 {
                     new int[] {
-                        0,
-                        0,
-                        0,
-                        0,
+                        0,0,0,0,0,
                     },
                     new int[] {
-                        1,
-                        1,
-                        1,
+                        1,1,1,
                     },
                     new int[] {
-                        2,
-                        2,
-                        2,
-                        2,
+                        2,2,2,2,2,
                     },
+                    new int[] {
+                        3,3,3,3,
+                    },
+                    new int[] {
+                        4,4,4,
+                    },
+                }
+            },
+            new IntTestData(){
+                Source = new int[] {
+                    2,2,2,2,2,
+                    3,3,3,3,
+                    4,4,4,
+                },
+                ExpectedResult = new int[][]
+                {
+                    null,
                     null,
                     new int[] {
-                        4,
-                        4,
-                        4,
+                        2,2,2,2,2,
+                    },
+                    new int[] {
+                        3,3,3,3,
+                    },
+                    new int[] {
+                        4,4,4,
                     },
                 }
             },
