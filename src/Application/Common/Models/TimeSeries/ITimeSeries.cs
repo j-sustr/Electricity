@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Common.Series
+namespace Electricity.Application.Common.Models.TimeSeries
 {
     public interface ITimeSeries<TTime, TValue>
     {

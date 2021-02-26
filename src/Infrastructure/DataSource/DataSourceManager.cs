@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Extensions;
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
 {
-
     public class DataSourceManager : IDataSourceManager
     {
         private readonly IDataSourceFactory _dsFactory;

@@ -1,11 +1,10 @@
-﻿using Common.Extension;
-using Common.Temporal;
+﻿using Electricity.Application.Common.Models.TimeSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Common.Series
+namespace Electricity.Application.Common.Extensions
 {
     public static partial class TimeSeriesExtensions
     {

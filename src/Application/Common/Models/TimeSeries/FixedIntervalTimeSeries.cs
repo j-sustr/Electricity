@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace Common.Series
+namespace Electricity.Application.Common.Models.TimeSeries
 {
     public class FixedIntervalTimeSeries<TValue> : ITimeSeries<TValue>
     {
