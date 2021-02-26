@@ -20,7 +20,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
     {
         public IntervalDto Interval1 { get; set; }
 
-        public IntervalDto Interval2 { get; set; }
+        public IntervalDto? Interval2 { get; set; }
 
         public Guid[] GroupIds { get; set; }
     }
