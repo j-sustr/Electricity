@@ -74,16 +74,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
                 var rowsInterval = view.GetInterval();
 
-                var activeEnergy = view.GetDifference(ElectricityMeterQuantity.ActiveEnergy);
-                var reactiveEnergyL = view.GetDifference(ElectricityMeterQuantity.ReactiveEnergyL);
+                var activeEnergy = view.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
+                var reactiveEnergyL = view.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
 
                 return new CostsOverviewItem
                 {
                     GroupName = g.Name,
 
-                    ActiveEnergy = activeEnergy,
-                    ReactiveEnergy = reactiveEnergyL,
-                    PeakDemand = 0,
+                    ActiveEnergyInMonths = activeEnergy,
+                    ReactiveEnergyInMonths = reactiveEnergyL,
+                    PeakDemandInMonths = null,
                     Interval = _mapper.Map<IntervalDto>(rowsInterval)
                 };
             });

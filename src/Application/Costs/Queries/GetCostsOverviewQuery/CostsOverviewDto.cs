@@ -9,13 +9,11 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
     {
         public string GroupName { get; set; }
 
-        public float ActiveEnergy { get; set; }
+        public float[] ActiveEnergyInMonths { get; set; }
 
-        public float ReactiveEnergy { get; set; }
+        public float[] ReactiveEnergyInMonths { get; set; }
 
-        public float PeakDemand { get; set; }
-
-        public float Cost { get; set; }
+        public float[] PeakDemandInMonths { get; set; }
 
         public IntervalDto Interval { get; set; }
     }
