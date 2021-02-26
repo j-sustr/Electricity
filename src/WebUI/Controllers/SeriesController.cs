@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using AutoMapper;
-using Common.Series;
 using DataSource;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Series.Queries.GetQuantitySeries;
