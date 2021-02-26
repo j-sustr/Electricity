@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Series;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
 using System;

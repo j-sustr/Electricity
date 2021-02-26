@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Random;
 using DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Utils;
 using Electricity.Infrastructure.DataSource.Fake;
 
 using DS = DataSource;

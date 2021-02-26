@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Common.Series;
 using Electricity.Application.Common.Mappings;
+using Electricity.Application.Common.Models.TimeSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;

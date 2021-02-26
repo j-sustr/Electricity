@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Common.Random
+namespace Electricity.Application.Common.Utils
 {
     public class RandomSeries
     {
