@@ -45,16 +45,19 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
             var userGroups = _groupService.GetUserGroups();
 
+            var items1 = GetItemsForInterval(userGroups, interval1);
+            var items2 = GetItemsForInterval(userGroups, interval2);
+
             return Task.FromResult(new CostsOverviewDto
             {
-                Interval1Items = GetItemsForInterval(userGroups, interval1),
-                Interval2Items = GetItemsForInterval(userGroups, interval2),
+                Items1 = items1,
+                Items2 = items2,
             });
         }
 
         public CostsOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval)
         {
-            if (groups == null)
+            if (groups == null || interval == null)
             {
                 return null;
             }
@@ -63,6 +66,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
             {
                 var quantities = new ElectricityMeterQuantity[] {
                     ElectricityMeterQuantity.ActiveEnergy,
+                    ElectricityMeterQuantity.ReactiveEnergyL
                 };
 
                 var view = _electricityMeterService.GetRowsView(g.ID, interval, quantities);
@@ -75,9 +79,12 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
                 return new CostsOverviewItem
                 {
+                    GroupName = g.Name,
+
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergy = reactiveEnergyL,
-                    PeakDemand = 0
+                    PeakDemand = 0,
+                    Interval = _mapper.Map<IntervalDto>(rowsInterval)
                 };
             });
 

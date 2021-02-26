@@ -21,6 +21,11 @@ namespace Electricity.Application.Common.Models.Dtos
 
         public IntervalDto(DateTime? start, DateTime? end)
         {
+            if (start == null && end == null)
+            {
+                IsInfinite = true;
+            }
+
             Start = start;
             End = end;
         }
@@ -33,7 +38,8 @@ namespace Electricity.Application.Common.Models.Dtos
                 )
                 .ForMember(d => d.End, opt =>
                     opt.PreCondition(src => src.IsInfinite != true)
-                );
+                )
+                .ReverseMap();
         }
     }
 }

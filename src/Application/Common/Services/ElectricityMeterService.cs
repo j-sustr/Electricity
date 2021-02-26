@@ -53,6 +53,12 @@ namespace Electricity.Application.Common.Services
                 case ElectricityMeterQuantity.ActiveEnergy:
                     return new Quantity("3EP", "Wh");
 
+                case ElectricityMeterQuantity.ReactiveEnergyL:
+                    return new Quantity("3EQL", "varh");
+
+                case ElectricityMeterQuantity.ReactiveEnergyC:
+                    return new Quantity("3EQC", "varh");
+
                 default:
                     throw new ArgumentException("invalid quantity");
             }
