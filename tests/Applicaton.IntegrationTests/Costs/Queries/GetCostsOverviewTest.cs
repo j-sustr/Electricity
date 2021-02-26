@@ -32,9 +32,9 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
             {
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.ActiveEnergy.Should().BePositive();
-                item.ReactiveEnergy.Should().BePositive();
-                item.PeakDemand.Should().BePositive();
+                item.ActiveEnergyInMonths.Should().OnlyContain(x => x > 0);
+                item.ReactiveEnergyInMonths.Should().OnlyContain(x => x > 0);
+                item.PeakDemandInMonths.Should().OnlyContain(x => x > 0);
             }
         }
     }
