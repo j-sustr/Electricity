@@ -29,7 +29,7 @@ namespace Electricity.Application.Common.Services
             return lastRow.Item2[i] - firstRow.Item2[i];
         }
 
-        public float GetDifferencePerMonths(ElectricityMeterQuantity quantity)
+        public float[] GetDifferenceInMonths(ElectricityMeterQuantity quantity)
         {
             throw new Exception("not implemented");
         }
