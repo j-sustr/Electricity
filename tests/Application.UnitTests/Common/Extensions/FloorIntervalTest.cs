@@ -5,7 +5,7 @@ using Electricity.Application.Common.Extensions;
 
 namespace Electricity.Application.UnitTests.Common.Extensions
 {
-    internal class DateTimeExtensionsTest
+    internal class FloorIntervalTest
     {
         public class TestData
         {
@@ -18,7 +18,7 @@ namespace Electricity.Application.UnitTests.Common.Extensions
                 Source = new DateTime(2021,1,1,1,1,1,1), ExpectedResult=new DateTime(2021, 1, 0) }};
 
         [Test]
-        public void FloorMonthTest([ValueSource("_testData")] TestData data)
+        public void ShouldFloorMonth([ValueSource("_testData")] TestData data)
         {
             data.Source.FloorMonth().Should().Be(data.ExpectedResult);
         }

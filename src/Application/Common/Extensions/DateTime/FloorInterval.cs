@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Electricity.Application.Common.Extensions
 {
-    public static class DateTimeExtensions
+    public static partial class DateTimeExtensions
     {
         public static DateTime FloorYear(this DateTime source)
         {
