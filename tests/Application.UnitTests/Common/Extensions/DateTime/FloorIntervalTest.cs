@@ -15,7 +15,10 @@ namespace Electricity.Application.UnitTests.Common.Extensions
 
         private static TestData[] _testData = new[]{
             new TestData(){
-                Source = new DateTime(2021,1,1,1,1,1,1), ExpectedResult=new DateTime(2021, 1, 0) }};
+                Source = new DateTime(2021,1,1,1,1,1,1),
+                ExpectedResult=new DateTime(2021, 1, 1)
+            }
+        };
 
         [Test]
         public void ShouldFloorMonth([ValueSource("_testData")] TestData data)

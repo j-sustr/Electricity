@@ -8,7 +8,7 @@ namespace Electricity.Application.Common.Extensions.ITimeSeries
 {
     public static partial class TimeSeriesExtensions
     {
-        public static IEnumerable<VariableIntervalTimeSeries<TValue>> ChunkByMonth<TValue, TAggregate>(this ITimeSeries<TValue> source)
+        public static IEnumerable<VariableIntervalTimeSeries<TValue>> ChunkByMonth<TValue>(this ITimeSeries<TValue> source)
         {
             var start = source.StartTime.FloorMonth();
             var chunks = source.Entries().ChunkByIndex((item, _) =>

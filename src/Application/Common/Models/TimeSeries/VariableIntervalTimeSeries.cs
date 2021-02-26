@@ -11,9 +11,9 @@ namespace Electricity.Application.Common.Models.TimeSeries
 
         public int Size { get; }
 
-        public DateTime EndTime => throw new NotImplementedException();
+        public DateTime EndTime => _entries.Last().Item1;
 
-        public DateTime StartTime => throw new NotImplementedException();
+        public DateTime StartTime => _entries.First().Item1;
 
         public VariableIntervalTimeSeries(IEnumerable<Tuple<DateTime, TValue>> entries)
         {

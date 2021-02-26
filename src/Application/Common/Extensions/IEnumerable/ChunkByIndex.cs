@@ -23,11 +23,19 @@ namespace Electricity.Application.Common.Extensions
             for (int i = 0; true; i++)
             {
                 if (!enumerator.MoveNext())
+                {
+                    if (buffer.Count > 0)
+                    {
+                        yield return buffer.ToArray();
+                    }
                     yield break;
+                }
+
                 element = enumerator.Current;
                 int index = indexResolver(element, i);
                 if (index != prevIndex)
                 {
+                    buffer.Add(element);
                     yield return buffer.ToArray();
                     buffer.Clear();
                     if (index != prevIndex + 1)
