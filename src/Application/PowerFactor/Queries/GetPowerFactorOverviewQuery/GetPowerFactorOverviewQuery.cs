@@ -27,18 +27,15 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
     public class GetPowerFactorOverviewQueryHandler : IRequestHandler<GetPowerFactorOverviewQuery, PowerFactorOverviewDto>
     {
-        private readonly ICurrentUserService _currentUserService;
         private readonly IGroupService _groupService;
         private readonly ITableCollection _tableCollection;
         private readonly IMapper _mapper;
 
         public GetPowerFactorOverviewQueryHandler(
-            ICurrentUserService currentUserService,
             IGroupService groupService,
             ITableCollection tableCollection,
             IMapper mapper)
         {
-            _currentUserService = currentUserService;
             _groupService = groupService;
             _tableCollection = tableCollection;
             _mapper = mapper;
@@ -46,23 +43,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
 
         public Task<PowerFactorOverviewDto> Handle(GetPowerFactorOverviewQuery request, CancellationToken cancellationToken)
         {
-            string userId = _currentUserService.UserId;
-            if (userId == null)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            if (request.Interval1 == null)
-            {
-                throw new ArgumentException("interval1 is null");
-            }
-
             var dto = new PowerFactorOverviewDto();
 
-            var userGroups = _groupService.GetUserGroups(userId);
+            var userGroups = _groupService.GetUserGroups();
 
             var dataList = new List<PowerFactorOverviewIntervalData>();
 
@@ -79,14 +65,14 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuer
             return Task.FromResult(dto);
         }
 
-        public PowerFactorOverviewIntervalData GetDataForInterval(Group[] userGroups, Interval interval)
+        public PowerFactorOverviewIntervalData GetDataForInterval(Group[] groups, Interval interval)
         {
-            if (userGroups == null)
+            if (groups == null)
             {
                 return null;
             }
 
-            var items = userGroups.Select(g =>
+            var items = groups.Select(g =>
             {
                 var emTable = _tableCollection.GetTable(g.ID, (byte)Arch.ElectricityMeter);
                 var quantities = new Quantity[] {

@@ -10,30 +10,24 @@ namespace Electricity.Application.Groups.Queries.GetUserGroupTree
 {
     public class GetUserGroupTreeQuery : IRequest<GroupTreeNodeDto>
     {
-
     }
 
     public class GetUserGroupTreeQueryHandler : IRequestHandler<GetUserGroupTreeQuery, GroupTreeNodeDto>
     {
         private readonly IGroupService _service;
         private readonly IMapper _mapper;
-        private readonly ICurrentUserService _currentUserService;
-
 
         public GetUserGroupTreeQueryHandler(
-            ICurrentUserService currentUserService,
             IGroupService service,
             IMapper mapper)
         {
-            _currentUserService = currentUserService;
             _service = service;
             _mapper = mapper;
         }
 
-
         public async Task<GroupTreeNodeDto> Handle(GetUserGroupTreeQuery request, CancellationToken cancellationToken)
         {
-            var tree = _service.GetUserGroupTree(_currentUserService.UserId);
+            var tree = _service.GetUserGroupTree();
 
             var treeDto = _mapper.Map<GroupTreeNodeDto>(tree);
 

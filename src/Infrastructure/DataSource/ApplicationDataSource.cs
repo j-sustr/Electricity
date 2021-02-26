@@ -9,12 +9,18 @@ namespace Electricity.Infrastructure.DataSource
 {
     public class ApplicationDataSource : IGroupService, IQuantityService, ITableCollection, IAuthenticationService
     {
+        private readonly ICurrentUserService _currentUserService;
+
         private readonly Tenant _tenant;
 
         private readonly DS.DataSource _dataSource;
 
-        public ApplicationDataSource(IDataSourceManager dsManager, ITenantProvider tenantProvider)
+        public ApplicationDataSource(
+            ICurrentUserService currentUserService,
+            IDataSourceManager dsManager,
+            ITenantProvider tenantProvider)
         {
+            _currentUserService = currentUserService;
             _tenant = tenantProvider.GetTenant();
 
             _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
@@ -27,24 +33,14 @@ namespace Electricity.Infrastructure.DataSource
             }
         }
 
-        public DS.Group[] GetUserGroups(string userId)
+        public DS.Group[] GetUserGroups()
         {
-            if (!Guid.TryParse(userId, out var userGuid))
-            {
-                return null;
-            }
-
-            return _dataSource.GetUserGroups(userGuid).ToArray();
+            return _dataSource.GetUserGroups(GetUserGuid()).ToArray();
         }
 
-        public GroupTreeNode GetUserGroupTree(string userId)
+        public GroupTreeNode GetUserGroupTree()
         {
-            if (!Guid.TryParse(userId, out var userGuid))
-            {
-                return null;
-            }
-
-            var userGroups = _dataSource.GetUserGroups(userGuid);
+            var userGroups = _dataSource.GetUserGroups(GetUserGuid());
             var root = new GroupTreeNode();
             root.Nodes = userGroups.Select(g =>
             {
@@ -66,6 +62,27 @@ namespace Electricity.Infrastructure.DataSource
             return new DataSourceTableReader(this._dataSource, groupId, arch);
         }
 
+        public Guid Login(string username, string password)
+        {
+            return _dataSource.Login(username, password);
+        }
+
+        private Guid GetUserGuid()
+        {
+            var userId = _currentUserService.UserId;
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            if (!Guid.TryParse(userId, out var userGuid))
+            {
+                throw new Exception("could not parse userId");
+            }
+
+            return userGuid;
+        }
+
         private void ReadGroupTree(GroupTreeNode root, Guid rootId)
         {
             var groups = _dataSource.GetGroups(rootId);
@@ -76,11 +93,6 @@ namespace Electricity.Infrastructure.DataSource
                 ReadGroupTree(node, g.ID);
                 return node;
             }).ToArray();
-        }
-
-        public Guid Login(string username, string password)
-        {
-            return _dataSource.Login(username, password);
         }
     }
 }
