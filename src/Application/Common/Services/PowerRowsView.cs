@@ -9,5 +9,10 @@ namespace Electricity.Application.Common.Services
         public PowerRowsView()
         {
         }
+
+        public float GetPeakDemandInMonths()
+        {
+            throw new Exception("not impl");
+        }
     }
 }
