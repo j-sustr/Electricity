@@ -47,6 +47,8 @@ namespace Electricity.Application.UnitTests.Common.Extensions.Enumerable
                     2,2,2,2,2,
                     3,3,3,3,
                     4,4,4,
+                    6,6,
+                    7,7,7,7
                 },
                 ExpectedResult = new int[][]
                 {
@@ -60,6 +62,13 @@ namespace Electricity.Application.UnitTests.Common.Extensions.Enumerable
                     },
                     new int[] {
                         4,4,4,
+                    },
+                    null,
+                    new int[] {
+                        6,6
+                    },
+                    new int[] {
+                        7,7,7,7
                     },
                 }
             },
@@ -114,6 +123,7 @@ namespace Electricity.Application.UnitTests.Common.Extensions.Enumerable
                         Tuple.Create(2, 9),
                         Tuple.Create(2, 10),
                         Tuple.Create(2, 11),
+                        Tuple.Create(2, 12),
                     },
                     null,
                     new Tuple<int, int>[] {

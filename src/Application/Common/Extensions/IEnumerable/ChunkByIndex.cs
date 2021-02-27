@@ -19,9 +19,9 @@ namespace Electricity.Application.Common.Extensions
                 yield return null;
             }
             var buffer = new List<TSource>();
-            buffer.Add(element);
             for (int i = 0; true; i++)
             {
+                buffer.Add(element);
                 if (!enumerator.MoveNext())
                 {
                     if (buffer.Count > 0)
@@ -46,10 +46,6 @@ namespace Electricity.Application.Common.Extensions
                             j++;
                         } while (j < index);
                     }
-                }
-                else
-                {
-                    buffer.Add(element);
                 }
                 prevIndex = index;
             }
