@@ -25,15 +25,18 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
     public class GetCostsOverviewQueryHandler : IRequestHandler<GetCostsOverviewQuery, CostsOverviewDto>
     {
         private readonly ElectricityMeterService _electricityMeterService;
+        private readonly PowerService _powerService;
         private readonly IGroupService _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsOverviewQueryHandler(
             ElectricityMeterService electricityMeterService,
+            PowerService powerService,
             IGroupService groupService,
             IMapper mapper)
         {
             _electricityMeterService = electricityMeterService;
+            _powerService = powerService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -64,19 +67,28 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
             var items = groups.Select(g =>
             {
+                var powInterval = _electricityMeterService.GetIntervalOverlap(g.ID, interval);
+                var emInterval = _powerService.GetIntervalOverlap(g.ID, interval);
+                if (!powInterval.Equals(emInterval))
+                {
+                    return null;
+                }
+
                 var emQuantities = new ElectricityMeterQuantity[] {
                     ElectricityMeterQuantity.ActiveEnergy,
                     ElectricityMeterQuantity.ReactiveEnergyL
                 };
 
-                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-                if (emView == null) return null;
+                var powQuantities = new PowerQuantity[] {
+                    PowerQuantity.PAvg3P
+                };
 
-                var rowsInterval = emView.GetInterval();
+                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
+                var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
 
                 var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
                 var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
-                var peakDemand = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
+                var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);
 
                 return new CostsOverviewItem
                 {
@@ -85,7 +97,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
                     ActiveEnergyInMonths = activeEnergy,
                     ReactiveEnergyInMonths = reactiveEnergyL,
                     PeakDemandInMonths = peakDemand,
-                    Interval = _mapper.Map<IntervalDto>(rowsInterval)
+                    Interval = _mapper.Map<IntervalDto>(emInterval)
                 };
             });
 

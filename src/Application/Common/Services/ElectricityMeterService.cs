@@ -63,5 +63,10 @@ namespace Electricity.Application.Common.Services
                     throw new ArgumentException("invalid quantity");
             }
         }
+
+        public Interval GetIntervalOverlap(Guid groupId, Interval interval)
+        {
+            return _tableCollection.GetIntervalOverlap(groupId, (byte)Arch.ElectricityMeter, interval);
+        }
     }
 }

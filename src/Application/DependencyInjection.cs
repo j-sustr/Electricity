@@ -19,6 +19,7 @@ namespace Electricity.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(ElectricityMeterService));
+            services.AddTransient(typeof(PowerService));
 
             return services;
         }
