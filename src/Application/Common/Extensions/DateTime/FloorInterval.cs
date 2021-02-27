@@ -9,25 +9,27 @@ namespace Electricity.Application.Common.Extensions
         public static DateTime FloorYear(this DateTime source)
         {
             var d = source.FloorMonth();
-            return source.AddMonths(-source.Month);
+            return d.AddMonths(-source.Month + 1);
         }
 
         public static DateTime FloorMonth(this DateTime source)
         {
             var d = source.FloorDay();
-            return source.AddDays(-source.Day);
+            return d.AddDays(-source.Day + 1);
         }
 
         public static DateTime FloorDay(this DateTime source)
         {
             var d = source.FloorHour();
-            return d.AddHours(source.Hour);
+            return d.AddHours(-source.Hour);
         }
 
         public static DateTime FloorHour(this DateTime source)
         {
             var d = source.AddMilliseconds(-source.Millisecond);
-            return d.AddMinutes(-source.Minute);
+            d = d.AddSeconds(-source.Second);
+            d = d.AddMinutes(-source.Minute);
+            return d;
         }
     }
 }
