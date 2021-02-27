@@ -1,5 +1,5 @@
 ﻿using Electricity.Application.Common.Models.Dtos;
-using Electricity.Application.Costs.Queries.GetCostsQuery;
+using Electricity.Application.Costs.Queries.GetCostsOverview;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

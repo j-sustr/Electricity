@@ -21,6 +21,11 @@ namespace Electricity.Application.Common.Services
             _rows = rows;
         }
 
+        public DateTime GetStart()
+        {
+            return _rows.First().Item1;
+        }
+
         public Interval GetInterval()
         {
             var start = _rows.First().Item1;

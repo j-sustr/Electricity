@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
@@ -98,6 +100,18 @@ namespace Electricity.Infrastructure.DataSource
                 ReadGroupTree(node, g.ID);
                 return node;
             }).ToArray();
+        }
+
+        public Group GetGroupById(string id)
+        {
+            if (!Guid.TryParse(id, out var guid))
+            {
+                return null;
+            }
+
+            var groups = _dataSource.GetUserGroups(GetUserGuid());
+
+            return groups.Find(g => g.ID == guid);
         }
     }
 }

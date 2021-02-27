@@ -94,9 +94,9 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                 {
                     GroupName = g.Name,
 
-                    ActiveEnergyInMonths = activeEnergy,
-                    ReactiveEnergyInMonths = reactiveEnergyL,
-                    PeakDemandInMonths = peakDemand,
+                    ActiveEnergyInMonths = activeEnergy.Values().ToArray(),
+                    ReactiveEnergyInMonths = reactiveEnergyL.Values().ToArray(),
+                    PeakDemandInMonths = peakDemand.Values().ToArray(),
                     Interval = _mapper.Map<IntervalDto>(emInterval)
                 };
             });

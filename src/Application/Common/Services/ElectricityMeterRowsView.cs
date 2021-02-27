@@ -1,4 +1,5 @@
 ﻿using DataSource;
+using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Extensions.ITimeSeries;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.TimeSeries;
@@ -27,18 +28,20 @@ namespace Electricity.Application.Common.Services
             return lastRow.Item2[i] - firstRow.Item2[i];
         }
 
-        public float[] GetDifferenceInMonths(ElectricityMeterQuantity quantity)
+        public VariableIntervalTimeSeries<float> GetDifferenceInMonths(ElectricityMeterQuantity quantity)
         {
             var i = GetIndexOfQuantity(quantity);
-            var series = new VariableIntervalTimeSeries<float[]>(_rows);
+            var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
             var prevValue = series.Entries().First().Item2[i];
-            return series.ChunkByMonth().Select((pair) =>
+            var result = series.ChunkByMonth().Select((ch) =>
             {
-                var currValue = series.Entries().Last().Item2[i];
+                var currValue = ch.Entries().Last().Item2[i];
                 var diff = currValue - prevValue;
                 prevValue = currValue;
-                return diff;
-            }).ToArray();
+                var startTime = ch.StartTime.FloorMonth();
+                return Tuple.Create(startTime, diff);
+            });
+            return new VariableIntervalTimeSeries<float>(result.ToArray());
         }
     }
 }

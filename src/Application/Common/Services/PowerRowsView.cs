@@ -17,19 +17,22 @@ namespace Electricity.Application.Common.Services
         {
         }
 
-        public float[] GetPeakDemandInMonths(PowerQuantity quantity)
+        public VariableIntervalTimeSeries<float> GetPeakDemandInMonths(PowerQuantity quantity)
         {
             var i = GetIndexOfQuantity(quantity);
-            var series = new VariableIntervalTimeSeries<float[]>(_rows);
-            return series.ChunkByMonth().Select(ch =>
+            var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
+            var result = series.ChunkByMonth().Select(ch =>
             {
                 var avgValues = ch.AggregateQuarterHours((rows) =>
                 {
                     var sum = rows.Aggregate<float[], float>(0, (acc, row) => acc + row[i]);
                     return sum / rows.Count();
                 });
-                return avgValues.Values().Max();
+                var max = avgValues.Values().Max();
+                var startTime = ch.StartTime.FloorMonth();
+                return Tuple.Create(startTime, max);
             }).ToArray();
+            return new VariableIntervalTimeSeries<float>(result);
         }
     }
 }

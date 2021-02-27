@@ -7,7 +7,7 @@ namespace Electricity.Application.Common.Models.TimeSeries
 {
     public class VariableIntervalTimeSeries<TValue> : ITimeSeries<TValue>
     {
-        private readonly IEnumerable<Tuple<DateTime, TValue>> _entries;
+        private readonly Tuple<DateTime, TValue>[] _entries;
 
         public int Size { get; }
 
@@ -15,20 +15,20 @@ namespace Electricity.Application.Common.Models.TimeSeries
 
         public DateTime StartTime => _entries.First().Item1;
 
-        public VariableIntervalTimeSeries(IEnumerable<Tuple<DateTime, TValue>> entries)
+        public VariableIntervalTimeSeries(Tuple<DateTime, TValue>[] entries)
         {
-            Size = entries.Count();
+            Size = entries.Length;
             _entries = entries;
         }
 
         public TValue ValueAt(int index)
         {
-            throw new NotImplementedException();
+            return _entries[index].Item2;
         }
 
         public DateTime TimeAt(int index)
         {
-            throw new NotImplementedException();
+            return _entries[index].Item1;
         }
 
         public Tuple<DateTime, TValue> EntryAt(int index)
