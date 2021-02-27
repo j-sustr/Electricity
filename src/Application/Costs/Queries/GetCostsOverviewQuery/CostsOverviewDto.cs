@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Electricity.Application.Costs.Queries.GetCostsQuery
+namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
     public class CostsOverviewItem
     {

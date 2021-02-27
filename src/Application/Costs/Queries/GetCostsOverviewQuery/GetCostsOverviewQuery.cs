@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Electricity.Application.Costs.Queries.GetCostsQuery
+namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
     public class GetCostsOverviewQuery : IRequest<CostsOverviewDto>
     {
