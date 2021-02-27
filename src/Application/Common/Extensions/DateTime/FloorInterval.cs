@@ -31,5 +31,13 @@ namespace Electricity.Application.Common.Extensions
             d = d.AddMinutes(-source.Minute);
             return d;
         }
+
+        public static DateTime FloorQuarterHour(this DateTime source)
+        {
+            var d = source.AddMilliseconds(-source.Millisecond);
+            d = d.AddSeconds(-source.Second);
+            d = d.AddMinutes(-(source.Minute % 15));
+            return d;
+        }
     }
 }

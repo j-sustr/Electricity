@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Electricity.Application.Common.Extensions
 {
-    public static class LINQExtension
+    public static partial class LINQExtension
     {
         // https://github.com/mariusschulz/ExtraLINQ#chunk
 

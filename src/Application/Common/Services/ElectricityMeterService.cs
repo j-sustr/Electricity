@@ -46,7 +46,7 @@ namespace Electricity.Application.Common.Services
             return new ElectricityMeterRowsView(quantities, rows);
         }
 
-        private Quantity GetQuantity(ElectricityMeterQuantity quantity)
+        public static Quantity GetQuantity(ElectricityMeterQuantity quantity)
         {
             switch (quantity)
             {

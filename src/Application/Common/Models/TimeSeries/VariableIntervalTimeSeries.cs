@@ -48,7 +48,7 @@ namespace Electricity.Application.Common.Models.TimeSeries
 
         public IEnumerable<TValue> Values()
         {
-            throw new NotImplementedException();
+            return _entries.Select(e => e.Item2);
         }
     }
 }

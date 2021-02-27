@@ -64,18 +64,19 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
             var items = groups.Select(g =>
             {
-                var quantities = new ElectricityMeterQuantity[] {
+                var emQuantities = new ElectricityMeterQuantity[] {
                     ElectricityMeterQuantity.ActiveEnergy,
                     ElectricityMeterQuantity.ReactiveEnergyL
                 };
 
-                var view = _electricityMeterService.GetRowsView(g.ID, interval, quantities);
-                if (view == null) return null;
+                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
+                if (emView == null) return null;
 
-                var rowsInterval = view.GetInterval();
+                var rowsInterval = emView.GetInterval();
 
-                var activeEnergy = view.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
-                var reactiveEnergyL = view.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
+                var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
+                var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
+                var peakDemand = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
 
                 return new CostsOverviewItem
                 {
@@ -83,7 +84,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsQuery
 
                     ActiveEnergyInMonths = activeEnergy,
                     ReactiveEnergyInMonths = reactiveEnergyL,
-                    PeakDemandInMonths = null,
+                    PeakDemandInMonths = peakDemand,
                     Interval = _mapper.Map<IntervalDto>(rowsInterval)
                 };
             });

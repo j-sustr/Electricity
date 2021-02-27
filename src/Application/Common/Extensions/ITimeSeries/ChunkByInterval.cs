@@ -25,5 +25,23 @@ namespace Electricity.Application.Common.Extensions.ITimeSeries
                 return new VariableIntervalTimeSeries<TValue>(ch);
             });
         }
+
+        public static IEnumerable<VariableIntervalTimeSeries<TValue>> ChunkByQuarterHour<TValue>(this ITimeSeries<TValue> source)
+        {
+            var start = source.StartTime.FloorQuarterHour();
+            var chunks = source.Entries().ChunkByIndex((item, _) =>
+            {
+                return start.CountQuarterHoursTo(item.Item1);
+            });
+
+            return chunks.Select(ch =>
+            {
+                if (ch == null)
+                {
+                    return null;
+                }
+                return new VariableIntervalTimeSeries<TValue>(ch);
+            });
+        }
     }
 }

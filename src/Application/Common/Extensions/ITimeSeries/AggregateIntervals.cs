@@ -8,18 +8,28 @@ namespace Electricity.Application.Common.Extensions
 {
     public static partial class TimeSeriesExtensions
     {
-        public static FixedIntervalTimeSeries<TValue> AggregateIntervals<TValue, TAggregate>(this ITimeSeries<TValue> series, Func<IEnumerable<TValue>, TAggregate> aggregator, Func<DateTime, int> indexResolver)
+        public static FixedIntervalTimeSeries<TAggregate> AggregateQuarterHours<TValue, TAggregate>(this ITimeSeries<TValue> source, Func<IEnumerable<TValue>, TAggregate> aggregator)
         {
-            var entries = series.Entries();
-            foreach (var chunk in entries.ChunkByIndex((entry, i) => indexResolver(entry.Item1)))
+            var start = source.StartTime.FloorQuarterHour();
+            var values = source.AggregateIntervals(aggregator, (d) =>
             {
-                TAggregate value;
-                value = aggregator(chunk?.Select(entry => entry.Item2));
-            }
+                return start.CountQuarterHoursTo(d);
+            });
 
-            return new FixedIntervalTimeSeries<TValue>(new TValue[] { }, DateTime.Now, TimeSpan.FromMinutes(1));
+            return new FixedIntervalTimeSeries<TAggregate>(values, start, TimeSpan.FromMinutes(15));
         }
 
-        // static  FindExtremeInterval
+        public static TAggregate[] AggregateIntervals<TValue, TAggregate>(this ITimeSeries<TValue> source, Func<IEnumerable<TValue>, TAggregate> aggregator, Func<DateTime, int> indexResolver)
+        {
+            var entries = source.Entries();
+            var result = new List<TAggregate>();
+            foreach (var chunk in entries.ChunkByIndex((entry, i) => indexResolver(entry.Item1)))
+            {
+                var value = aggregator(chunk?.Select(entry => entry.Item2));
+                result.Add(value);
+            }
+
+            return result.ToArray();
+        }
     }
 }

@@ -16,5 +16,17 @@ namespace Electricity.Application.Common.Extensions
             int y = source.CountYearsTo(target);
             return target.Month - source.Month + y * 12;
         }
+
+        public static int CountQuarterHoursTo(this DateTime source, DateTime target)
+        {
+            int minutes = source.CountMinutesTo(target);
+            return minutes / 15;
+        }
+
+        public static int CountMinutesTo(this DateTime source, DateTime target)
+        {
+            var ts = target - source;
+            return (int)Math.Floor(ts.TotalMinutes);
+        }
     }
 }
