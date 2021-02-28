@@ -14,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
+namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
     public class GetPowerFactorOverviewQuery : IRequest<PowerFactorOverviewDto>
     {

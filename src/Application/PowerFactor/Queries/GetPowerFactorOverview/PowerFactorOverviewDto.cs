@@ -1,7 +1,7 @@
 using Electricity.Application.Common.Models;
 using System.Collections.Generic;
 
-namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
+namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
     public class PowerFactorOverviewItem
     {

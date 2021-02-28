@@ -1,5 +1,5 @@
 using Electricity.Application.Common.Models;
-using Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery;
+using Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverviewQuery
+namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
     public class GetPowerFactorOverviewQueryValidator : AbstractValidator<GetPowerFactorOverviewQuery>
     {
