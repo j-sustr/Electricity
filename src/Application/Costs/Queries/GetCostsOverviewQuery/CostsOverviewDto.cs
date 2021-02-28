@@ -14,8 +14,6 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
         public float[] ReactiveEnergyInMonths { get; set; }
 
         public float[] PeakDemandInMonths { get; set; }
-
-        public IntervalDto Interval { get; set; }
     }
 
     public class CostsOverviewDto

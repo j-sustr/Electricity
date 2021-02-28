@@ -20,6 +20,7 @@ namespace Electricity.WebUI.Filters
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
+                { typeof(IntervalOutOfRangeException), HandleIntervalOutOfRangeException },
             };
         }
 
@@ -119,6 +120,23 @@ namespace Electricity.WebUI.Filters
             context.Result = new ObjectResult(details)
             {
                 StatusCode = StatusCodes.Status403Forbidden
+            };
+
+            context.ExceptionHandled = true;
+        }
+
+        private void HandleIntervalOutOfRangeException(ExceptionContext context)
+        {
+            var details = new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Interval is out of range",
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+            };
+
+            context.Result = new ObjectResult(details)
+            {
+                StatusCode = StatusCodes.Status400BadRequest
             };
 
             context.ExceptionHandled = true;

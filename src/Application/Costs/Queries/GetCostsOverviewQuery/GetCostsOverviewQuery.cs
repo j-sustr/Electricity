@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DataSource;
 using Electricity.Application.Common.Enums;
+using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
@@ -47,9 +48,10 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
             var userGroups = _groupService.GetUserGroups();
+            if (userGroups.Length == 0) return null;
 
-            var items1 = GetItemsForInterval(userGroups, interval1);
-            var items2 = GetItemsForInterval(userGroups, interval2);
+            var items1 = GetItemsForInterval(userGroups, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(userGroups, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new CostsOverviewDto
             {
@@ -58,22 +60,12 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             });
         }
 
-        public CostsOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval)
+        public CostsOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
         {
-            if (groups == null || interval == null)
-            {
-                return null;
-            }
+            if (interval == null) return null;
 
             var items = groups.Select(g =>
             {
-                var powInterval = _electricityMeterService.GetIntervalOverlap(g.ID, interval);
-                var emInterval = _powerService.GetIntervalOverlap(g.ID, interval);
-                if (!powInterval.Equals(emInterval))
-                {
-                    return null;
-                }
-
                 var emQuantities = new ElectricityMeterQuantity[] {
                     ElectricityMeterQuantity.ActiveEnergy,
                     ElectricityMeterQuantity.ReactiveEnergyL
@@ -85,6 +77,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                 var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
                 var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
+                if (emView == null || powView == null)
+                {
+                    throw new IntervalOutOfRangeException(intervalName);
+                }
+                var emInterval = emView.GetInterval();
+                var powInterval = powView.GetInterval();
+                if (!interval.Equals(emInterval) || !interval.Equals(powInterval))
+                {
+                    throw new IntervalOutOfRangeException(intervalName);
+                }
 
                 var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
                 var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
@@ -96,8 +98,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                     ActiveEnergyInMonths = activeEnergy.Values().ToArray(),
                     ReactiveEnergyInMonths = reactiveEnergyL.Values().ToArray(),
-                    PeakDemandInMonths = peakDemand.Values().ToArray(),
-                    Interval = _mapper.Map<IntervalDto>(emInterval)
+                    PeakDemandInMonths = peakDemand.Values().ToArray()
                 };
             });
 

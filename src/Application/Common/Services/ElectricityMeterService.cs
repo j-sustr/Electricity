@@ -64,6 +64,11 @@ namespace Electricity.Application.Common.Services
             }
         }
 
+        public bool HasInterval(Guid groupId, Interval interval)
+        {
+            return GetIntervalOverlap(groupId, interval).Equals(interval);
+        }
+
         public Interval GetIntervalOverlap(Guid groupId, Interval interval)
         {
             return _tableCollection.GetIntervalOverlap(groupId, (byte)Arch.ElectricityMeter, interval);
