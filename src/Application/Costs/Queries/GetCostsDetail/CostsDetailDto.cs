@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
-    public class CostsDetailItem
+    public class RawCostsDetailItem
     {
         public int Year { get; set; }
         public int Month { get; set; }
@@ -19,7 +19,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
     {
         public string GroupName { get; set; }
 
-        public CostsDetailItem[] Items1 { get; set; }
-        public CostsDetailItem[] Items2 { get; set; }
+        public RawCostsDetailItem[] Items1 { get; set; }
+        public RawCostsDetailItem[] Items2 { get; set; }
     }
 }
