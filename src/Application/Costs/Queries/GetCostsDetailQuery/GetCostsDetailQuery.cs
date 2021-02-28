@@ -53,8 +53,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetailQuery
                 throw new NotFoundException("Invalid GroupId");
             }
 
-            var items1 = GetItemsForInterval(group, interval1);
-            var items2 = GetItemsForInterval(group, interval2);
+            var items1 = GetItemsForInterval(group, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(group, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new CostsDetailDto
             {
@@ -63,16 +63,9 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetailQuery
             });
         }
 
-        public CostsDetailItem[] GetItemsForInterval(Group g, Interval interval)
+        public CostsDetailItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
         {
             if (interval == null)
-            {
-                return null;
-            }
-
-            var powInterval = _electricityMeterService.GetIntervalOverlap(g.ID, interval);
-            var emInterval = _powerService.GetIntervalOverlap(g.ID, interval);
-            if (!powInterval.Equals(emInterval))
             {
                 return null;
             }
@@ -88,7 +81,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetailQuery
 
             var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
             var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
-
+            if (emView == null || powView == null)
+            {
+                throw new IntervalOutOfRangeException(intervalName);
+            }
+            var emInterval = emView.GetInterval();
+            var powInterval = powView.GetInterval();
+            if (!interval.Equals(emInterval) || !interval.Equals(powInterval))
+            {
+                throw new IntervalOutOfRangeException(intervalName);
+            }
             var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
             var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
             var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);
