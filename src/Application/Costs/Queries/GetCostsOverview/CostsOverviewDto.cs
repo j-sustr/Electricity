@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
-    public class RawCostsOverviewItem
+    public class CostlyQuantitiesOverviewItem
     {
         public string GroupName { get; set; }
 
@@ -18,7 +18,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
     public class CostsOverviewDto
     {
-        public RawCostsOverviewItem[] Items1 { get; set; }
-        public RawCostsOverviewItem[] Items2 { get; set; }
+        public CostlyQuantitiesOverviewItem[] Items1 { get; set; }
+        public CostlyQuantitiesOverviewItem[] Items2 { get; set; }
     }
 }

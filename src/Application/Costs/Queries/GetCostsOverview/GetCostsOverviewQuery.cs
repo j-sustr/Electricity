@@ -60,7 +60,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             });
         }
 
-        public RawCostsOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
+        public CostlyQuantitiesOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
         {
             if (interval == null) return null;
 
@@ -92,7 +92,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                 var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
                 var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);
 
-                return new RawCostsOverviewItem
+                return new CostlyQuantitiesOverviewItem
                 {
                     GroupName = g.Name,
 

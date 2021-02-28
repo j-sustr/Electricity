@@ -63,7 +63,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             });
         }
 
-        public RawCostsDetailItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
+        public CostlyQuantitiesDetailItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
         {
             if (interval == null)
             {
@@ -95,11 +95,11 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
             var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);
 
-            var items = new List<RawCostsDetailItem>();
+            var items = new List<CostlyQuantitiesDetailItem>();
             for (int i = 0; i < activeEnergy.Size; i++)
             {
                 var time = activeEnergy.TimeAt(i);
-                var item = new RawCostsDetailItem
+                var item = new CostlyQuantitiesDetailItem
                 {
                     Year = time.Year,
                     Month = time.Month,
