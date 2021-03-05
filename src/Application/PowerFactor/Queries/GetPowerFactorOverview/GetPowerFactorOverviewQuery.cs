@@ -1,10 +1,12 @@
 using AutoMapper;
 using DataSource;
 using Electricity.Application.Common.Enums;
+using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Models.Queries;
+using Electricity.Application.Common.Services;
 using MediatR;
 using Newtonsoft.Json;
 using NJsonSchema.Annotations;
@@ -27,17 +29,17 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 
     public class GetPowerFactorOverviewQueryHandler : IRequestHandler<GetPowerFactorOverviewQuery, PowerFactorOverviewDto>
     {
+        private readonly ElectricityMeterService _electricityMeterService;
         private readonly IGroupService _groupService;
-        private readonly ITableCollection _tableCollection;
         private readonly IMapper _mapper;
 
         public GetPowerFactorOverviewQueryHandler(
+            ElectricityMeterService electricityMeterService,
             IGroupService groupService,
-            ITableCollection tableCollection,
             IMapper mapper)
         {
+            _electricityMeterService = electricityMeterService;
             _groupService = groupService;
-            _tableCollection = tableCollection;
             _mapper = mapper;
         }
 
@@ -46,88 +48,52 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var dto = new PowerFactorOverviewDto();
-
             var userGroups = _groupService.GetUserGroups();
+            if (userGroups.Length == 0) return null;
 
-            var dataList = new List<PowerFactorOverviewIntervalData>();
+            var items1 = GetItemsForInterval(userGroups, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(userGroups, interval2, nameof(request.Interval2));
 
-            var data = GetDataForInterval(userGroups, interval1);
-            dataList.Add(data);
-
-            if (request.Interval2 != null)
+            return Task.FromResult(new PowerFactorOverviewDto
             {
-                data = GetDataForInterval(userGroups, interval1);
-                dataList.Add(data);
-            }
-
-            dto.Data = dataList;
-            return Task.FromResult(dto);
+                Items1 = items1,
+                Items2 = items2
+            });
         }
 
-        public PowerFactorOverviewIntervalData GetDataForInterval(Group[] groups, Interval interval)
+        public PowerFactorOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
         {
-            if (groups == null)
-            {
-                return null;
-            }
+            if (interval == null) return null;
 
             var items = groups.Select(g =>
             {
-                var emTable = _tableCollection.GetTable(g.ID, (byte)Arch.ElectricityMeter);
-                var quantities = new Quantity[] {
-                    new Quantity("3EP", "Wh"),
-                    new Quantity("3EQL", "varh"),
-                    new Quantity("3EQC", "varh"),
+                var emQuantities = new ElectricityMeterQuantity[] {
+                    ElectricityMeterQuantity.ActiveEnergy,
+                    ElectricityMeterQuantity.ReactiveEnergyL,
+                    ElectricityMeterQuantity.ReactiveEnergyC,
                 };
 
-                var rows = emTable.GetRows(new GetRowsQuery
+                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
+                if (emView == null)
                 {
-                    Interval = interval,
-                    Quantities = quantities,
-                });
-
-                if (rows.Count() == 0)
-                {
-                    return null;
+                    throw new IntervalOutOfRangeException(intervalName);
                 }
 
-                var rowsInterval = GetRowsInterval(rows);
-
-                var firstRow = rows.First();
-                var lastRow = rows.Last();
-
-                var activeEnergy = lastRow.Item2[0] - firstRow.Item2[0];
-                var reactiveEnergyL = lastRow.Item2[1] - firstRow.Item2[1];
-                var reactiveEnergyC = lastRow.Item2[2] - firstRow.Item2[2];
-
-                var tanFi = reactiveEnergyL / activeEnergy;
-
-                var cosFi = (float)Math.Cos(Math.Atan(tanFi));
+                var activeEnergy = emView.GetDifference(ElectricityMeterQuantity.ActiveEnergy);
+                var reactiveEnergyL = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyL);
+                var reactiveEnergyC = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyC);
 
                 return new PowerFactorOverviewItem
                 {
-                    DeviceName = g.Name,
+                    GroupName = g.Name,
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,
                     ReactiveEnergyC = reactiveEnergyC,
-                    CosFi = cosFi,
-                    Interval = rowsInterval
+                    Interval = emView.GetInterval()
                 };
             });
 
-            return new PowerFactorOverviewIntervalData
-            {
-                Interval = null,
-                Items = items.ToList()
-            };
-        }
-
-        public Interval GetRowsInterval(IEnumerable<Tuple<DateTime, float[]>> rows)
-        {
-            var start = rows.First().Item1;
-            var end = rows.Last().Item1;
-            return new Interval(start, end);
+            return items.ToArray();
         }
     }
 }

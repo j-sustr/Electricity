@@ -5,7 +5,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
     public class PowerFactorOverviewItem
     {
-        public string DeviceName { get; set; }
+        public string GroupName { get; set; }
 
         public float ActiveEnergy { get; set; }
         public float ReactiveEnergyL { get; set; }
@@ -15,15 +15,10 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
         public Interval Interval { get; set; }
     }
 
-    public class PowerFactorOverviewIntervalData
-    {
-        public Interval Interval { get; set; }
-
-        public IList<PowerFactorOverviewItem> Items { get; set; } = new List<PowerFactorOverviewItem>();
-    }
-
     public class PowerFactorOverviewDto
     {
-        public IList<PowerFactorOverviewIntervalData> Data { get; set; } = new List<PowerFactorOverviewIntervalData>();
+        public PowerFactorOverviewItem[] Items1 { get; set; }
+
+        public PowerFactorOverviewItem[] Items2 { get; set; }
     }
 }
