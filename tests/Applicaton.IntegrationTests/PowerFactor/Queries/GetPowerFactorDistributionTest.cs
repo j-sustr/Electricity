@@ -13,7 +13,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
     public class GetPowerFactorDistributionTest
     {
         [Test]
-        public async Task ShouldRequireInterval1()
+        public async Task ShouldRequireGroupId()
         {
             var userId = await RunAsDefaultUserAsync();
 
@@ -33,7 +33,8 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                Interval1 = new IntervalDto(null, null)
+                GroupId = GetGroupIdByName("group-1"),
+                Interval1 = new IntervalDto(null, null),
             };
 
             var result = await SendAsync(query);
@@ -55,6 +56,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
+                GroupId = GetGroupIdByName("group-1"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
             };
 
@@ -77,6 +79,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
+                GroupId = GetGroupIdByName("group-1"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
                 Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
             };

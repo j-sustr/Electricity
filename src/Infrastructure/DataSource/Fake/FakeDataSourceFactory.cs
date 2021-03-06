@@ -1,5 +1,9 @@
+using DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using System;
+using System.Collections.Generic;
+
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource.Fake
@@ -7,6 +11,12 @@ namespace Electricity.Infrastructure.DataSource.Fake
     public class FakeDataSourceFactory : IDataSourceFactory
     {
         private int _seed;
+
+        public List<Group> Groups = new List<Group>{
+            new Group(Guid.NewGuid(), "group-1"),
+            new Group(Guid.NewGuid(), "group-2"),
+            new Group(Guid.NewGuid(), "group-3"),
+        };
 
         private BoundedInterval _interval { get; set; }
 
@@ -18,7 +28,9 @@ namespace Electricity.Infrastructure.DataSource.Fake
 
         public DS.DataSource CreateDataSource(DataSourceConfig config)
         {
-            return new FakeDataSource(_seed, _interval);
+            var ds = new FakeDataSource(_seed, _interval);
+            ds.Groups = Groups;
+            return ds;
         }
     }
 }

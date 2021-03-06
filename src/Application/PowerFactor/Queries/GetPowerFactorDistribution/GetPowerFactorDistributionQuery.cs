@@ -19,11 +19,11 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 {
     public class GetPowerFactorDistributionQuery : IRequest<PowerFactorDistributionDto>
     {
+        public string GroupId { get; set; }
+
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
-
-        public string GroupId { get; set; }
     }
 
     public class GetPowerFactorDistributionQueryHandler : IRequestHandler<GetPowerFactorDistributionQuery, PowerFactorDistributionDto>
@@ -81,11 +81,6 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
             if (emView == null)
-            {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
-            var emInterval = emView.GetInterval();
-            if (!interval.Equals(emInterval))
             {
                 throw new IntervalOutOfRangeException(intervalName);
             }

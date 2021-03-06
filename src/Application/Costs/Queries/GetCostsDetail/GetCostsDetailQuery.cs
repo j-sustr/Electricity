@@ -85,12 +85,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             {
                 throw new IntervalOutOfRangeException(intervalName);
             }
-            var emInterval = emView.GetInterval();
-            var powInterval = powView.GetInterval();
-            if (!interval.Equals(emInterval) || !interval.Equals(powInterval))
-            {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+
             var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
             var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
             var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);

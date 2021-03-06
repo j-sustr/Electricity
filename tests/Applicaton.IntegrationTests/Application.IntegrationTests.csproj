@@ -31,4 +31,19 @@
     <ProjectReference Include="..\..\src\WebUI\WebUI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="DataSource">
+      <HintPath>..\..\dll\DataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="DBDataSource">
+      <HintPath>..\..\dll\DBDataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="FileDataSource">
+      <HintPath>..\..\dll\FileDataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Dlls\log4net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

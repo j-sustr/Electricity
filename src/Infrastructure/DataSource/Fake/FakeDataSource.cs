@@ -18,11 +18,7 @@ namespace Electricity.Infrastructure.DataSource
 
         private BoundedInterval _interval { get; set; }
 
-        private List<Group> groups = new List<Group>{
-            new Group(Guid.NewGuid(), "group-1"),
-            new Group(Guid.NewGuid(), "group-2"),
-            new Group(Guid.NewGuid(), "group-3"),
-        };
+        public List<Group> Groups { get; set; }
 
         public FakeDataSource(int seed, BoundedInterval interval)
         {
@@ -47,7 +43,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, EEnergyAggType energyAggType = EEnergyAggType.Cumulative)
         {
-            if (groups.FindIndex(g => g.ID == groupID) == -1)
+            if (Groups.FindIndex(g => g.ID == groupID) == -1)
             {
                 throw new ArgumentException("invalid groupId");
             }
@@ -101,7 +97,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public override List<Group> GetUserGroups(Guid user)
         {
-            return groups;
+            return Groups;
         }
 
         public override Guid Login(string ENVISUser, string ENVISPassword)

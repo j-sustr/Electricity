@@ -27,7 +27,7 @@ public class Testing
 
     private static string _currentUserId;
 
-    private static FakeDataSourceFactory _fakeDataSourceFactory;
+    private static FakeDataSourceFactory _dataSourceFactory;
 
     private static FakeIdentityService _fakeIdentityService;
 
@@ -80,8 +80,8 @@ public class Testing
 
         var interval = new BoundedInterval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 31));
 
-        var dataSourceFactory = new FakeDataSourceFactory(0, interval);
-        services.AddSingleton<IDataSourceFactory>(provider => dataSourceFactory);
+        _dataSourceFactory = new FakeDataSourceFactory(0, interval);
+        services.AddSingleton<IDataSourceFactory>(provider => _dataSourceFactory);
     }
 
     public static void EnsureHttpContext(ServiceCollection services)
@@ -170,5 +170,15 @@ public class Testing
         var errors = string.Join(Environment.NewLine, result.Errors);
 
         throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
+    }
+
+    public static string GetGroupIdByName(string name)
+    {
+        var g = _dataSourceFactory.Groups.Find(g => g.Name == name);
+        if (g == null)
+        {
+            return null;
+        }
+        return g.ID.ToString();
     }
 }
