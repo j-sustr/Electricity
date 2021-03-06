@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Electricity.Application.Common.Mappings;
-using Electricity.Domain.Entities;
 using NUnit.Framework;
 using System;
 
