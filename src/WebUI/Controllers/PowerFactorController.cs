@@ -1,4 +1,5 @@
 using Electricity.Application.Common.Models;
+using Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution;
 using Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,12 @@ namespace Electricity.WebUI.Controllers
     {
         [HttpGet("overview")]
         public async Task<ActionResult<PowerFactorOverviewDto>> GetOverviewAsync([FromQuery] GetPowerFactorOverviewQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
+        [HttpGet("distribution")]
+        public async Task<ActionResult<PowerFactorDistributionDto>> GetDistributionAsync([FromQuery] GetPowerFactorDistributionQuery query)
         {
             return await Mediator.Send(query);
         }

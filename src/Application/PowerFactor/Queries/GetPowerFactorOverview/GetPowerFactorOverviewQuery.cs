@@ -7,6 +7,7 @@ using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Models.Queries;
 using Electricity.Application.Common.Services;
+using Electricity.Application.Common.Utils;
 using MediatR;
 using Newtonsoft.Json;
 using NJsonSchema.Annotations;
@@ -83,12 +84,15 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                 var reactiveEnergyL = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyL);
                 var reactiveEnergyC = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyC);
 
+                var cosFi = ElectricityUtil.CalcCosFi(activeEnergy, reactiveEnergyL - reactiveEnergyC);
+
                 return new PowerFactorOverviewItem
                 {
                     GroupName = g.Name,
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,
                     ReactiveEnergyC = reactiveEnergyC,
+                    CosFi = cosFi,
                     Interval = emView.GetInterval()
                 };
             });

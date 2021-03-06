@@ -61,6 +61,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             return Task.FromResult(new PowerFactorDistributionDto
             {
+                GroupName = group.Name,
                 Distribution1 = items1,
                 Distribution2 = items2,
             });

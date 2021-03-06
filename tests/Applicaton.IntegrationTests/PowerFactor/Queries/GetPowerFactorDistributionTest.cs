@@ -40,11 +40,11 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
             var result = await SendAsync(query);
 
             result.GroupName.Should().NotBeNullOrWhiteSpace();
-            result.Distribution1.Should().HaveCount(1);
+            result.Distribution1.Should().HaveCount(7);
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BePositive();
+                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
             }
         }
@@ -67,7 +67,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BePositive();
+                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
             }
         }
@@ -86,18 +86,18 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var result = await SendAsync(query);
 
-            result.Distribution1.Should().HaveCount(2);
-            result.Distribution1.Should().HaveCount(2);
+            result.Distribution1.Should().HaveCount(7);
+            result.Distribution1.Should().HaveCount(7);
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BePositive();
+                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
             }
 
             foreach (var item in result.Distribution2)
             {
-                item.Value.Should().BePositive();
+                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
             }
         }
