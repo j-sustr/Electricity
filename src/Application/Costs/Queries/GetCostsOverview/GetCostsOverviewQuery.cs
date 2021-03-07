@@ -94,6 +94,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                 return new CostlyQuantitiesOverviewItem
                 {
+                    GroupId = g.ID.ToString(),
                     GroupName = g.Name,
 
                     ActiveEnergyInMonths = activeEnergy.Values().ToArray(),

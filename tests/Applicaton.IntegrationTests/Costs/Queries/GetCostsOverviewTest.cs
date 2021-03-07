@@ -29,6 +29,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 
             foreach (var item in result.Items1)
             {
+                item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
                 item.ActiveEnergyInMonths.Should().OnlyContain(x => x > 0);

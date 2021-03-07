@@ -5,6 +5,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
     public class PowerFactorOverviewItem
     {
+        public string GroupId { get; set; }
         public string GroupName { get; set; }
 
         public float ActiveEnergy { get; set; }

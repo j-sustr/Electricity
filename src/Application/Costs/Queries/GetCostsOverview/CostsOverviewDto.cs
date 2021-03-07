@@ -7,6 +7,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
     public class CostlyQuantitiesOverviewItem
     {
+        public string GroupId { get; set; }
         public string GroupName { get; set; }
 
         public float[] ActiveEnergyInMonths { get; set; }

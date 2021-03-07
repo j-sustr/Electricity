@@ -88,6 +88,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 
                 return new PowerFactorOverviewItem
                 {
+                    GroupId = g.ID.ToString(),
                     GroupName = g.Name,
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,

@@ -45,6 +45,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Items1)
             {
+                item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
                 item.ActiveEnergy.Should().BePositive();
@@ -70,6 +71,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Items1)
             {
+                item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
                 item.ActiveEnergy.Should().BePositive();
@@ -97,6 +99,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Items1)
             {
+                item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
                 item.ActiveEnergy.Should().BePositive();
