@@ -98,6 +98,8 @@ namespace Electricity.WebUI
                 app.UseMiddleware<AutoAuthorizeMiddleware>();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                app.UseCors(builder =>
+                    builder.WithOrigins("http://localhost:4200"));
             }
             else
             {
@@ -122,9 +124,6 @@ namespace Electricity.WebUI
                 settings.Path = "/api";
                 settings.DocumentPath = "/api/specification.json";
             });
-
-            app.UseCors(builder =>
-                builder.WithOrigins("http://localhost:4200"));
 
             app.UseRouting();
             app.UseMultiTenant();
