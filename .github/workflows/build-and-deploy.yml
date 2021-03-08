@@ -19,11 +19,10 @@ jobs:
     name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
+    - name: Checkout repository and submodules
       uses: actions/checkout@v2
-      
-    - name: Checkout submodules
-      uses: textbook/git-checkout-submodule-action@2.1.1
+      with:
+        submodules: recursive
 
     
     - name: Setup .NET Core SDK ${{ env.NETCORE_VERSION }}
