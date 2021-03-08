@@ -38,7 +38,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Test app
-      run: dotnet test --no-build
+      run: dotnet test
 
     - name: Publish app for deploy
       run: dotnet publish --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
