@@ -2,11 +2,12 @@ name: "Build and Deploy"
 
 on:
   push:
-    branches: [ main ]
-  paths-ignore:
-    - '**/*.md'
-    - '**/*.gitignore'
-    - '**/*.gitattributes'
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
 
 env:
   AZURE_WEBAPP_NAME: aspnet-core-sample-deploy
