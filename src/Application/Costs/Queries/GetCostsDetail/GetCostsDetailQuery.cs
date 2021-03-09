@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataSource;
+using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
@@ -71,12 +72,20 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             }
 
             var emQuantities = new ElectricityMeterQuantity[] {
-                    ElectricityMeterQuantity.ActiveEnergy,
-                    ElectricityMeterQuantity.ReactiveEnergyL
+                    new ElectricityMeterQuantity{
+                        Type = ElectricityMeterQuantityType.ActiveEnergy,
+                        Phase = Phase.Main
+                    },
+                    new ElectricityMeterQuantity{
+                        Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                        Phase = Phase.Main
+                    }
                 };
 
             var powQuantities = new PowerQuantity[] {
-                    PowerQuantity.PAvg3P
+                    new PowerQuantity{
+                        Type = PowerQuantityType.PAvg3P
+                    }
                 };
 
             var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
@@ -86,9 +95,20 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                 throw new IntervalOutOfRangeException(intervalName);
             }
 
-            var activeEnergy = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ActiveEnergy);
-            var reactiveEnergyL = emView.GetDifferenceInMonths(ElectricityMeterQuantity.ReactiveEnergyL);
-            var peakDemand = powView.GetPeakDemandInMonths(PowerQuantity.PAvg3P);
+            var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
+            {
+                Type = ElectricityMeterQuantityType.ActiveEnergy,
+                Phase = Phase.Main
+            });
+            var reactiveEnergyL = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
+            {
+                Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                Phase = Phase.Main
+            });
+            var peakDemand = powView.GetPeakDemandInMonths(new PowerQuantity
+            {
+                Type = PowerQuantityType.PAvg3P
+            });
 
             var items = new List<CostlyQuantitiesDetailItem>();
             for (int i = 0; i < activeEnergy.Size; i++)

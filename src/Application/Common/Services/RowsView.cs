@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public abstract class RowsView<TQuantity>
+    public abstract class RowsView<TQuantity> where TQuantity : IEquatable<TQuantity>
     {
         protected readonly TQuantity[] _quantities;
 
@@ -40,13 +40,22 @@ namespace Electricity.Application.Common.Services
 
         protected int GetIndexOfQuantity(TQuantity quantity)
         {
-            int i = Array.IndexOf(_quantities, quantity);
-            if (i == -1)
+            int a = -1;
+            for (int i = 0; i < _quantities.Length; i++)
+            {
+                if (_quantities[i].Equals(quantity))
+                {
+                    a = i;
+                    break;
+                }
+            }
+
+            if (a == -1)
             {
                 throw new Exception($"does not have {nameof(quantity)}");
             }
 
-            return i;
+            return a;
         }
     }
 }

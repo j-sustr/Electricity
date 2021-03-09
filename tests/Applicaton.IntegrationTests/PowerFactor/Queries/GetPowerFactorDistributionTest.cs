@@ -27,14 +27,32 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         }
 
         [Test]
+        public async Task ShouldRequirePhases()
+        {
+            var userId = await RunAsDefaultUserAsync();
+
+            var query = new GetPowerFactorDistributionQuery
+            {
+                Interval1 = new IntervalDto(null, null)
+            };
+
+            FluentActions.Invoking(() =>
+                SendAsync(query)).Should().Throw<ValidationException>();
+        }
+
+        [Test]
         public async Task ShouldReturnPowerFactorOverviewWhenUnboundedIntervalProvided()
         {
             var userId = await RunAsDefaultUserAsync();
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetGroupIdByName("group-1"),
+                GroupId = GetUserGroupIdByName("group-1"),
                 Interval1 = new IntervalDto(null, null),
+                Phases = new Phases
+                {
+                    Main = true
+                }
             };
 
             var result = await SendAsync(query);
@@ -44,8 +62,9 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
+
+                item.ValueMain.Should().BeGreaterOrEqualTo(0);
             }
         }
 
@@ -56,8 +75,12 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetGroupIdByName("group-1"),
-                Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10))
+                GroupId = GetUserGroupIdByName("group-1"),
+                Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
+                Phases = new Phases
+                {
+                    Main = true
+                }
             };
 
             var result = await SendAsync(query);
@@ -67,8 +90,9 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
+
+                item.ValueMain.Should().BeGreaterOrEqualTo(0);
             }
         }
 
@@ -79,9 +103,14 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetGroupIdByName("group-1"),
+                GroupId = GetUserGroupIdByName("group-1"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
-                Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20))
+                Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20)),
+                Phases = new Phases
+                {
+                    L2 = true,
+                    L3 = true
+                }
             };
 
             var result = await SendAsync(query);
@@ -91,14 +120,18 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
+
+                item.ValueL2.Should().BeGreaterOrEqualTo(0);
+                item.ValueL3.Should().BeGreaterOrEqualTo(0);
             }
 
             foreach (var item in result.Distribution2)
             {
-                item.Value.Should().BeGreaterOrEqualTo(0);
                 item.Range.Should().NotBeNullOrWhiteSpace();
+
+                item.ValueL2.Should().BeGreaterOrEqualTo(0);
+                item.ValueL3.Should().BeGreaterOrEqualTo(0);
             }
         }
     }

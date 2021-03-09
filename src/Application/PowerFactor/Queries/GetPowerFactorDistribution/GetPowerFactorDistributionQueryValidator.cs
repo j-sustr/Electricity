@@ -16,6 +16,15 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             RuleFor(x => x.Interval1)
                .NotNull()
                .WithMessage("Interval1 is required.");
+
+            RuleFor(x => x.Phases)
+               .NotNull().WithMessage("Phases are required.")
+               .DependentRules(() =>
+               {
+                   RuleFor(x => x.Phases.ToArray()).NotEmpty()
+                        .WithMessage("At least one phase must be selected.");
+               });
+                
         }
     }
 }

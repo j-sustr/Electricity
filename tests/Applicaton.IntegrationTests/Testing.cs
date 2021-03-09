@@ -172,9 +172,9 @@ public class Testing
         throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
     }
 
-    public static string GetGroupIdByName(string name)
+    public static string GetUserGroupIdByName(string name)
     {
-        var g = _dataSourceFactory.Groups.Find(g => g.Name == name);
+        var g = _dataSourceFactory.UserGroups.Find(g => g.Name == name);
         if (g == null)
         {
             return null;
@@ -182,8 +182,8 @@ public class Testing
         return g.ID.ToString();
     }
 
-    public static int GetGroupCount()
+    public static int GetUserGroupCount()
     {
-        return _dataSourceFactory.Groups.Count;
+        return _dataSourceFactory.UserGroups.Count;
     }
 }

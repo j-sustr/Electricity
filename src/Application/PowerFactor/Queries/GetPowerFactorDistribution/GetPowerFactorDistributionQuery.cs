@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataSource;
+using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
@@ -22,8 +23,9 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
         public string GroupId { get; set; }
 
         public IntervalDto Interval1 { get; set; }
-
         public IntervalDto? Interval2 { get; set; }
+
+        public Phases Phases { get; set; }
     }
 
     public class GetPowerFactorDistributionQueryHandler : IRequestHandler<GetPowerFactorDistributionQuery, PowerFactorDistributionDto>
@@ -49,6 +51,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
         {
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
+            var phases = request.Phases;
 
             var group = _groupService.GetGroupById(request.GroupId);
             if (group == null)
@@ -56,8 +59,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 throw new NotFoundException("Invalid GroupId");
             }
 
-            var items1 = GetItemsForInterval(group, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(group, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(group, interval1, phases, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(group, interval2, phases, nameof(request.Interval2));
 
             return Task.FromResult(new PowerFactorDistributionDto
             {
@@ -67,27 +70,100 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             });
         }
 
-        public PowerFactorDistributionItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
+        public PowerFactorDistributionItem[] GetItemsForInterval(Group g, Interval interval, Phases phases, string intervalName)
         {
             if (interval == null)
             {
                 return null;
             }
 
-            var emQuantities = new ElectricityMeterQuantity[] {
-                    ElectricityMeterQuantity.ActiveEnergy,
-                    ElectricityMeterQuantity.ReactiveEnergyL,
-                    ElectricityMeterQuantity.ReactiveEnergyC,
-                };
+            var emQuantities = CreateQuantities(phases.ToArray());
 
             var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
             if (emView == null)
             {
                 throw new IntervalOutOfRangeException(intervalName);
             }
-            var activeEnergy = emView.GetDifferenceInQuarterHours(ElectricityMeterQuantity.ActiveEnergy);
-            var reactiveEnergyL = emView.GetDifferenceInQuarterHours(ElectricityMeterQuantity.ReactiveEnergyL);
-            var reactiveEnergyC = emView.GetDifferenceInQuarterHours(ElectricityMeterQuantity.ReactiveEnergyC);
+
+            var distributions = new Dictionary<Phase, Dictionary<string, int>>();
+
+            foreach (var phase in phases.ToArray())
+            {
+                distributions[phase] = CalcPowerFactorDistributionForPhase(emView, phase);
+            }
+
+            return DistributionToItems(distributions, phases);
+        }
+
+        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<Phase, Dictionary<string, int>> distributions, Phases phases)
+        {
+            var items = new List<PowerFactorDistributionItem>();
+
+            var dist = distributions[phases.ToArray()[0]];
+
+            foreach (var entry in dist)
+            {
+                var item = new PowerFactorDistributionItem();
+
+                item.Range = entry.Key;
+
+                if (phases.Main == true)
+                    item.ValueMain = distributions[Phase.Main][entry.Key];
+                if (phases.L1 == true)
+                    item.ValueL1 = distributions[Phase.L1][entry.Key];
+                if (phases.L2 == true)
+                    item.ValueL2 = distributions[Phase.L2][entry.Key];
+                if (phases.L3 == true)
+                    item.ValueL3 = distributions[Phase.L3][entry.Key];
+
+                items.Add(item);
+            }
+
+            return items.ToArray();
+        }
+
+        public ElectricityMeterQuantity[] CreateQuantities(Phase[] phases)
+        {
+            var emQuantityTypes = new ElectricityMeterQuantityType[] {
+                    ElectricityMeterQuantityType.ActiveEnergy,
+                    ElectricityMeterQuantityType.ReactiveEnergyL,
+                    ElectricityMeterQuantityType.ReactiveEnergyC,
+                };
+
+            var quanities = new List<ElectricityMeterQuantity>();
+
+            foreach (var qt in emQuantityTypes)
+            {
+                foreach (var p in phases)
+                {
+                    quanities.Add(new ElectricityMeterQuantity
+                    {
+                        Type = qt,
+                        Phase = p
+                    });
+                }
+            }
+
+            return quanities.ToArray();
+        }
+
+        public Dictionary<string, int> CalcPowerFactorDistributionForPhase(ElectricityMeterRowsView emView, Phase phase)
+        {
+            var activeEnergy = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
+            {
+                Type = ElectricityMeterQuantityType.ActiveEnergy,
+                Phase = phase,
+            });
+            var reactiveEnergyL = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
+            {
+                Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                Phase = phase,
+            });
+            var reactiveEnergyC = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
+            {
+                Type = ElectricityMeterQuantityType.ReactiveEnergyC,
+                Phase = phase,
+            });
 
             var ep = activeEnergy.Values().ToArray();
             var eqL = reactiveEnergyL.Values().ToArray();
@@ -99,30 +175,10 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 cosFi[i] = ElectricityUtil.CalcCosFi(ep[i], eqL[i] - eqC[i]);
             }
 
-            var distribution = CalcDistribution(cosFi);
-
-            return DistributionToItems(distribution);
+            return CalcPowerFactorDistribution(cosFi);
         }
 
-        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<string, int> distribution)
-        {
-            var items = new List<PowerFactorDistributionItem>();
-
-            foreach (KeyValuePair<string, int> entry in distribution)
-            {
-                items.Add(new PowerFactorDistributionItem
-                {
-                    Kind = null,
-                    Phase = 0,
-                    Range = entry.Key,
-                    Value = entry.Value,
-                });
-            }
-
-            return items.ToArray();
-        }
-
-        public Dictionary<string, int> CalcDistribution(float[] cosFi)
+        public Dictionary<string, int> CalcPowerFactorDistribution(float[] cosFi)
         {
             var counter = new Dictionary<string, int>();
             counter.Add("0.950-1.000", 0);

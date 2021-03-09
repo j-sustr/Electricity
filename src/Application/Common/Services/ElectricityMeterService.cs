@@ -9,13 +9,6 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public enum ElectricityMeterQuantity
-    {
-        ActiveEnergy,
-        ReactiveEnergyL,
-        ReactiveEnergyC,
-    }
-
     public class ElectricityMeterService
     {
         private readonly ITableCollection _tableCollection;
@@ -30,7 +23,7 @@ namespace Electricity.Application.Common.Services
         {
             var table = _tableCollection.GetTable(groupId, (byte)Arch.ElectricityMeter);
 
-            var q = quantities.Select(q => GetQuantity(q)).ToArray();
+            var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
             var rows = table.GetRows(new Models.Queries.GetRowsQuery
             {
@@ -44,24 +37,6 @@ namespace Electricity.Application.Common.Services
             }
 
             return new ElectricityMeterRowsView(quantities, rows);
-        }
-
-        public static Quantity GetQuantity(ElectricityMeterQuantity quantity)
-        {
-            switch (quantity)
-            {
-                case ElectricityMeterQuantity.ActiveEnergy:
-                    return new Quantity("3EP", "Wh");
-
-                case ElectricityMeterQuantity.ReactiveEnergyL:
-                    return new Quantity("3EQL", "varh");
-
-                case ElectricityMeterQuantity.ReactiveEnergyC:
-                    return new Quantity("3EQC", "varh");
-
-                default:
-                    throw new ArgumentException("invalid quantity");
-            }
         }
 
         public bool HasInterval(Guid groupId, Interval interval)

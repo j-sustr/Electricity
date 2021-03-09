@@ -41,7 +41,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetGroupCount());
+            result.Items1.Should().HaveCount(GetUserGroupCount());
 
             foreach (var item in result.Items1)
             {
@@ -67,7 +67,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetGroupCount());
+            result.Items1.Should().HaveCount(GetUserGroupCount());
 
             foreach (var item in result.Items1)
             {
@@ -94,8 +94,8 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetGroupCount());
-            result.Items2.Should().HaveCount(GetGroupCount());
+            result.Items1.Should().HaveCount(GetUserGroupCount());
+            result.Items2.Should().HaveCount(GetUserGroupCount());
 
             foreach (var item in result.Items1)
             {

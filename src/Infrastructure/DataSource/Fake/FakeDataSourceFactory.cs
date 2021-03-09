@@ -13,7 +13,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
     {
         private int _seed;
 
-        public List<Group> Groups = new List<Group>{
+        public List<Group> UserGroups = new List<Group>{
             new Group(GuidUtil.IntToGuid(1), "group-1"),
             new Group(GuidUtil.IntToGuid(2), "group-2"),
             new Group(GuidUtil.IntToGuid(3), "group-3"),
@@ -32,7 +32,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
         public DS.DataSource CreateDataSource(DataSourceConfig config)
         {
             var ds = new FakeDataSource(_seed, _interval);
-            ds.Groups = Groups;
+            ds.Groups = UserGroups;
             return ds;
         }
     }

@@ -9,11 +9,6 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public enum PowerQuantity
-    {
-        PAvg3P,
-    }
-
     public class PowerService
     {
         private readonly ITableCollection _tableCollection;
@@ -27,7 +22,7 @@ namespace Electricity.Application.Common.Services
         {
             var table = _tableCollection.GetTable(groupId, (byte)Arch.Main);
 
-            var q = quantities.Select(q => GetQuantity(q)).ToArray();
+            var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
             var rows = table.GetRows(new Models.Queries.GetRowsQuery
             {
@@ -41,18 +36,6 @@ namespace Electricity.Application.Common.Services
             }
 
             return new PowerRowsView(quantities, rows);
-        }
-
-        public static Quantity GetQuantity(PowerQuantity quantity)
-        {
-            switch (quantity)
-            {
-                case PowerQuantity.PAvg3P:
-                    return new Quantity("P_max_P3_C", "W");
-
-                default:
-                    throw new ArgumentException("invalid quantity");
-            }
         }
 
         public bool HasInterval(Guid groupId, Interval interval)

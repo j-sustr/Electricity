@@ -69,9 +69,18 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
             var items = groups.Select(g =>
             {
                 var emQuantities = new ElectricityMeterQuantity[] {
-                    ElectricityMeterQuantity.ActiveEnergy,
-                    ElectricityMeterQuantity.ReactiveEnergyL,
-                    ElectricityMeterQuantity.ReactiveEnergyC,
+                    new ElectricityMeterQuantity{
+                        Type = ElectricityMeterQuantityType.ActiveEnergy,
+                        Phase = Phase.Main
+                    },
+                    new ElectricityMeterQuantity{
+                        Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                        Phase = Phase.Main
+                    },
+                    new ElectricityMeterQuantity{
+                        Type = ElectricityMeterQuantityType.ReactiveEnergyC,
+                        Phase = Phase.Main
+                    }
                 };
 
                 var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
@@ -80,9 +89,21 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     throw new IntervalOutOfRangeException(intervalName);
                 }
 
-                var activeEnergy = emView.GetDifference(ElectricityMeterQuantity.ActiveEnergy);
-                var reactiveEnergyL = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyL);
-                var reactiveEnergyC = emView.GetDifference(ElectricityMeterQuantity.ReactiveEnergyC);
+                var activeEnergy = emView.GetDifference(new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ActiveEnergy,
+                    Phase = Phase.Main
+                });
+                var reactiveEnergyL = emView.GetDifference(new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                    Phase = Phase.Main
+                });
+                var reactiveEnergyC = emView.GetDifference(new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyC,
+                    Phase = Phase.Main
+                });
 
                 var cosFi = ElectricityUtil.CalcCosFi(activeEnergy, reactiveEnergyL - reactiveEnergyC);
 

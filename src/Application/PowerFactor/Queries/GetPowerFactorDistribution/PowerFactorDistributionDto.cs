@@ -7,13 +7,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 {
     public class PowerFactorDistributionItem
     {
-        public int Value { get; set; }
-
         public string Range { get; set; }
 
-        public string Kind { get; set; }
-
-        public int Phase { get; set; }
+        public int? ValueMain { get; set; }
+        public int? ValueL1 { get; set; }
+        public int? ValueL2 { get; set; }
+        public int? ValueL3 { get; set; }
     }
 
     public class PowerFactorDistributionDto

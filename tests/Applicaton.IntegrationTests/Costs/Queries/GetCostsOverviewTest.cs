@@ -24,7 +24,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetGroupCount());
+            result.Items1.Should().HaveCount(GetUserGroupCount());
             result.Items2.Should().BeNull();
 
             foreach (var item in result.Items1)
