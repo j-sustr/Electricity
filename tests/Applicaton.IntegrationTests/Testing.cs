@@ -36,7 +36,7 @@ public class Testing
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", true, true)
+            .AddJsonFile("appsettings.Test.json", true, true)
             .AddEnvironmentVariables();
 
         _configuration = builder.Build();
