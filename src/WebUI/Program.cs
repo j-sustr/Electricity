@@ -25,15 +25,6 @@ namespace Electricity.WebUI
                     logging.AddDebug();
                     logging.AddAzureWebAppDiagnostics();
                 })
-                .ConfigureServices(services =>
-                {
-                    services.Configure<AzureFileLoggerOptions>(options =>
-                    {
-                        options.FileName = "my-azure-diagnostics-";
-                        options.FileSizeLimit = 50 * 1024;
-                        options.RetainedFileCountLimit = 5;
-                    });
-                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
