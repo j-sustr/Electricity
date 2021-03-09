@@ -27,9 +27,6 @@
 
     <ItemGroup>
         <Folder Include="Common\Mappings\" />
-        <Folder Include="Groups\GetUserGroups\" />
-        <Folder Include="Series\GetPeakDemandSeries\" />
-        <Folder Include="Series\GetQuantitySeries\" />
     </ItemGroup>
 
     <ItemGroup>
