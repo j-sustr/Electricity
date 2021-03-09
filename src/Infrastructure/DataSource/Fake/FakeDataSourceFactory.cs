@@ -1,6 +1,7 @@
 using DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -13,9 +14,11 @@ namespace Electricity.Infrastructure.DataSource.Fake
         private int _seed;
 
         public List<Group> Groups = new List<Group>{
-            new Group(Guid.NewGuid(), "group-1"),
-            new Group(Guid.NewGuid(), "group-2"),
-            new Group(Guid.NewGuid(), "group-3"),
+            new Group(GuidUtil.IntToGuid(1), "group-1"),
+            new Group(GuidUtil.IntToGuid(2), "group-2"),
+            new Group(GuidUtil.IntToGuid(3), "group-3"),
+            new Group(GuidUtil.IntToGuid(4), "group-4"),
+            new Group(GuidUtil.IntToGuid(5), "group-5"),
         };
 
         private BoundedInterval _interval { get; set; }

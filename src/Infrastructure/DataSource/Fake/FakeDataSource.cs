@@ -53,7 +53,8 @@ namespace Electricity.Infrastructure.DataSource
             int rowLen = quantities.Length;
             var generators = Enumerable.Range(0, rowLen).Select((i) =>
             {
-                var g = new RandomSeries(0, _seed + i);
+                var seed = groupID.GetHashCode() + i;
+                var g = new RandomSeries(0, _seed + seed);
                 g.Cumulative = cumulative;
                 return g;
             }).ToArray();
