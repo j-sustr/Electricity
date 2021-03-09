@@ -181,4 +181,9 @@ public class Testing
         }
         return g.ID.ToString();
     }
+
+    public static int GetGroupCount()
+    {
+        return _dataSourceFactory.Groups.Count;
+    }
 }
