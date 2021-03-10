@@ -25,12 +25,8 @@ namespace Electricity.Application.IntegrationTests.DataSource.Queries
 
             var result = await SendAsync(query);
 
-            var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
-            var startU = start.ToUniversalTime();
-            var start2 = new DateTime(2021, 1, 1);
-
             result.MinDatetime.Should().Be(new DateTime(2021, 1, 1));
-            result.MaxDatetime.Should().Be(new DateTime(2021, 3, 1));
+            result.MaxDatetime.Should().Be(new DateTime(2021, 2, 28, 23, 59, 50));
         }
     }
 }
