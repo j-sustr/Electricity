@@ -9,16 +9,14 @@ namespace Electricity.WebUI.Controllers
 {
     public class GroupsController : ApiController
     {
-        // [HttpGet("user/{userId}")]
         [HttpGet]
-        public async Task<ActionResult<UserGroupsDto>> GetUserGroups([FromQuery] Guid userId)
+        public async Task<ActionResult<UserGroupsDto>> GetUserGroups()
         {
             return await Mediator.Send(new GetUserGroupsQuery());
         }
 
-        // [HttpGet("user-tree/{userId}")]
         [HttpGet("tree")]
-        public async Task<ActionResult<GroupTreeNodeDto>> GetUserGroupTree([FromQuery] Guid userId)
+        public async Task<ActionResult<GroupTreeNodeDto>> GetUserGroupTree()
         {
             return await Mediator.Send(new GetUserGroupTreeQuery());
         }
