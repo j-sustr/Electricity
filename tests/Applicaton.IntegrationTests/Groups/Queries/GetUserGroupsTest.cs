@@ -10,7 +10,7 @@ namespace Electricity.Application.IntegrationTests.Groups.Queries
 {
     using static Testing;
 
-    public class GetPowerFactorDistributionTest
+    public class GetUserGroupsTest
     {
         [Test]
         public async Task ShouldReturnUserGroups()

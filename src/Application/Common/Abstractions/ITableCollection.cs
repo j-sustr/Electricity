@@ -7,6 +7,6 @@ namespace Electricity.Application.Common.Interfaces
     {
         public ITable GetTable(Guid groupId, byte arch);
 
-        public Interval GetIntervalOverlap(Guid groupId, byte arch, Interval interval);
+        public Interval GetInterval(Guid? groupId, byte arch);
     }
 }

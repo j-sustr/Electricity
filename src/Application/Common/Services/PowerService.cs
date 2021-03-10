@@ -45,7 +45,9 @@ namespace Electricity.Application.Common.Services
 
         public Interval GetIntervalOverlap(Guid groupId, Interval interval)
         {
-            return _tableCollection.GetIntervalOverlap(groupId, (byte)Arch.Main, interval);
+            return _tableCollection
+                .GetInterval(groupId, (byte)Arch.Main)
+                .GetOverlap(interval);
         }
     }
 }

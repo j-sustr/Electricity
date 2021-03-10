@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using DataSource;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
+
 using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
@@ -21,9 +23,37 @@ namespace Electricity.Infrastructure.DataSource
             _arch = arch;
         }
 
-        public Interval GetInterval()
+        unsafe public Interval GetInterval()
         {
-            throw new NotImplementedException();
+            DateTime? start = null;
+            DateTime end = new DateTime();
+
+            var quants = new Quantity[]
+            {
+                new Quantity("", "")
+            };
+
+            using (var rc = _source.GetRows(_groupId, _arch, null, quants, 0))
+            {
+                if (rc == null)
+                {
+                    return null;
+                }
+
+                fixed (byte* p = rc.Buffer)
+                {
+                    rc.SetPointer(p);
+                    foreach (DS.RowInfo row in rc)
+                    {
+                        if (start == null)
+                            start = row.TimeLocal;
+                        else
+                            end = row.TimeLocal;
+                    }
+                }
+            }
+
+            return new Interval(start, end);
         }
 
         unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query)

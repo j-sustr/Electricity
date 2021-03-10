@@ -64,6 +64,22 @@ namespace Electricity.Infrastructure.DataSource
             return new DataSourceTableReader(this._dataSource, groupId, arch);
         }
 
+        public Interval GetInterval(Guid? groupId, byte arch)
+        {
+            if (groupId == null)
+            {
+                var groups = GetUserGroups();
+                if (groups.Length == 0)
+                    return null;
+
+                groupId = groups[0].ID;
+            }
+
+            var reader = new DataSourceTableReader(this._dataSource, (Guid)groupId, arch);
+
+            return reader.GetInterval();
+        }
+
         public Interval GetIntervalOverlap(Guid groupId, byte arch, Interval interval)
         {
             return interval;

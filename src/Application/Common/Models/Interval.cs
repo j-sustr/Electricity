@@ -11,11 +11,11 @@ namespace Electricity.Application.Common.Models
         public DateTime? End { get; set; }
 
         [JsonIgnore]
-        public bool IsFinite
+        public bool IsInfinite
         {
             get
             {
-                return Start != null && End != null;
+                return Start == null || End == null;
             }
         }
 
@@ -24,13 +24,12 @@ namespace Electricity.Application.Common.Models
         {
             get
             {
-                return !IsFinite && Start != End;
+                return IsInfinite && Start != End;
             }
         }
 
         public Interval()
         {
-
         }
 
         public Interval(DateTime? start, DateTime? end)
@@ -64,7 +63,7 @@ namespace Electricity.Application.Common.Models
 
         public DateRange ToDateRange()
         {
-            if (!IsFinite)
+            if (IsInfinite)
             {
                 return null;
             }

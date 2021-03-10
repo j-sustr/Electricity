@@ -15,7 +15,9 @@ namespace Electricity.Infrastructure
         {
             services.AddSingleton<IDataSourceFactory>((provider) =>
             {
-                return new FakeDataSourceFactory(0, new BoundedInterval(new DateTime(2021, 1, 1), new DateTime(2021, 3, 1)));
+                var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
+                var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
+                return new FakeDataSourceFactory(0, new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime()));
             });
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 

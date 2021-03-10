@@ -78,7 +78,9 @@ public class Testing
 
         services.Remove(dsFactoryDescriptor);
 
-        var interval = new BoundedInterval(new DateTime(2021, 1, 1), new DateTime(2021, 1, 31));
+        var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
+        var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
+        var interval = new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime());
 
         _dataSourceFactory = new FakeDataSourceFactory(0, interval);
         services.AddSingleton<IDataSourceFactory>(provider => _dataSourceFactory);
