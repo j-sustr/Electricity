@@ -6,13 +6,14 @@ namespace Electricity.Application.Common.Utils
     {
         private System.Random _random;
 
-        private float _next;
+        private float _nextValue;
 
+        public bool Positive { get; set; } = true;
         public bool Cumulative { get; set; } = false;
 
         public RandomSeries(float start = 0, int? seed = null)
         {
-            _next = start;
+            _nextValue = start;
 
             if (seed is int valueOfSeed)
             {
@@ -26,15 +27,25 @@ namespace Electricity.Application.Common.Utils
 
         public float Next()
         {
-            float value = _next;
+            float value = _nextValue;
+            float next = 0;
 
-            if (Cumulative)
+            if (Positive)
             {
-                _next += (float)_random.NextDouble();
+                next = (float)_random.NextDouble();
             }
             else
             {
-                _next += (float)_random.NextDouble() * 2 - 1;
+                next = (float)(_random.NextDouble() * 2 - 1);
+            }
+
+            if (Cumulative)
+            {
+                _nextValue += next;
+            }
+            else
+            {
+                _nextValue = next;
             }
 
             return value;
