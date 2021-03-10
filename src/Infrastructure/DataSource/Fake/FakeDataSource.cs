@@ -50,11 +50,13 @@ namespace Electricity.Infrastructure.DataSource
 
             bool cumulative = arch == (byte)Arch.ElectricityMeter;
 
-            int rowLen = quantities.Length;
-            var generators = Enumerable.Range(0, rowLen).Select((i) =>
+            var generators = quantities.Select((quant) =>
             {
-                var seed = groupID.GetHashCode() + i;
-                var g = new RandomSeries(0, _seed + seed);
+                int groupIdHash = GuidToHash(groupID);
+                int rangeHash = range != null ? DateRangeToHash(range) : 0;
+                int quanityHash = QuantityToHash(quant);
+                var hashSeed = groupIdHash + rangeHash + quanityHash;
+                var g = new RandomSeries(0, _seed + hashSeed);
                 g.Cumulative = cumulative;
                 return g;
             }).ToArray();
@@ -119,6 +121,36 @@ namespace Electricity.Infrastructure.DataSource
         protected override Stream GetStreamToRead(int RecID, byte arch, DateTime keyTime)
         {
             throw new NotImplementedException();
+        }
+
+        private int GuidToHash(Guid guid)
+        {
+            return StringToHash(guid.ToString());
+        }
+
+        private int DateRangeToHash(DateRange range)
+        {
+            var min = range.DateMin.ToString();
+            var max = range.DateMax.ToString();
+            return StringToHash(min) + StringToHash(max);
+        }
+
+        private int QuantityToHash(Quantity quant)
+        {
+            return StringToHash(quant.PropName);
+        }
+
+        private int StringToHash(string str)
+        {
+            int value = 0;
+            var chars = str.ToCharArray();
+
+            foreach (var c in chars)
+            {
+                value += c;
+            }
+
+            return value;
         }
     }
 }
