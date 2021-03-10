@@ -65,6 +65,9 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
                 item.Range.Should().NotBeNullOrWhiteSpace();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
+                item.ValueL1.Should().BeNull();
+                item.ValueL2.Should().BeNull();
+                item.ValueL2.Should().BeNull();
             }
         }
 
@@ -93,6 +96,9 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
                 item.Range.Should().NotBeNullOrWhiteSpace();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
+                item.ValueL1.Should().BeNull();
+                item.ValueL2.Should().BeNull();
+                item.ValueL2.Should().BeNull();
             }
         }
 
@@ -122,6 +128,8 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
             {
                 item.Range.Should().NotBeNullOrWhiteSpace();
 
+                item.ValueMain.Should().BeNull();
+                item.ValueL1.Should().BeNull();
                 item.ValueL2.Should().BeGreaterOrEqualTo(0);
                 item.ValueL3.Should().BeGreaterOrEqualTo(0);
             }
@@ -130,6 +138,8 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
             {
                 item.Range.Should().NotBeNullOrWhiteSpace();
 
+                item.ValueMain.Should().BeNull();
+                item.ValueL1.Should().BeNull();
                 item.ValueL2.Should().BeGreaterOrEqualTo(0);
                 item.ValueL3.Should().BeGreaterOrEqualTo(0);
             }
