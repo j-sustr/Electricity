@@ -17,11 +17,11 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
     public class GetCostsDetailQuery : IRequest<CostsDetailDto>
     {
+        public string GroupId { get; set; }
+
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
-
-        public string GroupId { get; set; }
     }
 
     public class GetCostsDetailQueryHandler : IRequestHandler<GetCostsDetailQuery, CostsDetailDto>
