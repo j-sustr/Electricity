@@ -1,4 +1,4 @@
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Models.Dtos;
 
 namespace Electricity.Application.Common.Models

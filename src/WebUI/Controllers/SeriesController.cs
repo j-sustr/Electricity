@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using AutoMapper;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Series.Queries.GetQuantitySeries;
 using Electricity.WebUI.Models;

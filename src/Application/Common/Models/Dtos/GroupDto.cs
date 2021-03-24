@@ -1,5 +1,5 @@
 using System;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Mappings;
 
 namespace Electricity.Application.Common.Models.Dtos

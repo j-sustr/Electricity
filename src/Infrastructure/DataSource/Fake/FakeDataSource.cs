@@ -2,17 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
 using Electricity.Infrastructure.DataSource.Fake;
 
-using DS = DataSource;
-
 namespace Electricity.Infrastructure.DataSource
 {
-    public class FakeDataSource : DS.DataSource
+    public class FakeDataSource : KMB.DataSource.DataSource
     {
         private int _seed;
 
@@ -103,26 +101,6 @@ namespace Electricity.Infrastructure.DataSource
             return Groups;
         }
 
-        public override Guid Login(string ENVISUser, string ENVISPassword)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override IList<UniArchiveBinPack> GetBinPacks(int RecID, byte arch, DateRange range)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override IList<UniConfig> GetConfs(int RecID, DateRange range)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Stream GetStreamToRead(int RecID, byte arch, DateTime keyTime)
-        {
-            throw new NotImplementedException();
-        }
-
         private int GuidToHash(Guid guid)
         {
             return StringToHash(guid.ToString());
@@ -151,6 +129,106 @@ namespace Electricity.Infrastructure.DataSource
             }
 
             return value;
+        }
+
+        public override IDisposable NewConnection()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IDisposable BeginTransaction(IDisposable connection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CommitTransaction(IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RollbackTransaction(IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Guid Login(string ENVISUser, string ENVISPassword, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<Group> GetGroups(Guid parent, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Quantity[] GetQuantities(Guid GroupID, byte arch, DateRange range, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override RowCollection GetRows(Guid GroupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, IDisposable connection, IDisposable transaction, EEnergyAggType energyAggType = KMB.DataSource.EEnergyAggType.Cumulative)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IList<UniConfig> GetConfs(int RecID, DateRange range, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IList<UniArchiveBinPack> GetBinPacks(int RecID, byte arch, DateRange range, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Stream GetStreamToRead(int RecID, byte arch, DateTime keyTime, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override UniArchiveBinPack BinPackToWrite(int recID, byte archID, DateTime time, ref DateTime curIntStart, ref DateTime curIntEnd, UniArchiveDefinition uad, uint period, IDisposable connection, IDisposable transaction, bool directFS)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void CommitBinPack(int recID, byte archID, UniArchiveBinPack ua, DateTime time, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int SaveRecord(SmpMeasNameDB record, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveArchiveDefinition(UniArchiveDefinition uad, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveConfig(UniConfig cfg, int recID, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<SmpMeasNameDB> GetRecords(IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
         }
     }
 }

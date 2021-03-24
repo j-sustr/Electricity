@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using MediatR;

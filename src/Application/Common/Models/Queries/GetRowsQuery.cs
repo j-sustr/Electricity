@@ -1,5 +1,5 @@
 using System;
-using DataSource;
+using KMB.DataSource;
 
 namespace Electricity.Application.Common.Models.Queries
 {

@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
-
-using DS = DataSource;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -15,7 +13,7 @@ namespace Electricity.Infrastructure.DataSource
 
         private readonly Tenant _tenant;
 
-        private readonly DS.DataSource _dataSource;
+        private readonly KMB.DataSource.DataSource _dataSource;
 
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
@@ -35,7 +33,7 @@ namespace Electricity.Infrastructure.DataSource
             }
         }
 
-        public DS.Group[] GetUserGroups()
+        public KMB.DataSource.Group[] GetUserGroups()
         {
             return _dataSource.GetUserGroups(GetUserGuid()).ToArray();
         }
@@ -54,7 +52,7 @@ namespace Electricity.Infrastructure.DataSource
             return root;
         }
 
-        public DS.Quantity[] GetQuantities(Guid groupId, byte arch, DS.DateRange range)
+        public KMB.DataSource.Quantity[] GetQuantities(Guid groupId, byte arch, KMB.DataSource.DateRange range)
         {
             return _dataSource.GetQuantities(groupId, arch, range);
         }

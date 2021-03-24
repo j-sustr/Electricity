@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 
-using DS = DataSource;
+
 
 namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceTableReader : ITable
     {
-        private DS.DataSource _source;
+        private KMB.DataSource.DataSource _source;
         private Guid _groupId;
         private byte _arch;
 
-        public DataSourceTableReader(DS.DataSource source, Guid groupId, byte arch)
+        public DataSourceTableReader(KMB.DataSource.DataSource source, Guid groupId, byte arch)
         {
             _source = source;
             _groupId = groupId;
@@ -43,7 +43,7 @@ namespace Electricity.Infrastructure.DataSource
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);
-                    foreach (DS.RowInfo row in rc)
+                    foreach (KMB.DataSource.RowInfo row in rc)
                     {
                         if (start == null)
                             start = row.TimeLocal;
@@ -79,7 +79,7 @@ namespace Electricity.Infrastructure.DataSource
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);
-                    foreach (DS.RowInfo row in rc)
+                    foreach (KMB.DataSource.RowInfo row in rc)
                     {
                         arr = new float[rowLen];
                         for (int i = 0; i < rowLen; i++)

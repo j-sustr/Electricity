@@ -1,8 +1,8 @@
-using DS = DataSource;
+
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {
-    public class FakePropValueFloat : DS.PropValueFloatBase
+    public class FakePropValueFloat : KMB.DataSource.PropValueFloatBase
     {
         public float Value { get; set; }
 

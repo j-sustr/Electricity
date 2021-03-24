@@ -1,11 +1,11 @@
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
 using System;
 using System.Collections.Generic;
 
-using DS = DataSource;
+
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {
@@ -29,7 +29,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
             _interval = interval;
         }
 
-        public DS.DataSource CreateDataSource(DataSourceConfig config)
+        public KMB.DataSource.DataSource CreateDataSource(DataSourceConfig config)
         {
             var ds = new FakeDataSource(_seed, _interval);
             ds.Groups = UserGroups;

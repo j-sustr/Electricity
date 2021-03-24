@@ -5,14 +5,14 @@ using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Extensions;
-using DS = DataSource;
+
 
 namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceManager : IDataSourceManager
     {
         private readonly IDataSourceFactory _dsFactory;
-        private readonly ConcurrentDictionary<Guid, DS.DataSource> dataSources = new ConcurrentDictionary<Guid, DS.DataSource>();
+        private readonly ConcurrentDictionary<Guid, KMB.DataSource.DataSource> dataSources = new ConcurrentDictionary<Guid, KMB.DataSource.DataSource>();
         private readonly ConcurrentDictionary<Guid, DataSourceConfig> dataSourceConfigs = new ConcurrentDictionary<Guid, DataSourceConfig>();
 
         public DataSourceManager(IDataSourceFactory dsFactory)
@@ -22,7 +22,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public Guid CreateDataSource(DataSourceConfig config)
         {
-            DS.DataSource newDataSource = _dsFactory.CreateDataSource(config);
+            KMB.DataSource.DataSource newDataSource = _dsFactory.CreateDataSource(config);
 
             var id = Guid.NewGuid();
             var configCopy = config.DeepClone();
@@ -36,9 +36,9 @@ namespace Electricity.Infrastructure.DataSource
             return dataSources.TryRemove(id, out var _);
         }
 
-        public DS.DataSource GetDataSource(Guid id)
+        public KMB.DataSource.DataSource GetDataSource(Guid id)
         {
-            DS.DataSource ds;
+            KMB.DataSource.DataSource ds;
             if (dataSources.TryGetValue(id, out ds))
             {
                 return ds;
