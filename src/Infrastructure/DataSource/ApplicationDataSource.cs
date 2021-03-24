@@ -7,13 +7,16 @@ using Electricity.Application.Common.Models;
 
 namespace Electricity.Infrastructure.DataSource
 {
-    public class ApplicationDataSource : IGroupService, IQuantityService, ITableCollection, IAuthenticationService
+    public class ApplicationDataSource : IDisposable, IGroupService, IQuantityService, ITableCollection, IAuthenticationService
     {
         private readonly ICurrentUserService _currentUserService;
 
         private readonly Tenant _tenant;
 
         private readonly KMB.DataSource.DataSource _dataSource;
+
+        private readonly IDisposable _connection;
+        private readonly IDisposable _transaction;
 
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
@@ -31,16 +34,25 @@ namespace Electricity.Infrastructure.DataSource
 
                 _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
             }
+
+            _connection = _dataSource.NewConnection();
+            _transaction = _dataSource.BeginTransaction(_connection);
         }
 
-        public KMB.DataSource.Group[] GetUserGroups()
+        public void Dispose()
         {
-            return _dataSource.GetUserGroups(GetUserGuid()).ToArray();
+            _transaction?.Dispose();
+            _connection?.Dispose();
+        }
+
+        public Group[] GetUserGroups()
+        {
+            return _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction).ToArray();
         }
 
         public GroupTreeNode GetUserGroupTree()
         {
-            var userGroups = _dataSource.GetUserGroups(GetUserGuid());
+            var userGroups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
             var root = new GroupTreeNode();
             root.Nodes = userGroups.Select(g =>
             {
@@ -52,14 +64,14 @@ namespace Electricity.Infrastructure.DataSource
             return root;
         }
 
-        public KMB.DataSource.Quantity[] GetQuantities(Guid groupId, byte arch, KMB.DataSource.DateRange range)
+        public Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range)
         {
-            return _dataSource.GetQuantities(groupId, arch, range);
+            return _dataSource.GetQuantities(groupId, arch, range, _connection, _transaction);
         }
 
         public ITable GetTable(Guid groupId, byte arch)
         {
-            return new DataSourceTableReader(this._dataSource, groupId, arch);
+            return new DataSourceTableReader(this._dataSource, groupId, arch, _connection, _transaction);
         }
 
         public Interval GetInterval(Guid? groupId, byte arch)
@@ -73,7 +85,7 @@ namespace Electricity.Infrastructure.DataSource
                 groupId = groups[0].ID;
             }
 
-            var reader = new DataSourceTableReader(this._dataSource, (Guid)groupId, arch);
+            var reader = new DataSourceTableReader(this._dataSource, (Guid)groupId, arch, _connection, _transaction);
 
             return reader.GetInterval();
         }
@@ -85,7 +97,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public Guid Login(string username, string password)
         {
-            return _dataSource.Login(username, password);
+            return _dataSource.Login(username, password, _connection, _transaction);
         }
 
         private Guid GetUserGuid()
@@ -106,7 +118,7 @@ namespace Electricity.Infrastructure.DataSource
 
         private void ReadGroupTree(GroupTreeNode root, Guid rootId)
         {
-            var groups = _dataSource.GetGroups(rootId);
+            var groups = _dataSource.GetGroups(rootId, _connection, _transaction);
             root.Nodes = groups.Select(g =>
             {
                 var node = new GroupTreeNode();
@@ -123,7 +135,7 @@ namespace Electricity.Infrastructure.DataSource
                 return null;
             }
 
-            var groups = _dataSource.GetUserGroups(GetUserGuid());
+            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
 
             return groups.Find(g => g.ID == guid);
         }

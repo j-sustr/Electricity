@@ -29,17 +29,77 @@ namespace Electricity.Infrastructure.DataSource
             throw new NotImplementedException();
         }
 
-        public override List<Group> GetGroups(Guid parent)
+        private int GuidToHash(Guid guid)
+        {
+            return StringToHash(guid.ToString());
+        }
+
+        private int DateRangeToHash(DateRange range)
+        {
+            var min = range.DateMin.ToString();
+            var max = range.DateMax.ToString();
+            return StringToHash(min) + StringToHash(max);
+        }
+
+        private int QuantityToHash(Quantity quant)
+        {
+            return StringToHash(quant.PropName);
+        }
+
+        private int StringToHash(string str)
+        {
+            int value = 0;
+            var chars = str.ToCharArray();
+
+            foreach (var c in chars)
+            {
+                value += c;
+            }
+
+            return value;
+        }
+
+        public override IDisposable NewConnection()
+        {
+            return null;
+        }
+
+        public override IDisposable BeginTransaction(IDisposable connection)
+        {
+            return null;
+        }
+
+        public override void CommitTransaction(IDisposable transaction)
         {
             throw new NotImplementedException();
         }
 
-        public override Quantity[] GetQuantities(Guid groupID, byte arch, DateRange range)
+        public override void RollbackTransaction(IDisposable transaction)
         {
             throw new NotImplementedException();
         }
 
-        public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, EEnergyAggType energyAggType = EEnergyAggType.Cumulative)
+        public override Guid Login(string ENVISUser, string ENVISPassword, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)
+        {
+            return Groups;
+        }
+
+        public override List<Group> GetGroups(Guid parent, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Quantity[] GetQuantities(Guid GroupID, byte arch, DateRange range, IDisposable connection, IDisposable transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, IDisposable connection, IDisposable transaction, EEnergyAggType energyAggType = KMB.DataSource.EEnergyAggType.Cumulative)
         {
             if (Groups.FindIndex(g => g.ID == groupID) == -1)
             {
@@ -94,86 +154,6 @@ namespace Electricity.Infrastructure.DataSource
             }
 
             return new FakeRowCollection(GenerateRows());
-        }
-
-        public override List<Group> GetUserGroups(Guid user)
-        {
-            return Groups;
-        }
-
-        private int GuidToHash(Guid guid)
-        {
-            return StringToHash(guid.ToString());
-        }
-
-        private int DateRangeToHash(DateRange range)
-        {
-            var min = range.DateMin.ToString();
-            var max = range.DateMax.ToString();
-            return StringToHash(min) + StringToHash(max);
-        }
-
-        private int QuantityToHash(Quantity quant)
-        {
-            return StringToHash(quant.PropName);
-        }
-
-        private int StringToHash(string str)
-        {
-            int value = 0;
-            var chars = str.ToCharArray();
-
-            foreach (var c in chars)
-            {
-                value += c;
-            }
-
-            return value;
-        }
-
-        public override IDisposable NewConnection()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IDisposable BeginTransaction(IDisposable connection)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void CommitTransaction(IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void RollbackTransaction(IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Guid Login(string ENVISUser, string ENVISPassword, IDisposable connection, IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<Group> GetGroups(Guid parent, IDisposable connection, IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Quantity[] GetQuantities(Guid GroupID, byte arch, DateRange range, IDisposable connection, IDisposable transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override RowCollection GetRows(Guid GroupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, IDisposable connection, IDisposable transaction, EEnergyAggType energyAggType = KMB.DataSource.EEnergyAggType.Cumulative)
-        {
-            throw new NotImplementedException();
         }
 
         protected override IList<UniConfig> GetConfs(int RecID, DateRange range, IDisposable connection, IDisposable transaction)

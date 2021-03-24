@@ -6,8 +6,6 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 
-
-
 namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceTableReader : ITable
@@ -15,12 +13,16 @@ namespace Electricity.Infrastructure.DataSource
         private KMB.DataSource.DataSource _source;
         private Guid _groupId;
         private byte _arch;
+        private IDisposable _connection;
+        private IDisposable _transaction;
 
-        public DataSourceTableReader(KMB.DataSource.DataSource source, Guid groupId, byte arch)
+        public DataSourceTableReader(KMB.DataSource.DataSource source, Guid groupId, byte arch, IDisposable connection, IDisposable transaction)
         {
             _source = source;
             _groupId = groupId;
             _arch = arch;
+            _connection = connection;
+            _transaction = transaction;
         }
 
         unsafe public Interval GetInterval()
@@ -33,7 +35,7 @@ namespace Electricity.Infrastructure.DataSource
                 new Quantity("", "")
             };
 
-            using (var rc = _source.GetRows(_groupId, _arch, null, quants, 0))
+            using (var rc = _source.GetRows(_groupId, _arch, null, quants, 0, _connection, _transaction))
             {
                 if (rc == null)
                 {
@@ -43,7 +45,7 @@ namespace Electricity.Infrastructure.DataSource
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);
-                    foreach (KMB.DataSource.RowInfo row in rc)
+                    foreach (RowInfo row in rc)
                     {
                         if (start == null)
                             start = row.TimeLocal;
@@ -69,7 +71,7 @@ namespace Electricity.Infrastructure.DataSource
             var entries = new List<Tuple<DateTime, float[]>>();
             var dateRange = query.Interval.ToDateRange();
             float[] arr;
-            using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, query.EnergyAggType))
+            using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, _connection, _transaction, query.EnergyAggType))
             {
                 if (rc == null)
                 {
@@ -79,7 +81,7 @@ namespace Electricity.Infrastructure.DataSource
                 fixed (byte* p = rc.Buffer)
                 {
                     rc.SetPointer(p);
-                    foreach (KMB.DataSource.RowInfo row in rc)
+                    foreach (RowInfo row in rc)
                     {
                         arr = new float[rowLen];
                         for (int i = 0; i < rowLen; i++)
