@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Application\Application.csproj" />
     <ProjectReference Include="..\..\src\WebUI\WebUI.csproj" />
   </ItemGroup>
 
@@ -40,9 +41,6 @@
     </Reference>
     <Reference Include="FileDataSource">
       <HintPath>..\..\dll\FileDataSource.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\Dlls\log4net.dll</HintPath>
     </Reference>
   </ItemGroup>
 
