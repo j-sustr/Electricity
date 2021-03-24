@@ -13,12 +13,13 @@ namespace Electricity.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IDataSourceFactory>((provider) =>
-            {
-                var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
-                var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
-                return new FakeDataSourceFactory(0, new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime()));
-            });
+            //services.AddSingleton<IDataSourceFactory>((provider) =>
+            //{
+            //    var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
+            //    var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
+            //    return new FakeDataSourceFactory(0, new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime()));
+            //});
+            services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
             services.AddSingleton<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
