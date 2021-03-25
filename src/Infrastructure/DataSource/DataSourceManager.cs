@@ -6,7 +6,6 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Extensions;
 
-
 namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceManager : IDataSourceManager
@@ -25,7 +24,7 @@ namespace Electricity.Infrastructure.DataSource
             KMB.DataSource.DataSource newDataSource = _dsFactory.CreateDataSource(config);
 
             var id = Guid.NewGuid();
-            var configCopy = config.DeepClone();
+            var configCopy = (DataSourceConfig)config.Clone();
             dataSourceConfigs.TryAdd(id, configCopy);
             dataSources.TryAdd(id, newDataSource);
             return id;
