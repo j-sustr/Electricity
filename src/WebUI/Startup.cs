@@ -17,6 +17,7 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Electricity.WebUI
 {
@@ -69,8 +70,20 @@ namespace Electricity.WebUI
             });
 
             services.AddMultiTenant<Tenant>()
-                    .WithConfigurationStore()
-                    .WithStaticStrategy("finbuckle");
+                    .WithInMemoryStore(options =>
+                    {
+                        options.IsCaseSensitive = true;
+                    })
+                    .WithDelegateStrategy(context =>
+                    {
+                        if (!(context is Microsoft.AspNetCore.Http.HttpContext httpContext))
+                            return null;
+
+                        httpContext.Request.Query.TryGetValue("tenant", out var identifier);
+
+                        return Task.FromResult(identifier.FirstOrDefault());
+                    })
+                    .WithClaimStrategy();
 
             services.AddMvcCore()
                 .AddApiExplorer();
