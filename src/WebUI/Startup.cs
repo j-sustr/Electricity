@@ -6,6 +6,7 @@ using Electricity.WebUI.Filters;
 using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ namespace Electricity.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+            services.AddRazorPages();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ITenantProvider, TenantProvider>();
@@ -54,8 +56,6 @@ namespace Electricity.WebUI
                 options.Filters.Add<ApiExceptionFilterAttribute>())
                     .AddFluentValidation();
 
-            services.AddRazorPages();
-
             // Customise default API behaviour
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -67,6 +67,9 @@ namespace Electricity.WebUI
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
             services.AddMultiTenant<Tenant>()
                 .WithInMemoryStore(options =>
