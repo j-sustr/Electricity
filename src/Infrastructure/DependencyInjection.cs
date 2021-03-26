@@ -27,8 +27,6 @@ namespace Electricity.Infrastructure
             services.AddScoped<ITableCollection, ApplicationDataSource>();
             services.AddScoped<Application.Common.Interfaces.IAuthenticationService, ApplicationDataSource>();
 
-            services.AddTransient<IIdentityService, FakeIdentityService>();
-
             return services;
         }
     }
