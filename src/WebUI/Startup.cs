@@ -1,4 +1,3 @@
-using AutoMapper;
 using Electricity.Application;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
@@ -70,20 +69,20 @@ namespace Electricity.WebUI
             });
 
             services.AddMultiTenant<Tenant>()
-                    .WithInMemoryStore(options =>
-                    {
-                        options.IsCaseSensitive = true;
-                    })
-                    .WithDelegateStrategy(context =>
-                    {
-                        if (!(context is Microsoft.AspNetCore.Http.HttpContext httpContext))
-                            return null;
+                .WithInMemoryStore(options =>
+                {
+                    options.IsCaseSensitive = true;
+                })
+                .WithDelegateStrategy(context =>
+                {
+                    if (!(context is Microsoft.AspNetCore.Http.HttpContext httpContext))
+                        return null;
 
-                        httpContext.Request.Query.TryGetValue("tenant", out var identifier);
+                    httpContext.Request.Query.TryGetValue("tenant", out var identifier);
 
-                        return Task.FromResult(identifier.FirstOrDefault());
-                    })
-                    .WithClaimStrategy();
+                    return Task.FromResult(identifier.FirstOrDefault());
+                })
+                .WithClaimStrategy();
 
             services.AddMvcCore()
                 .AddApiExplorer();
@@ -106,12 +105,12 @@ namespace Electricity.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<AutoAuthorizeMiddleware>();
+            // app.UseMiddleware<AutoAuthorizeMiddleware>();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
                 app.UseCors(builder =>
                     builder.WithOrigins("http://localhost:4200"));
             }
