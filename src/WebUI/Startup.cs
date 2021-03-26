@@ -1,4 +1,5 @@
 using Electricity.Application;
+using Electricity.Application.Common.Abstractions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Infrastructure;
@@ -9,6 +10,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,9 +38,6 @@ namespace Electricity.WebUI
             services.AddCors();
             services.AddRazorPages();
 
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<ITenantProvider, TenantProvider>();
-
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<Application.Common.Mappings.MappingProfile>();
@@ -47,6 +46,10 @@ namespace Electricity.WebUI
 
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<ITenantProvider, TenantService>();
 
             services.AddHttpContextAccessor();
 
@@ -69,23 +72,22 @@ namespace Electricity.WebUI
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
+                .AddCookie(options =>
+                {
+                });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddMultiTenant<Tenant>()
                 .WithInMemoryStore(options =>
                 {
                     options.IsCaseSensitive = true;
                 })
-                .WithDelegateStrategy(context =>
-                {
-                    if (!(context is Microsoft.AspNetCore.Http.HttpContext httpContext))
-                        return null;
-
-                    httpContext.Request.Query.TryGetValue("tenant", out var identifier);
-
-                    return Task.FromResult(identifier.FirstOrDefault());
-                })
-                .WithClaimStrategy();
+                .WithSessionStrategy();
 
             services.AddMvcCore()
                 .AddApiExplorer();
@@ -108,12 +110,9 @@ namespace Electricity.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // app.UseMiddleware<AutoAuthorizeMiddleware>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
                 app.UseCors(builder =>
                     builder.WithOrigins("http://localhost:4200"));
             }
@@ -123,8 +122,6 @@ namespace Electricity.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // app.UseMiddleware<MissingTenantMiddleware>(Configuration["MissingTenantLocation"]);
 
             app.UseHealthChecks("/health");
             app.UseHttpsRedirection();
@@ -142,6 +139,8 @@ namespace Electricity.WebUI
             });
 
             app.UseRouting();
+
+            app.UseSession();
             app.UseMultiTenant();
 
             app.UseAuthentication();

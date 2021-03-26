@@ -21,6 +21,7 @@ namespace Electricity.WebUI.Filters
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
                 { typeof(IntervalOutOfRangeException), HandleIntervalOutOfRangeException },
+                { typeof(UnknownTenantException), HandleUnknownTenantException },
             };
         }
 
@@ -137,6 +138,23 @@ namespace Electricity.WebUI.Filters
             context.Result = new ObjectResult(details)
             {
                 StatusCode = StatusCodes.Status400BadRequest
+            };
+
+            context.ExceptionHandled = true;
+        }
+
+        private void HandleUnknownTenantException(ExceptionContext context)
+        {
+            var details = new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Unknown tenant",
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4"
+            };
+
+            context.Result = new ObjectResult(details)
+            {
+                StatusCode = StatusCodes.Status404NotFound
             };
 
             context.ExceptionHandled = true;

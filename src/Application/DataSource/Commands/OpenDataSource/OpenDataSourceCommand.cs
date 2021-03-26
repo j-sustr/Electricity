@@ -1,4 +1,5 @@
-﻿using Electricity.Application.Common.Exceptions;
+﻿using Electricity.Application.Common.Abstractions;
+using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
@@ -19,16 +20,21 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
 
     public class OpenDataSourceCommandHandler : IRequestHandler<OpenDataSourceCommand, bool>
     {
-        private readonly IMultiTenantStore<Tenant> _tenantStore;
-
         private readonly IDataSourceManager _dsManager;
 
+        private readonly ITenantService _tenantService;
+
+        private readonly IMultiTenantStore<Tenant> _tenantStore;
+
         public OpenDataSourceCommandHandler(
-            IMultiTenantStore<Tenant> tenantStore,
-            IDataSourceManager dsManager)
+            IDataSourceManager dsManager,
+            ITenantService tenantService,
+            IMultiTenantStore<Tenant> tenantStore
+            )
         {
-            _tenantStore = tenantStore;
             _dsManager = dsManager;
+            _tenantService = tenantService;
+            _tenantStore = tenantStore;
         }
 
         public async Task<bool> Handle(OpenDataSourceCommand request, CancellationToken cancellationToken)
@@ -52,6 +58,9 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
             {
                 throw ex;
             }
+
+            var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
+            if (!result) return false;
 
             return await _tenantStore.TryAddAsync(tenant);
         }

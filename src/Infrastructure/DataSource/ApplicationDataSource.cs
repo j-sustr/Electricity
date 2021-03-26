@@ -4,6 +4,7 @@ using System.Linq;
 using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Exceptions;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -25,6 +26,11 @@ namespace Electricity.Infrastructure.DataSource
         {
             _currentUserService = currentUserService;
             _tenant = tenantProvider.GetTenant();
+
+            if (_tenant == null)
+            {
+                throw new UnknownTenantException();
+            }
 
             if (_dataSource == null)
             {
