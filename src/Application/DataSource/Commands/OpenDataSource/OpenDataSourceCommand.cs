@@ -42,14 +42,15 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 ConnectionString = "(empty)",
                 CEAFileName = request.Tenant.CEAFileName,
                 DBConnectionParams = request.Tenant.DBConnectionParams,
-                DataSourceId = null,
             };
 
-            tenant.DataSourceId = _dsManager.CreateDataSource(tenant.DataSourceConfig);
-
-            if (tenant.DataSourceId == null)
+            try
             {
-                throw new UnknownTenantException();
+                tenant.DataSourceId = _dsManager.CreateDataSource(tenant.DataSourceConfig);
+            }
+            catch (NotFoundException ex)
+            {
+                throw ex;
             }
 
             return await _tenantStore.TryAddAsync(tenant);

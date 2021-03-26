@@ -26,11 +26,6 @@ namespace Electricity.Infrastructure.DataSource
             _currentUserService = currentUserService;
             _tenant = tenantProvider.GetTenant();
 
-            if (_tenant.DataSourceId != null)
-            {
-                _dataSource = dsManager.GetDataSource((Guid)_tenant.DataSourceId);
-            }
-
             if (_dataSource == null)
             {
                 _tenant.DataSourceId = dsManager.CreateDataSource(_tenant.DataSourceConfig);
