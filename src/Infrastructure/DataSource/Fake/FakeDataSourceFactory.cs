@@ -5,13 +5,14 @@ using Electricity.Application.Common.Utils;
 using System;
 using System.Collections.Generic;
 
-
-
 namespace Electricity.Infrastructure.DataSource.Fake
 {
     public class FakeDataSourceFactory : IDataSourceFactory
     {
         private int _seed;
+
+        public string Username { get; set; }
+        public string Password { get; set; }
 
         public List<Group> UserGroups = new List<Group>{
             new Group(GuidUtil.IntToGuid(1), "group-1"),

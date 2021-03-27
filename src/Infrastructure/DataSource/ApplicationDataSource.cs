@@ -21,8 +21,8 @@ namespace Electricity.Infrastructure.DataSource
 
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
-            IDataSourceManager dsManager,
-            ITenantProvider tenantProvider)
+            ITenantProvider tenantProvider,
+            IDataSourceManager dsManager)
         {
             _currentUserService = currentUserService;
             _tenant = tenantProvider.GetTenant();
@@ -31,6 +31,8 @@ namespace Electricity.Infrastructure.DataSource
             {
                 throw new UnknownTenantException();
             }
+
+            _dataSource = dsManager.GetDataSource(_tenant.DataSourceId);
 
             if (_dataSource == null)
             {
@@ -49,13 +51,22 @@ namespace Electricity.Infrastructure.DataSource
             _connection?.Dispose();
         }
 
+        public Guid Login(string username, string password)
+        {
+            return _dataSource.Login(username, password, _connection, _transaction);
+        }
+
         public Group[] GetUserGroups()
         {
+            AssertUserLoggedIn();
+
             return _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction).ToArray();
         }
 
         public GroupTreeNode GetUserGroupTree()
         {
+            AssertUserLoggedIn();
+
             var userGroups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
             var root = new GroupTreeNode();
             root.Nodes = userGroups.Select(g =>
@@ -70,16 +81,22 @@ namespace Electricity.Infrastructure.DataSource
 
         public Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range)
         {
+            AssertUserLoggedIn();
+
             return _dataSource.GetQuantities(groupId, arch, range, _connection, _transaction);
         }
 
         public ITable GetTable(Guid groupId, byte arch)
         {
+            AssertUserLoggedIn();
+
             return new DataSourceTableReader(this._dataSource, groupId, arch, _connection, _transaction);
         }
 
         public Interval GetInterval(Guid? groupId, byte arch)
         {
+            AssertUserLoggedIn();
+
             if (groupId == null)
             {
                 var groups = GetUserGroups();
@@ -94,19 +111,25 @@ namespace Electricity.Infrastructure.DataSource
             return reader.GetInterval();
         }
 
-        public Guid Login(string username, string password)
+        public Group GetGroupById(string id)
         {
-            return _dataSource.Login(username, password, _connection, _transaction);
+            AssertUserLoggedIn();
+
+            if (!Guid.TryParse(id, out var guid))
+            {
+                return null;
+            }
+
+            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
+
+            return groups.Find(g => g.ID == guid);
         }
 
         private Guid GetUserGuid()
         {
-            var userId = _currentUserService.UserId;
-            if (userId == null)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            AssertUserLoggedIn();
 
+            var userId = _currentUserService.UserId;
             if (!Guid.TryParse(userId, out var userGuid))
             {
                 throw new Exception("could not parse userId");
@@ -117,6 +140,8 @@ namespace Electricity.Infrastructure.DataSource
 
         private void ReadGroupTree(GroupTreeNode root, Guid rootId)
         {
+            AssertUserLoggedIn();
+
             var groups = _dataSource.GetGroups(rootId, _connection, _transaction);
             root.Nodes = groups.Select(g =>
             {
@@ -127,16 +152,12 @@ namespace Electricity.Infrastructure.DataSource
             }).ToArray();
         }
 
-        public Group GetGroupById(string id)
+        private void AssertUserLoggedIn()
         {
-            if (!Guid.TryParse(id, out var guid))
+            if (_currentUserService.UserId == null)
             {
-                return null;
+                throw new ForbiddenAccessException();
             }
-
-            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
-
-            return groups.Find(g => g.ID == guid);
         }
     }
 }
