@@ -15,7 +15,7 @@ namespace Electricity.Application.IntegrationTests
         public async Task TestSetUp()
         {
             ResetState();
-            await CreateHttpContext();
+            CreateSession();
         }
     }
 }

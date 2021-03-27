@@ -20,17 +20,16 @@ namespace Electricity.Application.IntegrationTests.DataSource.Command
         [Test]
         public async Task ShouldOpenDBDataSource()
         {
-            await OpenFakeDataSourceAsync();
-
             using var scope = CreateServiceScope();
+            await CreateHttpContext(scope);
+            await OpenFakeDataSourceAsync();
+            await CreateHttpContext(scope);
 
-            // var store = scope.ServiceProvider.GetService<IMultiTenantStore<Tenant>>();
-            // var tenantResolver = scope.ServiceProvider.GetService<ITenantResolver<Tenant>>();
-            // var multitenantStrategy = scope.ServiceProvider.GetService<IMultiTenantStrategy>();
-            // var httpContextAccesssor = scope.ServiceProvider.GetService<IHttpContextAccessor>();
+            var accessor3 = MultiTenantContextAccessor;
 
-            // var identifier = await multitenantStrategy.GetIdentifierAsync(httpContextAccesssor.HttpContext);
-            // var tenant = await store.TryGetByIdentifierAsync(identifier);
+            var accessor2 = HttpContext.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
+
+            var accessor1 = scope.ServiceProvider.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
 
             var tenantService = scope.ServiceProvider.GetService<ITenantProvider>();
             var tenant = tenantService.GetTenant();

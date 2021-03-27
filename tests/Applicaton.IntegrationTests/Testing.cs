@@ -24,6 +24,7 @@ using Electricity.Application.Common.Enums;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Session;
 using Electricity.Application.IntegrationTests;
+using System.Diagnostics;
 
 [SetUpFixture]
 public class Testing
@@ -31,11 +32,16 @@ public class Testing
     private static IConfigurationRoot _configuration;
     private static IServiceScopeFactory _scopeFactory;
 
+    public static IMultiTenantContextAccessor<Tenant> MultiTenantContextAccessor;
+
+    private static int _fakeHttpContextTraceIdentifier = 0;
     private static HttpContext _fakeHttpContext;
     private static FakeSession _fakeSession;
     private static string _currentUserId;
 
     private static FakeDataSourceFactory _dataSourceFactory;
+
+    public static HttpContext HttpContext { get { return _fakeHttpContext; } }
 
     [OneTimeSetUp]
     public void RunBeforeAnyTests()
@@ -70,8 +76,9 @@ public class Testing
         services.AddTransient(provider =>
             Mock.Of<ICurrentUserService>(s => s.UserId == _currentUserId));
 
-        EnsureHttpContextAccessor(services);
         EnsureDataSourceFactory(services);
+        EnsureHttpContextAccessor(services);
+        EnsureMultiTenantContextAccessor(services);
 
         _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
     }
@@ -114,21 +121,40 @@ public class Testing
             d.ServiceType == typeof(IHttpContextAccessor));
         services.Remove(httpContextAccessorDescriptor);
 
-        services.AddScoped(provider =>
+        services.AddSingleton(provider =>
             Mock.Of<IHttpContextAccessor>(a =>
                 a.HttpContext == _fakeHttpContext));
     }
 
-    public static async Task CreateHttpContext()
+    public static void EnsureMultiTenantContextAccessor(ServiceCollection services)
     {
-        var scope = CreateServiceScope();
+        // mocking MultiTenantContextAccessor because it uses AsyncLocal<T>
 
+        var descriptor = services.FirstOrDefault(d =>
+            d.ServiceType == typeof(IMultiTenantContextAccessor<Tenant>));
+        services.Remove(descriptor);
+
+        var mockAccessor = new Mock<IMultiTenantContextAccessor<Tenant>>();
+        mockAccessor.SetupProperty(a => a.MultiTenantContext, null);
+
+        services.AddSingleton(mockAccessor.Object);
+    }
+
+    public static void CreateSession()
+    {
         _fakeSession = new FakeSession();
+    }
+
+    public static async Task CreateHttpContext(IServiceScope scope)
+    {
+        // using var scope = CreateServiceScope();
+        var serviceProvider = scope.ServiceProvider;
 
         var mockHttpContext = Mock.Of<HttpContext>(c =>
-            c.RequestServices == scope.ServiceProvider &&
+            c.RequestServices == serviceProvider &&
             c.Session == _fakeSession
         );
+        mockHttpContext.TraceIdentifier = (_fakeHttpContextTraceIdentifier++).ToString();
 
         await CreateMultiTenantContext(mockHttpContext);
 
@@ -140,6 +166,7 @@ public class Testing
         // substitude for MultiTenantMiddleware.Invoke(HttpContext context)
 
         var accessor = context.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
+        MultiTenantContextAccessor = accessor;
 
         if (accessor.MultiTenantContext == null)
         {
@@ -147,6 +174,15 @@ public class Testing
             var multiTenantContext = (IMultiTenantContext<Tenant>)await resolver.ResolveAsync(context);
             accessor.MultiTenantContext = multiTenantContext;
         }
+
+        await TestMethod(context);
+    }
+
+    public static async Task TestMethod(HttpContext context)
+    {
+        var accessor = context.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
+
+        Debug.WriteLine("");
     }
 
     public static async Task<string> RunAsDefaultUserAsync()
