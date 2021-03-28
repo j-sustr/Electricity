@@ -13,12 +13,12 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 {
     using static Testing;
 
-    public class GetPowerFactorOverviewTest
+    public class GetPowerFactorOverviewTest : TestBase
     {
         [Test]
         public async Task ShouldRequireInterval1()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorOverviewQuery
             {
@@ -32,7 +32,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhenUnboundedIntervalProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorOverviewQuery
             {
@@ -58,7 +58,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhenInterval1Provided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorOverviewQuery
             {
@@ -84,7 +84,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhen2IntervalsProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorOverviewQuery
             {

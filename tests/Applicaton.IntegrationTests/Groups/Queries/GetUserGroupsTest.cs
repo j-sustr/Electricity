@@ -10,12 +10,12 @@ namespace Electricity.Application.IntegrationTests.Groups.Queries
 {
     using static Testing;
 
-    public class GetUserGroupsTest
+    public class GetUserGroupsTest : TestBase
     {
         [Test]
         public async Task ShouldReturnUserGroups()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetUserGroupsQuery();
 

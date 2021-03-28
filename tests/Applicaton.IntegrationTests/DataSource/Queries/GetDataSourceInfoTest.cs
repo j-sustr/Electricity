@@ -10,12 +10,12 @@ namespace Electricity.Application.IntegrationTests.DataSource.Queries
 {
     using static Testing;
 
-    public class GetDataSourceInfoTest
+    public class GetDataSourceInfoTest : TestBase
     {
         [Test]
         public async Task ShouldReturnInfo()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetDataSourceInfoQuery
             {

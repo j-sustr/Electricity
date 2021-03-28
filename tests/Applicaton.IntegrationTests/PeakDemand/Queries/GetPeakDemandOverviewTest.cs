@@ -12,12 +12,12 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
 {
     using static Testing;
 
-    internal class GetPeakDemandOverviewTest
+    internal class GetPeakDemandOverviewTest : TestBase
     {
         [Test]
         public async Task ShouldRequireInterval1()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPeakDemandOverviewQuery
             {
@@ -31,7 +31,7 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
         [Test]
         public async Task ShouldReturnPeakDemandOverviewWhenUnboundedIntervalProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPeakDemandOverviewQuery
             {
@@ -54,7 +54,7 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
         [Test]
         public async Task ShouldReturnPeakDemandOverviewWhenInterval1Provided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPeakDemandOverviewQuery
             {
@@ -80,7 +80,7 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
         [Test]
         public async Task ShouldReturnPeakDemandOverviewWhen2IntervalsProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPeakDemandOverviewQuery
             {

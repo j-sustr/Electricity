@@ -16,6 +16,10 @@ namespace Electricity.Infrastructure.DataSource
 
         private BoundedInterval _interval { get; set; }
 
+        public string ENVISUser { get; set; }
+        public string ENVISPassword { get; set; }
+        public Guid UserId { get; set; } = Guid.NewGuid();
+
         public List<Group> Groups { get; set; }
 
         public FakeDataSource(int seed, BoundedInterval interval)
@@ -81,7 +85,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public override Guid Login(string ENVISUser, string ENVISPassword, IDisposable connection, IDisposable transaction)
         {
-            throw new NotImplementedException();
+            return UserId;
         }
 
         public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)

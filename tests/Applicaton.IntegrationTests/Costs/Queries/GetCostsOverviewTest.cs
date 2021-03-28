@@ -10,12 +10,12 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 {
     using static Testing;
 
-    public class GetCostsOverviewTest
+    public class GetCostsOverviewTest : TestBase
     {
         [Test]
         public async Task ShouldReturnCostsOverviewWhenInfiniteIntervalProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetCostsOverviewQuery
             {
@@ -41,7 +41,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
         [Test]
         public async Task ShouldThrowIntervalOutOfRangeException()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetCostsOverviewQuery
             {
