@@ -41,8 +41,8 @@ public class Testing
 
     private static FakeDataSourceFactory _dataSourceFactory;
 
+    public static IServiceScope ServiceScope { get; set; }
     public static string UserId { get { return _currentUserId; } }
-
     public static HttpContext HttpContext { get { return _fakeHttpContext; } }
 
     [OneTimeSetUp]
@@ -186,6 +186,11 @@ public class Testing
 
     public static async Task RunAsDefaultTenantAndUser()
     {
+        CreateServiceScope();
+        await CreateHttpContext(ServiceScope);
+        await OpenFakeDataSourceAsync();
+        await CreateHttpContext(ServiceScope);
+
         await RunAsDefaultUserAsync();
     }
 
@@ -224,7 +229,8 @@ public class Testing
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
-        using var scope = _scopeFactory.CreateScope();
+        // using var scope = _scopeFactory.CreateScope();
+        var scope = ServiceScope;
 
         var mediator = scope.ServiceProvider.GetService<ISender>();
 
@@ -233,11 +239,17 @@ public class Testing
 
     public static IServiceScope CreateServiceScope()
     {
-        return _scopeFactory.CreateScope();
+        var scope = _scopeFactory.CreateScope();
+        ServiceScope = scope;
+        return scope;
     }
 
     public static void ResetState()
     {
+        if (ServiceScope != null)
+            ServiceScope.Dispose();
+        ServiceScope = null;
+
         _fakeHttpContextTraceIdentifier = 0;
         _fakeHttpContext = null;
         _fakeSession = null;
