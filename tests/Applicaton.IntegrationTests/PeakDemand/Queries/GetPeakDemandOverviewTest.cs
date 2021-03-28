@@ -1,10 +1,10 @@
-﻿using Electricity.Application.Common.Models.Dtos;
+﻿using Electricity.Application.Common.Exceptions;
+using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -70,8 +70,8 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.PeakDemandTime.Should().BeAfter(query.Interval1.Start ?? DateTime.MinValue);
-                item.PeakDemandTime.Should().BeBefore(query.Interval1.End ?? DateTime.MaxValue);
+                item.PeakDemandTime.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
+                item.PeakDemandTime.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
 
                 item.PeakDemandValue.Should().BePositive();
             }
@@ -98,8 +98,8 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.PeakDemandTime.Should().BeAfter(query.Interval1.Start ?? DateTime.MinValue);
-                item.PeakDemandTime.Should().BeBefore(query.Interval1.End ?? DateTime.MaxValue);
+                item.PeakDemandTime.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
+                item.PeakDemandTime.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
 
                 item.PeakDemandValue.Should().BePositive();
             }
