@@ -32,7 +32,7 @@ public class Testing
     private static IConfigurationRoot _configuration;
     private static IServiceScopeFactory _scopeFactory;
 
-    public static IMultiTenantContextAccessor<Tenant> MultiTenantContextAccessor;
+    public static IMultiTenantContextAccessor<Tenant> Debug_MultiTenantContextAccessor;
 
     private static int _fakeHttpContextTraceIdentifier = 0;
     private static HttpContext _fakeHttpContext;
@@ -40,6 +40,8 @@ public class Testing
     private static string _currentUserId;
 
     private static FakeDataSourceFactory _dataSourceFactory;
+
+    public static string UserId { get { return _currentUserId; } }
 
     public static HttpContext HttpContext { get { return _fakeHttpContext; } }
 
@@ -121,9 +123,15 @@ public class Testing
             d.ServiceType == typeof(IHttpContextAccessor));
         services.Remove(httpContextAccessorDescriptor);
 
-        services.AddSingleton(provider =>
-            Mock.Of<IHttpContextAccessor>(a =>
-                a.HttpContext == _fakeHttpContext));
+        var mockAccessor = new Mock<IHttpContextAccessor>();
+        mockAccessor.SetupGet(a => a.HttpContext)
+            .Returns(() => _fakeHttpContext);
+
+        services.AddSingleton(mockAccessor.Object);
+
+        //services.AddSingleton(provider =>
+        //    Mock.Of<IHttpContextAccessor>(a =>
+        //        a.HttpContext == _fakeHttpContext));
     }
 
     public static void EnsureMultiTenantContextAccessor(ServiceCollection services)
@@ -166,7 +174,7 @@ public class Testing
         // substitude for MultiTenantMiddleware.Invoke(HttpContext context)
 
         var accessor = context.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
-        MultiTenantContextAccessor = accessor;
+        Debug_MultiTenantContextAccessor = accessor;
 
         if (accessor.MultiTenantContext == null)
         {
@@ -174,15 +182,11 @@ public class Testing
             var multiTenantContext = (IMultiTenantContext<Tenant>)await resolver.ResolveAsync(context);
             accessor.MultiTenantContext = multiTenantContext;
         }
-
-        await TestMethod(context);
     }
 
-    public static async Task TestMethod(HttpContext context)
+    public static async Task RunAsDefaultTenantAndUser()
     {
-        var accessor = context.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
-
-        Debug.WriteLine("");
+        await RunAsDefaultUserAsync();
     }
 
     public static async Task<string> RunAsDefaultUserAsync()
@@ -234,6 +238,7 @@ public class Testing
 
     public static void ResetState()
     {
+        _fakeHttpContextTraceIdentifier = 0;
         _fakeHttpContext = null;
         _fakeSession = null;
         _currentUserId = null;
