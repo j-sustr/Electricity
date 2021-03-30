@@ -11,12 +11,6 @@ namespace Electricity.WebUI.Controllers
 {
     public class DataSourceController : ApiController
     {
-        [HttpGet("info")]
-        public async Task<ActionResult<DataSourceInfoDto>> GetInfoAsync([FromQuery] GetDataSourceInfoQuery query)
-        {
-            return await Mediator.Send(query);
-        }
-
         [HttpPost("open")]
         public async Task<ActionResult> OpenAsync([FromBody] OpenDataSourceCommand query)
         {
@@ -24,5 +18,12 @@ namespace Electricity.WebUI.Controllers
 
             return Ok();
         }
+
+        [HttpGet("info")]
+        public async Task<ActionResult<DataSourceInfoDto>> GetInfoAsync([FromQuery] GetDataSourceInfoQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+        
     }
 }
