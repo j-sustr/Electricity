@@ -114,7 +114,8 @@ namespace Electricity.WebUI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseCors(builder =>
-                    builder.WithOrigins("http://localhost:4200"));
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod());
             }
             else
             {
