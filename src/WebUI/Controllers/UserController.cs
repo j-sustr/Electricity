@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 
 namespace Electricity.WebUI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class UserController : ApiController
     {
         private readonly Application.Common.Interfaces.IAuthenticationService _authService;
@@ -30,7 +28,7 @@ namespace Electricity.WebUI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<ActionResult> Login(string username, string password)
         {
             var guid = _authService.Login(username, password);
             if (guid == Guid.Empty)
@@ -76,7 +74,7 @@ namespace Electricity.WebUI.Controllers
 
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
 
