@@ -1,9 +1,5 @@
-﻿using System;
-using CleanArchitecture.Infrastructure.Identity;
-using Electricity.Application.Common.Interfaces;
-using Electricity.Application.Common.Models;
+﻿using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure.DataSource;
-using Electricity.Infrastructure.DataSource.Fake;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
