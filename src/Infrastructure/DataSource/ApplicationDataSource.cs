@@ -5,6 +5,7 @@ using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -22,8 +23,11 @@ namespace Electricity.Infrastructure.DataSource
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
             ITenantProvider tenantProvider,
-            IDataSourceManager dsManager)
+            IDataSourceManager dsManager,
+            IHttpContextAccessor accessor)
         {
+            var t = accessor.HttpContext.Session.GetString("__tenant__");
+
             _currentUserService = currentUserService;
             _tenant = tenantProvider.GetTenant();
 
