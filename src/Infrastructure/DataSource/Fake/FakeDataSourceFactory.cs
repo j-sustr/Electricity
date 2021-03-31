@@ -2,7 +2,6 @@ using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
-using System;
 using System.Collections.Generic;
 
 namespace Electricity.Infrastructure.DataSource.Fake
