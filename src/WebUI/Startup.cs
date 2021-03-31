@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -65,6 +66,12 @@ namespace Electricity.WebUI
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true; // consent required
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -79,6 +86,8 @@ namespace Electricity.WebUI
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
 
@@ -115,7 +124,8 @@ namespace Electricity.WebUI
                 app.UseDeveloperExceptionPage();
                 app.UseCors(builder =>
                     builder.WithOrigins("http://localhost:4200")
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
             }
             else
             {
