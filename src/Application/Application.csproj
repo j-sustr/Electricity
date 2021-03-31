@@ -12,16 +12,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Ardalis.GuardClauses" Version="3.0.1" />
+        <PackageReference Include="Ardalis.GuardClauses" Version="3.1.0" />
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageReference Include="Finbuckle.MultiTenant" Version="6.2.0" />
-        <PackageReference Include="FluentValidation" Version="9.5.0" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.0" />
+        <PackageReference Include="FluentValidation" Version="9.5.3" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.3" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="3.1.12" />
+        <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="5.0.4" />
         <PackageReference Include="morelinq" Version="3.3.2" />
-        <PackageReference Include="NJsonSchema" Version="10.3.11" />
+        <PackageReference Include="NJsonSchema" Version="10.4.0" />
     </ItemGroup>
 
     <ItemGroup>
