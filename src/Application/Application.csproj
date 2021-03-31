@@ -19,7 +19,6 @@
         <PackageReference Include="FluentValidation" Version="9.5.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="3.1.12" />
         <PackageReference Include="morelinq" Version="3.3.2" />
         <PackageReference Include="NJsonSchema" Version="10.3.11" />
