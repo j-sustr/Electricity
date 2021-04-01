@@ -1,4 +1,5 @@
 ﻿using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Models.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,21 @@ namespace Electricity.WebUI.Controllers
         {
             _authService = authService;
             _logger = logger;
+        }
+
+        [HttpGet("current-user")]
+        public ActionResult<UserDto> GetCurrentUser()
+        {
+            var user = HttpContext.User;
+            if (user == null)
+            {
+                return Ok(null);
+            }
+
+            return Ok(new UserDto
+            {
+                Username = user.FindFirstValue("username")
+            });
         }
 
         [HttpPost("login")]
