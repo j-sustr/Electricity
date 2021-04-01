@@ -68,8 +68,9 @@ namespace Electricity.WebUI.Controllers
             });
         }
 
-        [Authorize]
         [HttpPost("logout")]
+        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
