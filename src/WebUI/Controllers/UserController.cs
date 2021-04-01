@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NJsonSchema.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Electricity.WebUI.Controllers
             _tenantProvider = tenantProvider;
         }
 
+        [return: CanBeNull]
         [HttpGet("current-user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
@@ -30,13 +32,13 @@ namespace Electricity.WebUI.Controllers
             if (tenant == null)
             {
                 await HttpContext.SignOutAsync();
-                return Ok(null);
+                return null;
             }
 
             var user = HttpContext.User;
             if (user == null)
             {
-                return Ok(null);
+                return null;
             }
 
             return Ok(new UserDto
