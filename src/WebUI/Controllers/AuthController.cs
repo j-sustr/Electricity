@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Electricity.Application.Common.Models.Dtos;
 
 namespace Electricity.WebUI.Controllers
 {
@@ -20,7 +21,7 @@ namespace Electricity.WebUI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(string username, string password)
+        public async Task<ActionResult<UserDto>> Login(string username, string password)
         {
             var guid = _authService.Login(username, password);
             if (guid == Guid.Empty)
@@ -61,7 +62,10 @@ namespace Electricity.WebUI.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            return Ok();
+            return Ok(new UserDto
+            {
+                Username = username
+            });
         }
 
         [Authorize]
