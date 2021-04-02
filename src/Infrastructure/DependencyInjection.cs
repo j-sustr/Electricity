@@ -1,5 +1,6 @@
 ﻿using Electricity.Application.Common.Interfaces;
 using Electricity.Infrastructure.DataSource;
+using Electricity.Infrastructure.DataSource.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,8 @@ namespace Electricity.Infrastructure
             //    return new FakeDataSourceFactory(0, new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime()));
             //});
             services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
-            services.AddSingleton<IDataSourceManager, DataSourceManager>();
+            services.AddSingleton<DataSourceCache>();
+            services.AddScoped<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<IGroupService, ApplicationDataSource>();
             services.AddScoped<IQuantityService, ApplicationDataSource>();

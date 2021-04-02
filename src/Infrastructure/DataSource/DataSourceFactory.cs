@@ -2,6 +2,7 @@ using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
+using Electricity.Infrastructure.DataSource.Abstractions;
 using KMB.DataSource.DB;
 using KMB.DataSource.File;
 using System.Data.SqlClient;

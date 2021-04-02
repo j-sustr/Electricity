@@ -6,6 +6,7 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Exceptions;
+using Electricity.Infrastructure.DataSource.Abstractions;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -13,18 +14,17 @@ namespace Electricity.Infrastructure.DataSource
     {
         private readonly ITenantProvider _tenantProvider;
         private readonly IDataSourceFactory _dsFactory;
-        // private readonly ICurrentUserService _currentUserService;
-
-        private readonly ConcurrentDictionary<Guid, KMB.DataSource.DataSource> _dataSourceCache = new ConcurrentDictionary<Guid, KMB.DataSource.DataSource>();
-        // private readonly ConcurrentDictionary<Guid, HashSet<string>> _dataSourceUsers = new ConcurrentDictionary<Guid, HashSet<string>>();
+        private readonly DataSourceCache _dsCache;
 
         public DataSourceManager(
             ITenantProvider tenantProvider,
-            IDataSourceFactory dsFactory
+            IDataSourceFactory dsFactory,
+            DataSourceCache dsCache
             )
         {
             _tenantProvider = tenantProvider;
             _dsFactory = dsFactory;
+            _dsCache = dsCache;
         }
 
         public (Guid, KMB.DataSource.DataSource) CreateDataSource(DataSourceCreationParams creationParams)
@@ -32,7 +32,7 @@ namespace Electricity.Infrastructure.DataSource
             KMB.DataSource.DataSource newDataSource = _dsFactory.CreateDataSource(creationParams);
 
             var id = Guid.NewGuid();
-            _dataSourceCache.TryAdd(id, newDataSource);
+            _dsCache.Add(id, newDataSource);
             return (id, newDataSource);
         }
 
@@ -42,7 +42,7 @@ namespace Electricity.Infrastructure.DataSource
             var id = tenant.DataSourceId;
 
             KMB.DataSource.DataSource ds;
-            if (_dataSourceCache.TryGetValue(id, out ds))
+            if (_dsCache.TryGetDataSource(id, out ds))
             {
                 return ds;
             }
@@ -56,7 +56,7 @@ namespace Electricity.Infrastructure.DataSource
         public bool DeleteDataSource()
         {
             var tenant = GetTenant();
-            return _dataSourceCache.TryRemove(tenant.DataSourceId, out var _);
+            return _dsCache.TryRemove(tenant.DataSourceId);
         }
 
         private Tenant GetTenant()

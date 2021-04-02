@@ -3,6 +3,7 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
 using System.Collections.Generic;
+using Electricity.Infrastructure.DataSource.Abstractions;
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {

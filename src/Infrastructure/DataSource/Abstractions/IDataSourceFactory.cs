@@ -1,6 +1,6 @@
 using Electricity.Application.Common.Models;
 
-namespace Electricity.Application.Common.Interfaces
+namespace Electricity.Infrastructure.DataSource.Abstractions
 {
     public interface IDataSourceFactory
     {
