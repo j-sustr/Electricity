@@ -7,10 +7,10 @@ namespace Electricity.Application.Common.Interfaces
 
     public interface IDataSourceManager
     {
-        Guid CreateDataSource(DataSourceConfig config);
+        (Guid, KMB.DataSource.DataSource) CreateDataSource(DataSourceCreationParams creationParams);
 
-        KMB.DataSource.DataSource GetDataSource(Guid id);
+        KMB.DataSource.DataSource GetDataSource();
 
-        bool DeleteDataSource(Guid id);
+        bool DeleteDataSource();
     }
 }

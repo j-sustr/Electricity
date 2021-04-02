@@ -4,6 +4,6 @@ namespace Electricity.Application.Common.Interfaces
 {
     public interface IDataSourceFactory
     {
-        KMB.DataSource.DataSource CreateDataSource(DataSourceConfig config);
+        KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams config);
     }
 }

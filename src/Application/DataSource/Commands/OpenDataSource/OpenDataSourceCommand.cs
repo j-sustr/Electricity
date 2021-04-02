@@ -50,19 +50,34 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 DBConnectionParams = request.Tenant.DBConnectionParams,
             };
 
+            var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
+            if (!result) return false;
+
+            result = await _tenantStore.TryAddAsync(tenant);
+            if (!result) return false;
+
+            IDisposable connection = null;
             try
             {
-                tenant.DataSourceId = _dsManager.CreateDataSource(tenant.DataSourceConfig);
+                var (dsId, ds) = _dsManager.CreateDataSource(tenant.DataSourceCreationParams);
+                connection = ds.NewConnection();
+                tenant.DataSourceId = dsId;
+                return false;
             }
             catch (NotFoundException ex)
             {
                 throw ex;
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection?.Dispose();
+            }
 
-            var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
-            if (!result) return false;
-
-            return await _tenantStore.TryAddAsync(tenant);
+            return false;
         }
     }
 }

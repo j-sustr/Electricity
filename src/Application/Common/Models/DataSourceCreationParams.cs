@@ -16,7 +16,7 @@ namespace Electricity.Application.Common.Models
         }
     }
 
-    public class DataSourceConfig : ICloneable
+    public class DataSourceCreationParams : ICloneable
     {
         public DataSourceType DataSourceType { get; set; }
 
@@ -26,7 +26,7 @@ namespace Electricity.Application.Common.Models
 
         public object Clone()
         {
-            return new DataSourceConfig
+            return new DataSourceCreationParams
             {
                 DataSourceType = this.DataSourceType,
                 DBConnectionParams = (DBConnectionParams)this.DBConnectionParams.Clone(),

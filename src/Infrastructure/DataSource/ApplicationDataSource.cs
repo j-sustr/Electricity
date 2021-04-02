@@ -11,7 +11,6 @@ namespace Electricity.Infrastructure.DataSource
     public class ApplicationDataSource : IDisposable, IGroupService, IQuantityService, ITableCollection, IAuthenticationService
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly ITenantProvider _tenantProvider;
         private readonly IDataSourceManager _dataSourceManager;
 
         private KMB.DataSource.DataSource _dataSource;
@@ -20,14 +19,12 @@ namespace Electricity.Infrastructure.DataSource
 
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
-            ITenantProvider tenantProvider,
             IDataSourceManager dataSourceManager,
             IHttpContextAccessor accessor)
         {
             var t = accessor.HttpContext.Session.GetString("__tenant__");
 
             _currentUserService = currentUserService;
-            _tenantProvider = tenantProvider;
             _dataSourceManager = dataSourceManager;
         }
 
@@ -39,6 +36,8 @@ namespace Electricity.Infrastructure.DataSource
 
         public Guid Login(string username, string password)
         {
+            InitializeOperation();
+
             return _dataSource.Login(username, password, _connection, _transaction);
         }
 
@@ -119,20 +118,7 @@ namespace Electricity.Infrastructure.DataSource
 
         private void InitializeOperation()
         {
-            var tenant = _tenantProvider.GetTenant();
-            if (tenant == null)
-            {
-                throw new UnknownTenantException();
-            }
-
-            _dataSource = _dataSourceManager.GetDataSource(tenant.DataSourceId);
-            if (_dataSource == null)
-            {
-                tenant.DataSourceId = _dataSourceManager.CreateDataSource(tenant.DataSourceConfig);
-
-                _dataSource = _dataSourceManager.GetDataSource((Guid)tenant.DataSourceId);
-            }
-
+            _dataSource = _dataSourceManager.GetDataSource();
             _connection = _dataSource.NewConnection();
             _transaction = _dataSource.BeginTransaction(_connection);
         }

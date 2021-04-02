@@ -16,11 +16,11 @@ namespace Electricity.Application.Common.Models
         public DBConnectionParams DBConnectionParams { get; set; }
         public string CEAFileName { get; set; }
 
-        public DataSourceConfig DataSourceConfig
+        public DataSourceCreationParams DataSourceCreationParams
         {
             get
             {
-                return new DataSourceConfig
+                return new DataSourceCreationParams
                 {
                     DataSourceType = DataSourceType,
                     CEAFileName = CEAFileName,

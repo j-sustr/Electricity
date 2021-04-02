@@ -11,12 +11,12 @@ namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceFactory : IDataSourceFactory
     {
-        public KMB.DataSource.DataSource CreateDataSource(DataSourceConfig config)
+        public KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams creationParams)
         {
             KMB.DataSource.DataSource ds = null;
-            if (config.DataSourceType == DataSourceType.DB)
+            if (creationParams.DataSourceType == DataSourceType.DB)
             {
-                var db = config.DBConnectionParams;
+                var db = creationParams.DBConnectionParams;
                 ds = new DBDataSource(db.Server, db.DBName, db.Username, db.Password);
                 try
                 {
@@ -28,9 +28,9 @@ namespace Electricity.Infrastructure.DataSource
                     throw new NotFoundException("Specified DB is not available");
                 }
             }
-            else if (config.DataSourceType == DataSourceType.File)
+            else if (creationParams.DataSourceType == DataSourceType.File)
             {
-                var filePath = config.CEAFileName;
+                var filePath = creationParams.CEAFileName;
                 if (!File.Exists(filePath))
                 {
                     throw new NotFoundException("Specified File does not exist");

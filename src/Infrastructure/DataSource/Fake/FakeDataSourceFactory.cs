@@ -29,7 +29,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
             _interval = interval;
         }
 
-        public KMB.DataSource.DataSource CreateDataSource(DataSourceConfig config)
+        public KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams creationParams)
         {
             var ds = new FakeDataSource(_seed, _interval);
             ds.Groups = UserGroups;
