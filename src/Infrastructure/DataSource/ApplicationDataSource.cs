@@ -20,11 +20,8 @@ namespace Electricity.Infrastructure.DataSource
 
         public ApplicationDataSource(
             ICurrentUserService currentUserService,
-            IDataSourceManager dataSourceManager,
-            IHttpContextAccessor accessor)
+            IDataSourceManager dataSourceManager)
         {
-            var t = accessor.HttpContext.Session.GetString("__tenant__");
-
             _currentUserService = currentUserService;
             _dataSourceManager = dataSourceManager;
         }
