@@ -20,6 +20,7 @@ namespace Electricity.Infrastructure
             services.AddSingleton<DataSourceCache>();
             services.AddScoped<IDataSourceManager, DataSourceManager>();
 
+            services.AddScoped<ApplicationDataSource>(); // DEBUG
             services.AddScoped<IGroupService, ApplicationDataSource>();
             services.AddScoped<IQuantityService, ApplicationDataSource>();
             services.AddScoped<ITableCollection, ApplicationDataSource>();

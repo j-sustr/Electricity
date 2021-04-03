@@ -5,6 +5,7 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -39,6 +40,14 @@ namespace Electricity.Infrastructure.DataSource
             InitializeOperation();
 
             return _dataSource.Login(username, password, _connection, _transaction);
+        }
+
+        public List<SmpMeasNameDB> GetRecords()
+        {
+            AssertUserLoggedIn();
+            InitializeOperation();
+
+            return _dataSource.GetRecords(_connection, _transaction);
         }
 
         public Group[] GetUserGroups()

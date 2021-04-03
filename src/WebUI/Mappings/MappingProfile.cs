@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Electricity.Application.Common.Models.Dtos;
 
 namespace Electricity.WebUI.Mappings
 {
@@ -15,6 +16,8 @@ namespace Electricity.WebUI.Mappings
     {
         public MappingProfile()
         {
+            CreateMap<SmpMeasNameDB, SmpMeasNameDBDto>();
+
             CreateMap<string, Quantity>()
                 .ConvertUsing(s => QuantityExtensions.FromString(s));
 
