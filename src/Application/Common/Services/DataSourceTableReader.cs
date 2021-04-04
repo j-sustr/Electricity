@@ -6,7 +6,7 @@ using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 
-namespace Electricity.Infrastructure.DataSource
+namespace Electricity.Application.Common.Services
 {
     public class DataSourceTableReader : ITable
     {

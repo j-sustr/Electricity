@@ -1,4 +1,5 @@
-﻿using Electricity.Infrastructure.DataSource.Abstractions;
+﻿using Electricity.Application.Common.Abstractions;
+using Electricity.Infrastructure.DataSource.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Electricity.Infrastructure.DataSource
 {
-    public class DataSourceCache
+    public class DataSourceCache : IDataSourceCache
     {
         private readonly ConcurrentDictionary<Guid, KMB.DataSource.DataSource> _cache = new ConcurrentDictionary<Guid, KMB.DataSource.DataSource>();
         // private readonly ConcurrentDictionary<Guid, HashSet<string>> _dataSourceUsers = new ConcurrentDictionary<Guid, HashSet<string>>();
@@ -27,6 +28,11 @@ namespace Electricity.Infrastructure.DataSource
         public bool TryRemove(Guid id)
         {
             return _cache.TryRemove(id, out var _);
+        }
+
+        public void Clear()
+        {
+            _cache.Clear();
         }
     }
 }

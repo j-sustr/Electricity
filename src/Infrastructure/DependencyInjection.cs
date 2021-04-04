@@ -1,4 +1,6 @@
-﻿using Electricity.Application.Common.Interfaces;
+﻿using Electricity.Application.Common.Abstractions;
+using Electricity.Application.Common.Interfaces;
+using Electricity.Application.Common.Services;
 using Electricity.Infrastructure.DataSource;
 using Electricity.Infrastructure.DataSource.Abstractions;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +19,7 @@ namespace Electricity.Infrastructure
             //    return new FakeDataSourceFactory(0, new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime()));
             //});
             services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
-            services.AddSingleton<DataSourceCache>();
+            services.AddSingleton<IDataSourceCache, DataSourceCache>();
             services.AddScoped<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<ApplicationDataSource>(); // DEBUG

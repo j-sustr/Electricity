@@ -4,10 +4,9 @@ using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Exceptions;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
-namespace Electricity.Infrastructure.DataSource
+namespace Electricity.Application.Common.Services
 {
     public class ApplicationDataSource : IDisposable, IGroupService, IQuantityService, ITableCollection, IAuthenticationService
     {

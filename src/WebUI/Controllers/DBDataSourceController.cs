@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Electricity.Application.Common.Models.Dtos;
-using Electricity.Infrastructure.DataSource;
+using Electricity.Application.Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Electricity.WebUI.Controllers
 {

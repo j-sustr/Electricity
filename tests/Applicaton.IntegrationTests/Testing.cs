@@ -14,14 +14,11 @@ using Moq;
 using NUnit.Framework;
 using Finbuckle.MultiTenant;
 using Electricity.Application.Common.Models;
-using Finbuckle.MultiTenant.Core;
 using Electricity.Application.DataSource.Commands.OpenDataSource;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Enums;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Session;
 using Electricity.Application.IntegrationTests;
-using System.Diagnostics;
+using Electricity.Infrastructure.DataSource.Abstractions;
 
 [SetUpFixture]
 public class Testing

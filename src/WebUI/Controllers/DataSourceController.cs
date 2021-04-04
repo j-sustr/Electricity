@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Electricity.Application.Common.Abstractions;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Costs.Queries.GetCostsOverview;
 using Electricity.Application.DataSource.Commands.OpenDataSource;
 using Electricity.Application.DataSource.Queries.GetDataSourceInfo;
 using Electricity.Infrastructure.DataSource;
 using KMB.DataSource;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,6 +18,13 @@ namespace Electricity.WebUI.Controllers
 {
     public class DataSourceController : ApiController
     {
+        private readonly IDataSourceCache _dsCache;
+
+        public DataSourceController(IDataSourceCache dsCache)
+        {
+            _dsCache = dsCache;
+        }
+
         // --- DEBUG ---
         [HttpGet("tenant")]
         public ActionResult GetTenant()
@@ -45,6 +54,15 @@ namespace Electricity.WebUI.Controllers
         public async Task<ActionResult<DataSourceInfoDto>> GetInfoAsync([FromQuery] GetDataSourceInfoQuery query)
         {
             return await Mediator.Send(query);
+        }
+
+        [HttpDelete("cache")]
+        [Authorize]
+        public ActionResult ClearCache()
+        {
+            _dsCache.Clear();
+
+            return Ok();
         }
     }
 }

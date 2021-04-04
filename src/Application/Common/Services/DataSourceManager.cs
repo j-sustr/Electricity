@@ -7,19 +7,20 @@ using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Infrastructure.DataSource.Abstractions;
+using Electricity.Application.Common.Abstractions;
 
-namespace Electricity.Infrastructure.DataSource
+namespace Electricity.Application.Common.Services
 {
     public class DataSourceManager : IDataSourceManager
     {
         private readonly ITenantProvider _tenantProvider;
         private readonly IDataSourceFactory _dsFactory;
-        private readonly DataSourceCache _dsCache;
+        private readonly IDataSourceCache _dsCache;
 
         public DataSourceManager(
             ITenantProvider tenantProvider,
             IDataSourceFactory dsFactory,
-            DataSourceCache dsCache
+            IDataSourceCache dsCache
             )
         {
             _tenantProvider = tenantProvider;
