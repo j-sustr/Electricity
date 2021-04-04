@@ -62,7 +62,8 @@ namespace Electricity.Infrastructure.DataSource
             AssertUserLoggedIn();
             InitializeOperation();
 
-            return _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction).ToArray();
+            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
+            return groups.ToArray();
         }
 
         public GroupTreeNode GetUserGroupTree()
@@ -105,8 +106,11 @@ namespace Electricity.Infrastructure.DataSource
 
             if (groupId == null)
             {
-                var groups = GetUserGroups();
-                if (groups.Length == 0)
+                var groups = GetUserGroups().ToList();
+                if (groups[0].Name == "UserData")
+                    groups.RemoveAt(0);
+
+                if (groups.Count == 0)
                     return null;
 
                 groupId = groups[0].ID;
