@@ -61,8 +61,8 @@ namespace Electricity.Application.Common.Services
             AssertUserLoggedIn();
             InitializeOperation();
 
-            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
-            return groups.ToArray();
+            var gr = CreateGroupReader();
+            return gr.GetUserGroups(GetUserGuid());
         }
 
         public GroupTreeNode GetUserGroupTree()
@@ -70,24 +70,37 @@ namespace Electricity.Application.Common.Services
             AssertUserLoggedIn();
             InitializeOperation();
 
-            var userGroups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
-            var root = new GroupTreeNode();
-            root.Nodes = userGroups.Select(g =>
-            {
-                var node = new GroupTreeNode();
-                node.Group = g;
-                ReadGroupTree(node, g.ID);
-                return node;
-            }).ToArray();
-            return root;
+            var gr = CreateGroupReader();
+            return gr.GetUserGroupTree(GetUserGuid());
         }
 
-        public Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range)
+        public Group GetGroupById(string id)
         {
             AssertUserLoggedIn();
             InitializeOperation();
 
-            return _dataSource.GetQuantities(groupId, arch, range, _connection, _transaction);
+            var guid = ParseGuidFromString(id, nameof(id));
+
+            var gr = CreateGroupReader();
+            return gr.GetGroupById(guid, GetUserGuid());
+        }
+
+        public GroupInfo GetGroupInfo(string id, InfoFilter infoFilter)
+        {
+            var guid = ParseGuidFromString(id, nameof(id));
+
+            var gr = CreateGroupReader();
+            return gr.GetGroupInfo(guid, infoFilter);
+        }
+
+        public Quantity[] GetQuantities(string groupId, byte arch, DateRange range)
+        {
+            AssertUserLoggedIn();
+            InitializeOperation();
+
+            var guid = ParseGuidFromString(groupId, nameof(groupId));
+
+            return _dataSource.GetQuantities(guid, arch, range, _connection, _transaction);
         }
 
         public ITable GetTable(Guid groupId, byte arch)
@@ -120,26 +133,16 @@ namespace Electricity.Application.Common.Services
             return reader.GetInterval();
         }
 
-        public Group GetGroupById(string id)
-        {
-            AssertUserLoggedIn();
-            InitializeOperation();
-
-            if (!Guid.TryParse(id, out var guid))
-            {
-                return null;
-            }
-
-            var groups = _dataSource.GetUserGroups(GetUserGuid(), _connection, _transaction);
-
-            return groups.Find(g => g.ID == guid);
-        }
-
         private void InitializeOperation()
         {
             _dataSource = _dataSourceManager.GetDataSource();
             _connection = _dataSource.NewConnection();
             _transaction = _dataSource.BeginTransaction(_connection);
+        }
+
+        private GroupReader CreateGroupReader()
+        {
+            return new GroupReader(_dataSource, _connection, _transaction);
         }
 
         private Guid GetUserGuid()
@@ -153,16 +156,13 @@ namespace Electricity.Application.Common.Services
             return userGuid;
         }
 
-        private void ReadGroupTree(GroupTreeNode root, Guid rootId)
+        private Guid ParseGuidFromString(string id, string name)
         {
-            var groups = _dataSource.GetGroups(rootId, _connection, _transaction);
-            root.Nodes = groups.Select(g =>
+            if (!Guid.TryParse(id, out var guid))
             {
-                var node = new GroupTreeNode();
-                node.Group = g;
-                ReadGroupTree(node, g.ID);
-                return node;
-            }).ToArray();
+                throw new ArgumentException($"could not parse Guid", name);
+            }
+            return guid;
         }
 
         private void AssertUserLoggedIn()

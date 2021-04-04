@@ -7,6 +7,6 @@ namespace Electricity.Application.Common.Interfaces
 {
     public interface IQuantityService
     {
-        Quantity[] GetQuantities(Guid groupId, byte arch, DateRange range);
+        Quantity[] GetQuantities(string groupId, byte arch, DateRange range);
     }
 }

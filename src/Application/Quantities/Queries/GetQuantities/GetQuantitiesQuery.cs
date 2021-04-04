@@ -13,7 +13,7 @@ namespace Electricity.Application.Quantities.Queries.GetQuantities
 {
     public class GetQuantitiesQuery : IRequest<QuantitiesDto>
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
         public byte Arch { get; set; }
 
         // public Tuple<DateTime, DateTime> Range { get; set; }
