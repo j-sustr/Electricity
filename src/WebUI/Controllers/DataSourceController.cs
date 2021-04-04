@@ -16,17 +16,6 @@ namespace Electricity.WebUI.Controllers
 {
     public class DataSourceController : ApiController
     {
-        private ApplicationDataSource _appDS;
-        private IMapper _mapper;
-
-        public DataSourceController(
-            ApplicationDataSource appDS,
-            IMapper mapper)
-        {
-            _appDS = appDS;
-            _mapper = mapper;
-        }
-
         // --- DEBUG ---
         [HttpGet("tenant")]
         public ActionResult GetTenant()
@@ -40,16 +29,6 @@ namespace Electricity.WebUI.Controllers
         {
             HttpContext.Session.SetString("__tenant__", identifier);
             return Ok();
-        }
-
-        [HttpGet("records")]
-        public ActionResult<List<SmpMeasNameDBDto>> GetRecords()
-        {
-            var records = _appDS.GetRecords();
-
-            var dto = _mapper.Map<List<SmpMeasNameDBDto>>(records);
-
-            return dto;
         }
 
         // ------

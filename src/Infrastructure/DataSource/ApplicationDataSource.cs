@@ -39,6 +39,16 @@ namespace Electricity.Infrastructure.DataSource
             return _dataSource.Login(username, password, _connection, _transaction);
         }
 
+        public KMB.DataSource.DataSource GetDataSource(out IDisposable connection, out IDisposable transaction)
+        {
+            InitializeOperation();
+
+            connection = _connection;
+            transaction = _transaction;
+
+            return _dataSource;
+        }
+
         public List<SmpMeasNameDB> GetRecords()
         {
             AssertUserLoggedIn();
