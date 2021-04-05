@@ -87,6 +87,9 @@ namespace Electricity.Application.Common.Services
 
         public GroupInfo GetGroupInfo(string id, InfoFilter infoFilter)
         {
+            AssertUserLoggedIn();
+            InitializeOperation();
+
             var guid = ParseGuidFromString(id, nameof(id));
 
             var gr = CreateGroupReader();
