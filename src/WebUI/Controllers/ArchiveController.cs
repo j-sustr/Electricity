@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Electricity.WebUI.Controllers
 {
-    public class QuantitiesController : ApiController
+    public class ArchiveController : ApiController
     {
-        [HttpGet]
+        [HttpGet("quantities")]
         public async Task<ActionResult<QuantitiesDto>> GetQuantities([FromQuery] string groupId, [FromQuery] byte arch)
         {
             return await Mediator.Send(new GetQuantitiesQuery
