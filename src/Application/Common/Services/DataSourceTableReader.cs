@@ -8,7 +8,7 @@ using Electricity.Application.Common.Models.Queries;
 
 namespace Electricity.Application.Common.Services
 {
-    public class DataSourceTableReader : ITable
+    public class DataSourceTableReader : IArchive
     {
         private KMB.DataSource.DataSource _source;
         private Guid _groupId;

@@ -6,7 +6,7 @@ using KMB.DataSource;
 
 namespace Electricity.Application.Common.Interfaces
 {
-    public interface ITable
+    public interface IArchive
     {
         Interval GetInterval();
         Quantity[] GetQuantities(DateRange range);
