@@ -11,9 +11,9 @@ namespace Electricity.Application.Common.Services
 {
     public class PowerService
     {
-        private readonly ITableCollection _tableCollection;
+        private readonly IArchiveRepository _tableCollection;
 
-        public PowerService(ITableCollection tableCollection)
+        public PowerService(IArchiveRepository tableCollection)
         {
             _tableCollection = tableCollection;
         }

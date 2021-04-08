@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Electricity.Application.Common.Services
 {
-    public class ApplicationDataSource : IDisposable, IGroupRepository, ITableCollection, IAuthenticationService
+    public class ApplicationDataSource : IDisposable, IGroupRepository, IArchiveRepository, IAuthenticationService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IDataSourceManager _dataSourceManager;

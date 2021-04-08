@@ -29,10 +29,10 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
 
     public class GetQuantitySeriesQueryHandler : IRequestHandler<GetQuantitySeriesQuery, QuantitySeriesDto>
     {
-        private readonly ITableCollection _tables;
+        private readonly IArchiveRepository _tables;
         private readonly IMapper _mapper;
 
-        public GetQuantitySeriesQueryHandler(ITableCollection tables, IMapper mapper)
+        public GetQuantitySeriesQueryHandler(IArchiveRepository tables, IMapper mapper)
         {
             _tables = tables;
             _mapper = mapper;

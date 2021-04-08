@@ -11,10 +11,10 @@ namespace Electricity.Application.Common.Services
 {
     public class ElectricityMeterService
     {
-        private readonly ITableCollection _tableCollection;
+        private readonly IArchiveRepository _tableCollection;
 
         public ElectricityMeterService(
-            ITableCollection tableCollection)
+            IArchiveRepository tableCollection)
         {
             _tableCollection = tableCollection;
         }

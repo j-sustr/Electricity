@@ -17,9 +17,9 @@ namespace Electricity.Application.DataSource.Queries.GetDataSourceInfo
 
     public class GetDataSourceInfoQueryHandler : IRequestHandler<GetDataSourceInfoQuery, DataSourceInfoDto>
     {
-        private readonly ITableCollection _tableCollection;
+        private readonly IArchiveRepository _tableCollection;
 
-        public GetDataSourceInfoQueryHandler(ITableCollection tableCollection)
+        public GetDataSourceInfoQueryHandler(IArchiveRepository tableCollection)
         {
             _tableCollection = tableCollection;
         }
