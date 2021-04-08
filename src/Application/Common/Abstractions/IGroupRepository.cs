@@ -4,7 +4,7 @@ using System;
 
 namespace Electricity.Application.Common.Interfaces
 {
-    public interface IGroupService
+    public interface IGroupRepository
     {
         public GroupInfo GetUserGroupInfoTree();
 

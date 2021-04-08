@@ -23,7 +23,7 @@ namespace Electricity.Infrastructure
             services.AddScoped<IDataSourceManager, DataSourceManager>();
 
             services.AddScoped<ApplicationDataSource>(); // DEBUG
-            services.AddScoped<IGroupService, ApplicationDataSource>();
+            services.AddScoped<IGroupRepository, ApplicationDataSource>();
             services.AddScoped<IQuantityService, ApplicationDataSource>();
             services.AddScoped<ITableCollection, ApplicationDataSource>();
             services.AddScoped<IAuthenticationService, ApplicationDataSource>();

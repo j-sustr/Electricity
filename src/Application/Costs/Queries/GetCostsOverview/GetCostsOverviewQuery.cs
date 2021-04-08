@@ -27,13 +27,13 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
     {
         private readonly ElectricityMeterService _electricityMeterService;
         private readonly PowerService _powerService;
-        private readonly IGroupService _groupService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsOverviewQueryHandler(
             ElectricityMeterService electricityMeterService,
             PowerService powerService,
-            IGroupService groupService,
+            IGroupRepository groupService,
             IMapper mapper)
         {
             _electricityMeterService = electricityMeterService;

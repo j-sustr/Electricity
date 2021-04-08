@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Electricity.Application.Common.Services
 {
-    public class ApplicationDataSource : IDisposable, IGroupService, IQuantityService, ITableCollection, IAuthenticationService
+    public class ApplicationDataSource : IDisposable, IGroupRepository, ITableCollection, IAuthenticationService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IDataSourceManager _dataSourceManager;
@@ -112,16 +112,6 @@ namespace Electricity.Application.Common.Services
 
             var gr = CreateGroupReader();
             return gr.GetGroupInfo(guid, infoFilter);
-        }
-
-        public Quantity[] GetQuantities(string groupId, byte arch, DateRange range)
-        {
-            CheckUserLoggedIn();
-            InitializeOperation();
-
-            var guid = ParseGuidFromString(groupId, nameof(groupId));
-
-            return _dataSource.GetQuantities(guid, arch, range, _connection, _transaction);
         }
 
         public ITable GetTable(Guid groupId, byte arch)

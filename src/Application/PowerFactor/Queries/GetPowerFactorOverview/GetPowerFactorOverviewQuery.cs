@@ -31,12 +31,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
     public class GetPowerFactorOverviewQueryHandler : IRequestHandler<GetPowerFactorOverviewQuery, PowerFactorOverviewDto>
     {
         private readonly ElectricityMeterService _electricityMeterService;
-        private readonly IGroupService _groupService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetPowerFactorOverviewQueryHandler(
             ElectricityMeterService electricityMeterService,
-            IGroupService groupService,
+            IGroupRepository groupService,
             IMapper mapper)
         {
             _electricityMeterService = electricityMeterService;

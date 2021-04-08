@@ -28,12 +28,12 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
     public class GetPeakDemandDetailQueryHandler : IRequestHandler<GetPeakDemandOverviewQuery, PeakDemandOverviewDto>
     {
         private readonly PowerService _powerService;
-        private readonly IGroupService _groupService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetPeakDemandDetailQueryHandler(
             PowerService powerService,
-            IGroupService groupService,
+            IGroupRepository groupService,
             IMapper mapper)
         {
             _powerService = powerService;

@@ -19,11 +19,11 @@ namespace Electricity.Application.Groups.Queries.GetUserRecordGroupInfos
 
     public class GetUserRecordGroupInfosQueryHandler : IRequestHandler<GetUserRecordGroupInfosQuery, GroupInfoDto[]>
     {
-        private readonly IGroupService _service;
+        private readonly IGroupRepository _service;
         private readonly IMapper _mapper;
 
         public GetUserRecordGroupInfosQueryHandler(
-            IGroupService service,
+            IGroupRepository service,
             IMapper mapper)
         {
             _service = service;

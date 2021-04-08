@@ -36,7 +36,7 @@ namespace Electricity.WebUI.Controllers
         [HttpGet("info")]
         public ActionResult<GroupInfoDto> GetGroupInfo(string id, [FromQuery] InfoFilterDto filter)
         {
-            var gs = HttpContext.RequestServices.GetService<IGroupService>();
+            var gs = HttpContext.RequestServices.GetService<IGroupRepository>();
             var m = HttpContext.RequestServices.GetService<IMapper>();
 
             var f = m.Map<InfoFilter>(filter);

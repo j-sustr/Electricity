@@ -14,11 +14,11 @@ namespace Electricity.Application.Groups.Queries.GetUserGroupTree
 
     public class GetUserGroupTreeQueryHandler : IRequestHandler<GetUserGroupTreeQuery, GroupTreeNodeDto>
     {
-        private readonly IGroupService _service;
+        private readonly IGroupRepository _service;
         private readonly IMapper _mapper;
 
         public GetUserGroupTreeQueryHandler(
-            IGroupService service,
+            IGroupRepository service,
             IMapper mapper)
         {
             _service = service;
