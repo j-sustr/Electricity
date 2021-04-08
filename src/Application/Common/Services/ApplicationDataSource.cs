@@ -119,7 +119,7 @@ namespace Electricity.Application.Common.Services
             CheckUserLoggedIn();
             InitializeOperation();
 
-            return new DataSourceTableReader(this._dataSource, groupId, arch, _connection, _transaction);
+            return new ArchiveReader(this._dataSource, groupId, arch, _connection, _transaction);
         }
 
         public Interval GetInterval(Guid? groupId, byte arch)
@@ -139,7 +139,7 @@ namespace Electricity.Application.Common.Services
                 groupId = groups[0].ID;
             }
 
-            var reader = new DataSourceTableReader(this._dataSource, (Guid)groupId, arch, _connection, _transaction);
+            var reader = new ArchiveReader(this._dataSource, (Guid)groupId, arch, _connection, _transaction);
 
             return reader.GetInterval();
         }

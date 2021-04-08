@@ -8,7 +8,7 @@ using Electricity.Application.Common.Models.Queries;
 
 namespace Electricity.Application.Common.Services
 {
-    public class DataSourceTableReader : IArchive
+    public class ArchiveReader : IArchive
     {
         private KMB.DataSource.DataSource _source;
         private Guid _groupId;
@@ -16,7 +16,7 @@ namespace Electricity.Application.Common.Services
         private IDisposable _connection;
         private IDisposable _transaction;
 
-        public DataSourceTableReader(KMB.DataSource.DataSource source, Guid groupId, byte arch, IDisposable connection, IDisposable transaction)
+        public ArchiveReader(KMB.DataSource.DataSource source, Guid groupId, byte arch, IDisposable connection, IDisposable transaction)
         {
             _source = source;
             _groupId = groupId;
@@ -56,6 +56,11 @@ namespace Electricity.Application.Common.Services
             }
 
             return new Interval(start, end);
+        }
+
+        public Quantity[] GetQuantities(DateRange range)
+        {
+            return _source.GetQuantities(_groupId, _arch, range, _connection, _transaction);
         }
 
         unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetArchiveRowsQuery query)
