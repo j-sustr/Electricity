@@ -40,7 +40,7 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
 
         public Task<QuantitySeriesDto> Handle(GetQuantitySeriesQuery request, CancellationToken cancellationToken)
         {
-            var table = _tables.GetTable(request.GroupId, request.Arch);
+            var table = _tables.GetArchive(request.GroupId, request.Arch);
 
             var rows = table.GetRows(new GetRowsQuery
             {

@@ -114,7 +114,7 @@ namespace Electricity.Application.Common.Services
             return gr.GetGroupInfo(guid, infoFilter);
         }
 
-        public IArchive GetTable(Guid groupId, byte arch)
+        public IArchive GetArchive(Guid groupId, byte arch)
         {
             CheckUserLoggedIn();
             InitializeOperation();

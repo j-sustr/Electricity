@@ -21,7 +21,7 @@ namespace Electricity.Application.Common.Services
 
         public ElectricityMeterRowsView GetRowsView(Guid groupId, Interval interval, ElectricityMeterQuantity[] quantities)
         {
-            var table = _tableCollection.GetTable(groupId, (byte)Arch.ElectricityMeter);
+            var table = _tableCollection.GetArchive(groupId, (byte)Arch.ElectricityMeter);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 

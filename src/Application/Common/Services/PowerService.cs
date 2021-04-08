@@ -20,7 +20,7 @@ namespace Electricity.Application.Common.Services
 
         public PowerRowsView GetRowsView(Guid groupId, Interval interval, PowerQuantity[] quantities)
         {
-            var table = _tableCollection.GetTable(groupId, (byte)Arch.Main);
+            var table = _tableCollection.GetArchive(groupId, (byte)Arch.Main);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
