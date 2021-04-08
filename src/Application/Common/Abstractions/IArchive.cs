@@ -11,6 +11,6 @@ namespace Electricity.Application.Common.Interfaces
         Interval GetInterval();
         Quantity[] GetQuantities(DateRange range);
 
-        IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query);
+        IEnumerable<Tuple<DateTime, float[]>> GetRows(GetArchiveRowsQuery query);
     }
 }

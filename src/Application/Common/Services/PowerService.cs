@@ -24,7 +24,7 @@ namespace Electricity.Application.Common.Services
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
-            var rows = table.GetRows(new Models.Queries.GetRowsQuery
+            var rows = table.GetRows(new Models.Queries.GetArchiveRowsQuery
             {
                 Interval = interval,
                 Quantities = q

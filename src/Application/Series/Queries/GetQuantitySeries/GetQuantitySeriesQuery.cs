@@ -42,7 +42,7 @@ namespace Electricity.Application.Series.Queries.GetQuantitySeries
         {
             var table = _tables.GetArchive(request.GroupId, request.Arch);
 
-            var rows = table.GetRows(new GetRowsQuery
+            var rows = table.GetRows(new GetArchiveRowsQuery
             {
                 Quantities = new Quantity[] { request.Quantity },
                 Aggregation = (uint)Math.Floor(request.AggregationInterval.TotalMilliseconds),

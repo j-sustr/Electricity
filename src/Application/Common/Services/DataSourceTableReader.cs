@@ -58,7 +58,7 @@ namespace Electricity.Application.Common.Services
             return new Interval(start, end);
         }
 
-        unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetRowsQuery query)
+        unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetArchiveRowsQuery query)
         {
             if (query.Interval == null)
             {

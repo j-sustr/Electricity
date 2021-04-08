@@ -3,7 +3,7 @@ using KMB.DataSource;
 
 namespace Electricity.Application.Common.Models.Queries
 {
-    public class GetRowsQuery
+    public class GetArchiveRowsQuery
     {
         public Interval Interval { get; set; } = Interval.Unbounded;
 
