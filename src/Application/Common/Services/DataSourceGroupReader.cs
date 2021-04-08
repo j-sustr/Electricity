@@ -37,6 +37,35 @@ namespace Electricity.Application.Common.Services
             return _dataSource.GetGroupInfos(id, infoFilter, _connection, _transaction);
         }
 
+        public GroupInfo GetUserGroupInfoTree(Guid userId)
+        {
+            return _dataSource.GetGroupInfos(userId, new InfoFilter() { IDisGroup = false }, _connection, _transaction);
+        }
+
+        public GroupInfo[] GetUserRecordGroupInfos(Guid userId)
+        {
+            GroupInfo groupInfo = _dataSource.GetGroupInfos(userId, new InfoFilter() { IDisGroup = false }, _connection, _transaction);
+
+            List<GroupInfo> recordGroups = new List<GroupInfo>();
+
+            void AddRecordGroups(List<GroupInfo> list, GroupInfo g)
+            {
+                if (g.Archives != null)
+                    recordGroups.Add(g);
+
+                List<GroupInfo> groups = g.Subgroups;
+                if (groups == null) return;
+
+                foreach (var item in groups)
+                    AddRecordGroups(list, item);
+
+            }
+
+            AddRecordGroups(recordGroups, groupInfo);
+
+            return recordGroups.ToArray();
+        }
+
         public Group[] GetUserGroups(Guid userId)
         {
             var groups = _dataSource.GetUserGroups(userId, _connection, _transaction);

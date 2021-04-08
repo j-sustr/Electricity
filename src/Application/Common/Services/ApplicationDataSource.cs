@@ -50,15 +50,33 @@ namespace Electricity.Application.Common.Services
 
         public List<SmpMeasNameDB> GetRecords()
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             return _dataSource.GetRecords(_connection, _transaction);
         }
 
+        public GroupInfo GetUserGroupInfoTree()
+        {
+            CheckUserLoggedIn();
+            InitializeOperation();
+
+            var gr = CreateGroupReader();
+            return gr.GetUserGroupInfoTree(GetUserGuid());
+        }
+
+        public GroupInfo[] GetUserRecordGroupInfos()
+        {
+            CheckUserLoggedIn();
+            InitializeOperation();
+
+            var gr = CreateGroupReader();
+            return gr.GetUserRecordGroupInfos(GetUserGuid());
+        }
+
         public Group[] GetUserGroups()
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             var gr = CreateGroupReader();
@@ -67,7 +85,7 @@ namespace Electricity.Application.Common.Services
 
         public GroupTreeNode GetUserGroupTree()
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             var gr = CreateGroupReader();
@@ -76,7 +94,7 @@ namespace Electricity.Application.Common.Services
 
         public Group GetGroupById(string id)
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             var guid = ParseGuidFromString(id, nameof(id));
@@ -87,7 +105,7 @@ namespace Electricity.Application.Common.Services
 
         public GroupInfo GetGroupInfo(string id, InfoFilter infoFilter)
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             var guid = ParseGuidFromString(id, nameof(id));
@@ -98,7 +116,7 @@ namespace Electricity.Application.Common.Services
 
         public Quantity[] GetQuantities(string groupId, byte arch, DateRange range)
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             var guid = ParseGuidFromString(groupId, nameof(groupId));
@@ -108,7 +126,7 @@ namespace Electricity.Application.Common.Services
 
         public ITable GetTable(Guid groupId, byte arch)
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             return new DataSourceTableReader(this._dataSource, groupId, arch, _connection, _transaction);
@@ -116,7 +134,7 @@ namespace Electricity.Application.Common.Services
 
         public Interval GetInterval(Guid? groupId, byte arch)
         {
-            AssertUserLoggedIn();
+            CheckUserLoggedIn();
             InitializeOperation();
 
             if (groupId == null)
@@ -168,7 +186,7 @@ namespace Electricity.Application.Common.Services
             return guid;
         }
 
-        private void AssertUserLoggedIn()
+        private void CheckUserLoggedIn()
         {
             if (_currentUserService.UserId == null)
             {
