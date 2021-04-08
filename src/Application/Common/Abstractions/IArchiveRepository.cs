@@ -7,6 +7,5 @@ namespace Electricity.Application.Common.Interfaces
     {
         public IArchive GetArchive(Guid groupId, byte arch);
 
-        public Interval GetInterval(Guid? groupId, byte arch);
     }
 }
