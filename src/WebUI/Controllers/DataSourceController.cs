@@ -1,17 +1,8 @@
-﻿using AutoMapper;
-using Electricity.Application.Common.Abstractions;
-using Electricity.Application.Common.Models.Dtos;
-using Electricity.Application.Costs.Queries.GetCostsOverview;
+﻿using Electricity.Application.Common.Abstractions;
 using Electricity.Application.DataSource.Commands.OpenDataSource;
-using Electricity.Application.DataSource.Queries.GetDataSourceInfo;
-using Electricity.Infrastructure.DataSource;
-using KMB.DataSource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Electricity.WebUI.Controllers
