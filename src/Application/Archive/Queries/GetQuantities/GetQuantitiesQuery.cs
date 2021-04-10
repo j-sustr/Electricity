@@ -13,7 +13,7 @@ namespace Electricity.Application.Archive.Queries.GetQuantities
 {
     public class GetQuantitiesQuery : IRequest<QuantitiesDto>
     {
-        public string GroupId { get; set; }
+        public Guid GroupId { get; set; }
         public byte Arch { get; set; }
 
         // public Tuple<DateTime, DateTime> Range { get; set; }
@@ -21,24 +21,27 @@ namespace Electricity.Application.Archive.Queries.GetQuantities
 
     public class GetQuantitiesQueryHandler : IRequestHandler<GetQuantitiesQuery, QuantitiesDto>
     {
-        private readonly IArchiveRepository _service;
+        private readonly IArchiveRepository _repo;
         private readonly IMapper _mapper;
 
-        public GetQuantitiesQueryHandler(IArchiveRepository service, IMapper mapper)
+        public GetQuantitiesQueryHandler(IArchiveRepository repo, IMapper mapper)
         {
-            _service = service;
+            _repo = repo;
             _mapper = mapper;
         }
 
         public async Task<QuantitiesDto> Handle(GetQuantitiesQuery request, CancellationToken cancellationToken)
         {
-            Quantity[] quants = null;
+            var arch = _repo.GetArchive(request.GroupId, request.Arch);
+            if (arch == null)
+            {
+                throw new NotFoundException($"Archive ({request.GroupId}, {request.Arch})");
+            }
 
-            quants = _service.GetQuantities(request.GroupId, request.Arch, null);
-
+            Quantity[] quants = arch.GetQuantities(null);
             if (quants == null)
             {
-                throw new NotFoundException(nameof(Group), request.GroupId);
+                return await Task.FromResult<QuantitiesDto>(null);
             }
 
             var quantsDto = _mapper.Map<Quantity[], QuantityDto[]>(quants);
