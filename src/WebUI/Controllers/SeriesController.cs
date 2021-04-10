@@ -1,10 +1,7 @@
-using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using AutoMapper;
-using KMB.DataSource;
+using Electricity.Application.Archive.Queries.GetQuantitySeries;
 using Electricity.Application.Common.Models.Dtos;
-using Electricity.Application.Series.Queries.GetQuantitySeries;
 using Electricity.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 
