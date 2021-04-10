@@ -41,12 +41,6 @@ namespace Electricity.WebUI.Controllers
             return Ok();
         }
 
-        [HttpGet("info")]
-        public async Task<ActionResult<DataSourceInfoDto>> GetInfoAsync([FromQuery] GetDataSourceInfoQuery query)
-        {
-            return await Mediator.Send(query);
-        }
-
         [HttpDelete("cache")]
         [Authorize]
         public ActionResult ClearCache()
