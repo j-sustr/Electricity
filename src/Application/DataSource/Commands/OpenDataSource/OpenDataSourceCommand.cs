@@ -1,4 +1,5 @@
 ﻿using Electricity.Application.Common.Abstractions;
+using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
@@ -13,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace Electricity.Application.DataSource.Commands.OpenDataSource
 {
-    public class OpenDataSourceCommand : IRequest<bool>
+    public class OpenDataSourceCommand : IRequest<DataSourceInfoDto>
     {
         public TenantDto Tenant { get; set; }
     }
 
-    public class OpenDataSourceCommandHandler : IRequestHandler<OpenDataSourceCommand, bool>
+    public class OpenDataSourceCommandHandler : IRequestHandler<OpenDataSourceCommand, DataSourceInfoDto>
     {
         private readonly IDataSourceManager _dsManager;
 
@@ -37,7 +38,7 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
             _tenantStore = tenantStore;
         }
 
-        public async Task<bool> Handle(OpenDataSourceCommand request, CancellationToken cancellationToken)
+        public async Task<DataSourceInfoDto> Handle(OpenDataSourceCommand request, CancellationToken cancellationToken)
         {
             var tenant = new Tenant
             {
@@ -51,10 +52,12 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
             };
 
             var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
-            if (!result) return false;
+            if (!result) 
+                throw new Exception();
 
             result = await _tenantStore.TryAddAsync(tenant);
-            if (!result) return false;
+            if (!result)
+                throw new Exception();
 
             IDisposable connection = null;
             try
@@ -62,7 +65,7 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 var (dsId, ds) = _dsManager.CreateDataSource(tenant.DataSourceCreationParams);
                 connection = ds.NewConnection();
                 tenant.DataSourceId = dsId;
-                return false;
+                return null;
             }
             catch (NotFoundException ex)
             {
@@ -77,7 +80,21 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 connection?.Dispose();
             }
 
-            return false;
+
+            string name;
+            if (request.Tenant.DataSourceType == DataSourceType.DB)
+            {
+                name = request.Tenant.DBConnectionParams.DBName;
+            }
+            else
+            {
+                name = request.Tenant.CEAFileName;
+            }
+
+            return new DataSourceInfoDto
+            {
+                Name = name
+            };
         }
     }
 }
