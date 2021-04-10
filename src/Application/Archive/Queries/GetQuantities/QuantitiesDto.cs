@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Electricity.Application.Quantities.Queries.GetQuantities
+namespace Electricity.Application.Archive.Queries.GetQuantities
 {
     public class QuantitiesDto
     {

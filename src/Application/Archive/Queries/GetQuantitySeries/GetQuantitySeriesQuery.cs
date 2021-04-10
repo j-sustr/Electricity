@@ -10,7 +10,7 @@ using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
 
-namespace Electricity.Application.Series.Queries.GetQuantitySeries
+namespace Electricity.Application.Archive.Queries.GetQuantitySeries
 {
     public class GetQuantitySeriesQuery : IRequest<QuantitySeriesDto>
     {

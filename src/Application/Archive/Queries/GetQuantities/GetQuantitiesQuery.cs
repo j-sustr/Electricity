@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Electricity.Application.Quantities.Queries.GetQuantities
+namespace Electricity.Application.Archive.Queries.GetQuantities
 {
     public class GetQuantitiesQuery : IRequest<QuantitiesDto>
     {
@@ -21,10 +21,10 @@ namespace Electricity.Application.Quantities.Queries.GetQuantities
 
     public class GetQuantitiesQueryHandler : IRequestHandler<GetQuantitiesQuery, QuantitiesDto>
     {
-        private readonly IQuantityService _service;
+        private readonly IArchiveRepository _service;
         private readonly IMapper _mapper;
 
-        public GetQuantitiesQueryHandler(IQuantityService service, IMapper mapper)
+        public GetQuantitiesQueryHandler(IArchiveRepository service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

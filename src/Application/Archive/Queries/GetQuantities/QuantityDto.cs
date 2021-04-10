@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Electricity.Application.Quantities.Queries.GetQuantities
+namespace Electricity.Application.Archive.Queries.GetQuantities
 {
     public class QuantityDto : IMapFrom<Quantity>
     {

@@ -2,7 +2,7 @@ using Electricity.Application.Common.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Electricity.Application.Series.Queries.GetQuantitySeries
+namespace Electricity.Application.Archive.Queries.GetQuantitySeries
 {
     public class QuantitySeriesDto
     {
