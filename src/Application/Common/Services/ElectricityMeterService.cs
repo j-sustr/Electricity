@@ -6,26 +6,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Electricity.Application.Common.Models.Queries;
 
 namespace Electricity.Application.Common.Services
 {
-    public class ElectricityMeterService
+    public class ElectricityMeterService : ArchiveRepositoryService
     {
-        private readonly IArchiveRepository _tableCollection;
-
         public ElectricityMeterService(
-            IArchiveRepository tableCollection)
+            IArchiveRepository archiveRepository,
+            IGroupRepository groupRepository) : base(archiveRepository, groupRepository)
         {
-            _tableCollection = tableCollection;
         }
 
         public ElectricityMeterRowsView GetRowsView(Guid groupId, Interval interval, ElectricityMeterQuantity[] quantities)
         {
-            var table = _tableCollection.GetArchive(groupId, (byte)Arch.ElectricityMeter);
+            var table = _archiveRepository.GetArchive(groupId, (byte)Arch.ElectricityMeter);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
-            var rows = table.GetRows(new Models.Queries.GetArchiveRowsQuery
+            var rows = table.GetRows(new GetArchiveRowsQuery
             {
                 Interval = interval,
                 Quantities = q
@@ -39,16 +38,9 @@ namespace Electricity.Application.Common.Services
             return new ElectricityMeterRowsView(quantities, rows);
         }
 
-        public bool HasInterval(Guid groupId, Interval interval)
+        public Interval GetIntervalOverlap(Interval interval)
         {
-            return GetIntervalOverlap(groupId, interval).Equals(interval);
-        }
-
-        public Interval GetIntervalOverlap(Guid groupId, Interval interval)
-        {
-            return _tableCollection
-                .GetInterval(groupId, (byte)Arch.ElectricityMeter)
-                .GetOverlap(interval);
+            return base.GetIntervalOverlap(interval, (byte)Arch.ElectricityMeter);
         }
     }
 }
