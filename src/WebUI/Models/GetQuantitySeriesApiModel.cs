@@ -1,7 +1,7 @@
 using System;
+using Electricity.Application.Archive.Queries.GetQuantitySeries;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Mappings;
-using Electricity.Application.Series.Queries.GetQuantitySeries;
 
 namespace Electricity.WebUI.Models
 {
