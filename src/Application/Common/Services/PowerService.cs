@@ -9,18 +9,17 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public class PowerService
+    public class PowerService : ArchiveRepositoryService
     {
-        private readonly IArchiveRepository _tableCollection;
-
-        public PowerService(IArchiveRepository tableCollection)
+        public PowerService(
+            IArchiveRepository archiveRepository,
+            IGroupRepository groupRepository): base(archiveRepository, groupRepository)
         {
-            _tableCollection = tableCollection;
         }
 
         public PowerRowsView GetRowsView(Guid groupId, Interval interval, PowerQuantity[] quantities)
         {
-            var table = _tableCollection.GetArchive(groupId, (byte)Arch.Main);
+            var table = _archiveRepository.GetArchive(groupId, (byte)Arch.Main);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
@@ -36,18 +35,6 @@ namespace Electricity.Application.Common.Services
             }
 
             return new PowerRowsView(quantities, rows);
-        }
-
-        public bool HasInterval(Guid groupId, Interval interval)
-        {
-            return GetIntervalOverlap(groupId, interval).Equals(interval);
-        }
-
-        public Interval GetIntervalOverlap(Guid groupId, Interval interval)
-        {
-            return _tableCollection
-                .GetInterval(groupId, (byte)Arch.Main)
-                .GetOverlap(interval);
         }
     }
 }
