@@ -7,6 +7,8 @@ using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
 using Electricity.Infrastructure.DataSource.Fake;
+using Electricity.Infrastructure.DataSource.Util;
+using Electricity.Application.Common.Extensions;
 
 namespace Electricity.Infrastructure.DataSource
 {
@@ -14,18 +16,15 @@ namespace Electricity.Infrastructure.DataSource
     {
         private int _seed;
 
-        private BoundedInterval _interval { get; set; }
-
         public string ENVISUser { get; set; }
         public string ENVISPassword { get; set; }
         public Guid UserId { get; set; } = Guid.NewGuid();
 
-        public List<Group> Groups { get; set; }
+        public GroupInfo GroupTree { get; set; }
 
-        public FakeDataSource(int seed, BoundedInterval interval)
+        public FakeDataSource(int seed)
         {
             _seed = seed;
-            _interval = interval;
         }
 
         public override void Dispose()
@@ -88,9 +87,34 @@ namespace Electricity.Infrastructure.DataSource
             return UserId;
         }
 
+        public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction)
+        {
+            if (filter.IDisGroup)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (!filter.RecurseSubgroups)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (filter.infoType != ArchiveInfoType.All)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (filter.range != null)
+            {
+                throw new NotImplementedException();
+            }
+
+            return GroupInfoUtil.CloneGroupInfo(GroupTree);
+        }
+
         public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)
         {
-            return Groups;
+            throw new NotImplementedException();
         }
 
         public override List<Group> GetGroups(Guid parent, IDisposable connection, IDisposable transaction)
@@ -105,10 +129,13 @@ namespace Electricity.Infrastructure.DataSource
 
         public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, IDisposable connection, IDisposable transaction, EEnergyAggType energyAggType = KMB.DataSource.EEnergyAggType.Cumulative)
         {
-            if (Groups.FindIndex(g => g.ID == groupID) == -1)
+            var groupArray = GroupTree.GetUserRecordGroupInfos();
+            var groupIndex = Array.FindIndex(groupArray, g => g.ID == groupID);
+            if (groupIndex == -1)
             {
                 throw new ArgumentException("invalid groupId");
             }
+            var group = groupArray[groupIndex];
 
             bool cumulative = arch == (byte)Arch.ElectricityMeter;
 
@@ -128,7 +155,8 @@ namespace Electricity.Infrastructure.DataSource
                 q.Value = new FakePropValueFloat();
             }
 
-            var interval = _interval.ToInterval();
+            var archive = group.Archives[arch];
+            var interval = Interval.FromDateRange(archive.Range);
 
             if (range != null)
             {
@@ -142,7 +170,7 @@ namespace Electricity.Infrastructure.DataSource
 
             IEnumerable<RowInfo> GenerateRows()
             {
-                DateTime time = interval.Start ?? _interval.Start;
+                DateTime time = interval.Start ?? archive.Range.DateMin;
                 TimeSpan duration = new TimeSpan(0, 0, 10);
                 while (time < interval.End)
                 {
@@ -206,11 +234,6 @@ namespace Electricity.Infrastructure.DataSource
         }
 
         public override void SaveChanges()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction)
         {
             throw new NotImplementedException();
         }

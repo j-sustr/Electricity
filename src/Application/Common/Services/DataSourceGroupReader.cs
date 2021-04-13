@@ -1,4 +1,5 @@
-﻿using Electricity.Application.Common.Interfaces;
+﻿using Electricity.Application.Common.Extensions;
+using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using KMB.DataSource;
 using System;
@@ -8,13 +9,13 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public class GroupReader
+    public class DataSourceGroupReader
     {
         private readonly KMB.DataSource.DataSource _dataSource;
         private IDisposable _connection;
         private IDisposable _transaction;
 
-        public GroupReader(
+        public DataSourceGroupReader(
             KMB.DataSource.DataSource dataSource,
             IDisposable connection,
             IDisposable transaction
@@ -46,24 +47,7 @@ namespace Electricity.Application.Common.Services
         {
             GroupInfo groupInfo = _dataSource.GetGroupInfos(userId, new InfoFilter() { IDisGroup = false }, _connection, _transaction);
 
-            List<GroupInfo> recordGroups = new List<GroupInfo>();
-
-            void AddRecordGroups(List<GroupInfo> list, GroupInfo g)
-            {
-                if (g.Archives != null)
-                    recordGroups.Add(g);
-
-                List<GroupInfo> groups = g.Subgroups;
-                if (groups == null) return;
-
-                foreach (var item in groups)
-                    AddRecordGroups(list, item);
-
-            }
-
-            AddRecordGroups(recordGroups, groupInfo);
-
-            return recordGroups.ToArray();
+            return groupInfo.GetUserRecordGroupInfos();
         }
 
         public Group[] GetUserGroups(Guid userId)

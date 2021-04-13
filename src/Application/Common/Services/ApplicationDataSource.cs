@@ -151,9 +151,9 @@ namespace Electricity.Application.Common.Services
             _transaction = _dataSource.BeginTransaction(_connection);
         }
 
-        private GroupReader CreateGroupReader()
+        private DataSourceGroupReader CreateGroupReader()
         {
-            return new GroupReader(_dataSource, _connection, _transaction);
+            return new DataSourceGroupReader(_dataSource, _connection, _transaction);
         }
 
         private Guid GetUserGuid()

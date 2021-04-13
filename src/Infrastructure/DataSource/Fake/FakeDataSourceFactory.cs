@@ -4,9 +4,13 @@ using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
 using System.Collections.Generic;
 using Electricity.Infrastructure.DataSource.Abstractions;
+using Electricity.Infrastructure.DataSource.Util;
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {
+    using static ArchiveInfoUtil;
+    using static GroupInfoUtil;
+
     public class FakeDataSourceFactory : IDataSourceFactory
     {
         private int _seed;
@@ -14,26 +18,68 @@ namespace Electricity.Infrastructure.DataSource.Fake
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public List<Group> UserGroups = new List<Group>{
-            new Group(GuidUtil.IntToGuid(1), "group-1"),
-            new Group(GuidUtil.IntToGuid(2), "group-2"),
-            new Group(GuidUtil.IntToGuid(3), "group-3"),
-            new Group(GuidUtil.IntToGuid(4), "group-4"),
-            new Group(GuidUtil.IntToGuid(5), "group-5"),
+        public GroupInfo GroupTree = new GroupInfo
+        {
+            ID = GuidUtil.IntToGuid(0),
+            Name = "TestUser",
+            Subgroups = new List<GroupInfo>
+            {
+                new GroupInfo
+                {
+                    ID = GuidUtil.IntToGuid(1),
+                    Name = "Oddeleni",
+                    Subgroups = new List<GroupInfo>
+                    {
+                        new GroupInfo
+                        {
+                            ID = GuidUtil.IntToGuid(2),
+                            Name = "Mistnost101",
+                            Archives = new ArchiveInfo[] {
+                                CreateArchiveInfo(0, 0, null, null),
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CreateArchiveInfo(6, 0, null, null),
+                            },
+                            Subgroups = new List<GroupInfo>(),
+                        },
+                        new GroupInfo
+                        {
+                            ID = GuidUtil.IntToGuid(3),
+                            Name = "Mistnost201",
+                            Archives = new ArchiveInfo[] {
+                                CreateArchiveInfo(0, 0, null, null),
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CreateArchiveInfo(6, 0, null, null),
+                            },
+                            Subgroups = new List<GroupInfo>(),
+                        }
+                    }
+                },
+                new GroupInfo
+                {
+                    ID = GuidUtil.IntToGuid(4),
+                    Name = "UserData",
+                    Subgroups = new List<GroupInfo>(),
+                }
+            }
         };
 
-        private BoundedInterval _interval { get; set; }
-
-        public FakeDataSourceFactory(int seed, BoundedInterval interval)
+        public FakeDataSourceFactory(int seed)
         {
             _seed = seed;
-            _interval = interval;
         }
 
         public KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams creationParams)
         {
-            var ds = new FakeDataSource(_seed, _interval);
-            ds.Groups = UserGroups;
+            var ds = new FakeDataSource(_seed);
+            ds.GroupTree = GroupTree;
             return ds;
         }
     }
