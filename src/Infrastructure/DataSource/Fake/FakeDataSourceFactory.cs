@@ -82,5 +82,32 @@ namespace Electricity.Infrastructure.DataSource.Fake
             ds.GroupTree = GroupTree;
             return ds;
         }
+
+        public void SetRange(DateRange range)
+        {
+            void SetRangeOnGroup(DateRange range, GroupInfo g)
+            {
+                if (g == null) return;
+                if (g.Archives != null)
+                {
+                    foreach (var archive in g.Archives)
+                    {
+                        if (archive != null)
+                        {
+                            archive.Range = range;
+                        }
+                    }
+                }
+                if (g.Subgroups != null)
+                {
+                    foreach (var subgroup in g.Subgroups)
+                    {
+                        SetRangeOnGroup(range, subgroup);
+                    }
+                }
+            }
+
+            SetRangeOnGroup(range, GroupTree);
+        }
     }
 }

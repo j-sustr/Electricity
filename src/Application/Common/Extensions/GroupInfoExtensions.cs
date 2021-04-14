@@ -28,5 +28,25 @@ namespace Electricity.Application.Common.Extensions
 
             return recordGroups.ToArray();
         }
+
+        public static GroupInfo Find(this GroupInfo g, Guid id)
+        {
+            GroupInfo GetGroup(GroupInfo l_g, Guid l_id)
+            {
+                if (l_g.ID == l_id) return l_g;
+
+                foreach (var subgroup in g.Subgroups)
+                {
+                    var grp = GetGroup(subgroup, l_id);
+                    if (grp != null)
+                    {
+                        return grp;
+                    }
+                }
+                return null;
+            }
+
+            return GetGroup(g, id);
+        }
     }
 }

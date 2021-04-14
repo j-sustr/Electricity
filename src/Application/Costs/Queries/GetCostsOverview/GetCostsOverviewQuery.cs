@@ -21,6 +21,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
+
+        public int? MaxGroups { get; set; }
     }
 
     public class GetCostsOverviewQueryHandler : IRequestHandler<GetCostsOverviewQuery, CostsOverviewDto>
@@ -47,11 +49,15 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var userGroups = _groupService.GetUserGroups();
-            if (userGroups.Length == 0) return null;
+            var userGroupInfos = _groupService.GetUserRecordGroupInfos();
+            if (userGroupInfos.Length == 0) return null;
+            if (request.MaxGroups is int max)
+            {
+                userGroupInfos = userGroupInfos.Take(max).ToArray();
+            }
 
-            var items1 = GetItemsForInterval(userGroups, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(userGroups, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(userGroupInfos, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(userGroupInfos, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new CostsOverviewDto
             {
@@ -60,12 +66,24 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             });
         }
 
-        public CostlyQuantitiesOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
+        public CostlyQuantitiesOverviewItem[] GetItemsForInterval(GroupInfo[] groupInfos, Interval interval, string intervalName)
         {
             if (interval == null) return null;
 
-            var items = groups.Select(g =>
+            var items = groupInfos.Select(g =>
             {
+                if (g.Archives[(int)Arch.Main] == null || g.Archives[(int)Arch.ElectricityMeter] == null)
+                {
+                    var message = $"Missing archives: ";
+                    message += (g.Archives[(int)Arch.Main] == null) ? (nameof(Arch.Main) + ", ") : "";
+                    message += (g.Archives[(int)Arch.ElectricityMeter] == null) ? (nameof(Arch.ElectricityMeter) + ", ") : "";
+
+                    return new CostlyQuantitiesOverviewItem
+                    {
+                        Message = message
+                    };
+                }
+
                 var emQuantities = new ElectricityMeterQuantity[] {
                     new ElectricityMeterQuantity{
                         Type = ElectricityMeterQuantityType.ActiveEnergy,

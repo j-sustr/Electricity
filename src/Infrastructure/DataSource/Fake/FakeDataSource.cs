@@ -91,7 +91,12 @@ namespace Electricity.Infrastructure.DataSource
         {
             if (filter.IDisGroup)
             {
-                throw new NotImplementedException();
+                if (filter.RecurseSubgroups)
+                {
+                    throw new NotImplementedException();
+                }
+
+                return GroupTree.Find(ID);
             }
 
             if (!filter.RecurseSubgroups)

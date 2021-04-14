@@ -1,11 +1,8 @@
-using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Groups.Queries.GetUserGroupInfoTree;
-using Electricity.Application.Groups.Queries.GetUserGroups;
-using Electricity.Application.Groups.Queries.GetUserGroupTree;
 using Electricity.Application.Groups.Queries.GetUserRecordGroupInfos;
 using KMB.DataSource;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +24,6 @@ namespace Electricity.WebUI.Controllers
             return await Mediator.Send(new GetUserRecordGroupInfosQuery());
         }
 
-        [HttpGet("user-tree")]
-        public async Task<ActionResult<GroupTreeNodeDto>> GetUserGroupTree()
-        {
-            return await Mediator.Send(new GetUserGroupTreeQuery());
-        }
-
         [HttpGet("info")]
         public ActionResult<GroupInfoDto> GetGroupInfo(string id, [FromQuery] InfoFilterDto filter)
         {
@@ -41,7 +32,7 @@ namespace Electricity.WebUI.Controllers
 
             var f = m.Map<InfoFilter>(filter);
 
-            var info = gs.GetGroupInfo(id, f);
+            var info = gs.GetGroupInfo(id);
 
             var dto = m.Map<GroupInfoDto>(info);
 

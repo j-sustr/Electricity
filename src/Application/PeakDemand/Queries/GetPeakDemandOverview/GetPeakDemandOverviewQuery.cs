@@ -46,11 +46,11 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var userGroups = _groupService.GetUserGroups();
-            if (userGroups.Length == 0) return null;
+            var userRecordGroups = _groupService.GetUserRecordGroupInfos();
+            if (userRecordGroups.Length == 0) return null;
 
-            var items1 = GetItemsForInterval(userGroups, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(userGroups, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(userRecordGroups, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(userRecordGroups, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new PeakDemandOverviewDto
             {
@@ -59,7 +59,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
             });
         }
 
-        private PeakDemandOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
+        private PeakDemandOverviewItem[] GetItemsForInterval(GroupInfo[] groups, Interval interval, string intervalName)
         {
             if (interval == null) return null;
 

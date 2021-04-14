@@ -47,7 +47,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(null, null),
                 Phases = new Phases
                 {
@@ -78,7 +78,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
                 Phases = new Phases
                 {
@@ -109,7 +109,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
                 Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20)),
                 Phases = new Phases

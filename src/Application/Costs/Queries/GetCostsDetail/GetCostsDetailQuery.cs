@@ -48,7 +48,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var group = _groupService.GetGroupById(request.GroupId);
+            var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
             {
                 throw new NotFoundException("Invalid GroupId");
@@ -64,7 +64,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             });
         }
 
-        public CostlyQuantitiesDetailItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
+        public CostlyQuantitiesDetailItem[] GetItemsForInterval(GroupInfo g, Interval interval, string intervalName)
         {
             if (interval == null)
             {

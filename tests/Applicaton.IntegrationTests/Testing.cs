@@ -19,6 +19,8 @@ using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.IntegrationTests;
 using Electricity.Infrastructure.DataSource.Abstractions;
+using Electricity.Application.Common.Extensions;
+using KMB.DataSource;
 
 [SetUpFixture]
 public class Testing
@@ -105,9 +107,10 @@ public class Testing
 
         var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
         var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
-        var interval = new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime());
+        var range = new DateRange(start.ToUniversalTime(), end.ToUniversalTime());
 
-        _dataSourceFactory = new FakeDataSourceFactory(0, interval);
+        _dataSourceFactory = new FakeDataSourceFactory(0);
+        _dataSourceFactory.SetRange(range);
         services.AddSingleton<IDataSourceFactory>(provider => _dataSourceFactory);
     }
 
@@ -206,9 +209,10 @@ public class Testing
         return _currentUserId;
     }
 
-    public static string GetUserGroupIdByName(string name)
+    public static string GetRecordGroupIdByName(string name)
     {
-        var g = _dataSourceFactory.UserGroups.Find(g => g.Name == name);
+        var recordGroups = _dataSourceFactory.GroupTree.GetUserRecordGroupInfos();
+        var g = Array.Find(recordGroups, g => g.Name == name);
         if (g == null)
         {
             return null;
@@ -216,9 +220,14 @@ public class Testing
         return g.ID.ToString();
     }
 
-    public static int GetUserGroupCount()
+    public static GroupInfo GetGroupTree()
     {
-        return _dataSourceFactory.UserGroups.Count;
+        return _dataSourceFactory.GroupTree;
+    }
+
+    public static int GetRecordGroupCount()
+    {
+        return _dataSourceFactory.GroupTree.GetUserRecordGroupInfos().Length;
     }
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)

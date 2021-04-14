@@ -53,7 +53,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             var interval2 = _mapper.Map<Interval>(request.Interval2);
             var phases = request.Phases;
 
-            var group = _groupService.GetGroupById(request.GroupId);
+            var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
             {
                 throw new NotFoundException("Invalid GroupId");
@@ -70,7 +70,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             });
         }
 
-        public PowerFactorDistributionItem[] GetItemsForInterval(Group g, Interval interval, Phases phases, string intervalName)
+        public PowerFactorDistributionItem[] GetItemsForInterval(GroupInfo g, Interval interval, Phases phases, string intervalName)
         {
             if (interval == null)
             {

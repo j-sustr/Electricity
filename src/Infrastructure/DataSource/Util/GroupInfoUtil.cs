@@ -11,12 +11,13 @@ namespace Electricity.Infrastructure.DataSource.Util
             {
                 ID = g.ID,
                 Name = g.Name,
-                Archives = g.Archives.Select(a =>
+                Archives = g.Archives?.Select(a =>
                 {
+                    if (a == null) return null;
                     var newA = new ArchiveInfo(a.Arch);
                     newA.Count = a.Count;
-                    newA.Range = new DateRange(a.Range.DateMin, a.Range.DateMax);
-                    newA.Intervals = a.Intervals.Select(i => new DateRange(i.DateMin, i.DateMax)).ToList();
+                    newA.Range = a.Range != null ? new DateRange(a.Range.DateMin, a.Range.DateMax) : null;
+                    newA.Intervals = a.Intervals?.Select(i => new DateRange(i.DateMin, i.DateMax)).ToList();
                     return newA;
                 }).ToArray(),
                 Subgroups = g.Subgroups.Select(g => CloneGroupInfo(g)).ToList()

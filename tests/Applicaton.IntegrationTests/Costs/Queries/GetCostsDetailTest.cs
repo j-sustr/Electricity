@@ -1,24 +1,28 @@
 ﻿using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Models.Dtos;
-using Electricity.Application.Costs.Queries.GetCostsOverview;
+using Electricity.Application.Costs.Queries.GetCostsDetail;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Electricity.Application.IntegrationTests.Costs.Queries
 {
     using static Testing;
 
-    public class GetCostsOverviewTest : TestBase
+    class GetCostsDetailTest : TestBase
     {
         [Test]
         public async Task ShouldReturnCostsOverviewWhenInfiniteIntervalProvided()
         {
             await RunAsDefaultTenantAndUser();
 
-            var query = new GetCostsOverviewQuery
+            var query = new GetCostsDetailQuery
             {
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(null, null)
             };
 
@@ -29,12 +33,12 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 
             foreach (var item in result.Items1)
             {
-                item.GroupId.Should().NotBeNullOrWhiteSpace();
-                item.GroupName.Should().NotBeNullOrWhiteSpace();
+                item.Year.Should().Be(2021);
+                item.Month.Should().BeInRange(1, 12);
 
-                item.ActiveEnergyInMonths.Should().OnlyContain(x => x > 0);
-                item.ReactiveEnergyInMonths.Should().OnlyContain(x => x > 0);
-                item.PeakDemandInMonths.Should().OnlyContain(x => x > 0);
+                item.ActiveEnergy.Should().BePositive();
+                item.ReactiveEnergy.Should().BePositive();
+                item.PeakDemand.Should().BePositive();
             }
         }
 
@@ -43,8 +47,9 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
         {
             await RunAsDefaultTenantAndUser();
 
-            var query = new GetCostsOverviewQuery
+            var query = new GetCostsDetailQuery
             {
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(new DateTime(2010, 1, 1), new DateTime(2012, 1, 1))
             };
 

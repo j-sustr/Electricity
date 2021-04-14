@@ -26,16 +26,14 @@ namespace Electricity.Application.Common.Services
             _transaction = transaction;
         }
 
-        public Group GetGroupById(Guid id, Guid userId)
+        public GroupInfo GetGroupInfo(Guid id)
         {
-            var groups = _dataSource.GetUserGroups(userId, _connection, _transaction);
+            var group = _dataSource.GetGroupInfos(id, new InfoFilter {
+                RecurseSubgroups = false,
+                IDisGroup = true,
+            }, _connection, _transaction);
 
-            return groups.Find(g => g.ID == id);
-        }
-
-        public GroupInfo GetGroupInfo(Guid id, InfoFilter infoFilter)
-        {
-            return _dataSource.GetGroupInfos(id, infoFilter, _connection, _transaction);
+            return group;
         }
 
         public GroupInfo GetUserGroupInfoTree(Guid userId)
@@ -54,32 +52,6 @@ namespace Electricity.Application.Common.Services
         {
             var groups = _dataSource.GetUserGroups(userId, _connection, _transaction);
             return groups.ToArray();
-        }
-
-        public GroupTreeNode GetUserGroupTree(Guid userId)
-        {
-            var userGroups = _dataSource.GetUserGroups(userId, _connection, _transaction);
-            var root = new GroupTreeNode();
-            root.Nodes = userGroups.Select(g =>
-            {
-                var node = new GroupTreeNode();
-                node.Group = g;
-                ReadGroupTree(node, g.ID);
-                return node;
-            }).ToArray();
-            return root;
-        }
-
-        private void ReadGroupTree(GroupTreeNode root, Guid rootId)
-        {
-            var groups = _dataSource.GetGroups(rootId, _connection, _transaction);
-            root.Nodes = groups.Select(g =>
-            {
-                var node = new GroupTreeNode();
-                node.Group = g;
-                ReadGroupTree(node, g.ID);
-                return node;
-            }).ToArray();
         }
     }
 }

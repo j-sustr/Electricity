@@ -74,25 +74,7 @@ namespace Electricity.Application.Common.Services
             return gr.GetUserRecordGroupInfos(GetUserGuid());
         }
 
-        public Group[] GetUserGroups()
-        {
-            CheckUserLoggedIn();
-            InitializeOperation();
-
-            var gr = CreateGroupReader();
-            return gr.GetUserGroups(GetUserGuid());
-        }
-
-        public GroupTreeNode GetUserGroupTree()
-        {
-            CheckUserLoggedIn();
-            InitializeOperation();
-
-            var gr = CreateGroupReader();
-            return gr.GetUserGroupTree(GetUserGuid());
-        }
-
-        public Group GetGroupById(string id)
+        public GroupInfo GetGroupInfo(string id)
         {
             CheckUserLoggedIn();
             InitializeOperation();
@@ -100,18 +82,7 @@ namespace Electricity.Application.Common.Services
             var guid = ParseGuidFromString(id, nameof(id));
 
             var gr = CreateGroupReader();
-            return gr.GetGroupById(guid, GetUserGuid());
-        }
-
-        public GroupInfo GetGroupInfo(string id, InfoFilter infoFilter)
-        {
-            CheckUserLoggedIn();
-            InitializeOperation();
-
-            var guid = ParseGuidFromString(id, nameof(id));
-
-            var gr = CreateGroupReader();
-            return gr.GetGroupInfo(guid, infoFilter);
+            return gr.GetGroupInfo(guid);
         }
 
         public IArchive GetArchive(Guid groupId, byte arch)
@@ -120,28 +91,6 @@ namespace Electricity.Application.Common.Services
             InitializeOperation();
 
             return new ArchiveReader(this._dataSource, groupId, arch, _connection, _transaction);
-        }
-
-        public Interval GetInterval(Guid? groupId, byte arch)
-        {
-            CheckUserLoggedIn();
-            InitializeOperation();
-
-            if (groupId == null)
-            {
-                var groups = GetUserGroups().ToList();
-                if (groups[0].Name == "UserData")
-                    groups.RemoveAt(0);
-
-                if (groups.Count == 0)
-                    return null;
-
-                groupId = groups[0].ID;
-            }
-
-            var reader = new ArchiveReader(this._dataSource, (Guid)groupId, arch, _connection, _transaction);
-
-            return reader.GetInterval();
         }
 
         private void InitializeOperation()

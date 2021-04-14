@@ -40,7 +40,7 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetUserGroupCount());
+            result.Items1.Should().HaveCount(GetRecordGroupCount());
 
             foreach (var item in result.Items1)
             {
@@ -63,7 +63,7 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetUserGroupCount());
+            result.Items1.Should().HaveCount(GetRecordGroupCount());
 
             foreach (var item in result.Items1)
             {
@@ -90,8 +90,8 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetUserGroupCount());
-            result.Items2.Should().HaveCount(GetUserGroupCount());
+            result.Items1.Should().HaveCount(GetRecordGroupCount());
+            result.Items2.Should().HaveCount(GetRecordGroupCount());
 
             foreach (var item in result.Items1)
             {

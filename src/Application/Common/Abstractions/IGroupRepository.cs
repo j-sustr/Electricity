@@ -9,13 +9,7 @@ namespace Electricity.Application.Common.Interfaces
         public GroupInfo GetUserGroupInfoTree();
 
         public GroupInfo[] GetUserRecordGroupInfos();
-        
-        public Group[] GetUserGroups();
 
-        public GroupTreeNode GetUserGroupTree();
-
-        public GroupInfo GetGroupInfo(string id, InfoFilter infoFilter);
-
-        public Group GetGroupById(string id);
+        public GroupInfo GetGroupInfo(string id);
     }
 }
