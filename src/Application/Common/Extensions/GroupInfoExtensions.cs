@@ -34,8 +34,12 @@ namespace Electricity.Application.Common.Extensions
             GroupInfo GetGroup(GroupInfo l_g, Guid l_id)
             {
                 if (l_g.ID == l_id) return l_g;
+                if (l_g.Subgroups == null)
+                {
+                    return null;
+                }
 
-                foreach (var subgroup in g.Subgroups)
+                foreach (var subgroup in l_g.Subgroups)
                 {
                     var grp = GetGroup(subgroup, l_id);
                     if (grp != null)

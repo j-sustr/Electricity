@@ -16,7 +16,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
     class GetCostsDetailTest : TestBase
     {
         [Test]
-        public async Task ShouldReturnCostsOverviewWhenInfiniteIntervalProvided()
+        public async Task ShouldReturnCostsDetailWhenInfiniteIntervalProvided()
         {
             await RunAsDefaultTenantAndUser();
 
