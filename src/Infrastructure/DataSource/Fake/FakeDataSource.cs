@@ -16,11 +16,9 @@ namespace Electricity.Infrastructure.DataSource
     {
         private int _seed;
 
-        public string ENVISUser { get; set; }
-        public string ENVISPassword { get; set; }
-        public Guid UserId { get; set; } = Guid.NewGuid();
+        private FakeUserData _currentUser = null;
+        public FakeUserData[] Users { get; set; }
 
-        public GroupInfo GroupTree { get; set; }
 
         public FakeDataSource(int seed)
         {
@@ -84,11 +82,21 @@ namespace Electricity.Infrastructure.DataSource
 
         public override Guid Login(string ENVISUser, string ENVISPassword, IDisposable connection, IDisposable transaction)
         {
-            return UserId;
+            var user = Array.Find(Users, (user) => user.Username == ENVISUser);
+            if (user == null)
+            {
+                throw new Exception("Bad User");
+            }
+            
+            _currentUser = user;
+
+            return user.UserId;
         }
 
         public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction)
         {
+            var groupTree = _currentUser.GroupTree;
+
             if (filter.IDisGroup)
             {
                 if (filter.RecurseSubgroups)
@@ -96,7 +104,7 @@ namespace Electricity.Infrastructure.DataSource
                     throw new NotImplementedException();
                 }
 
-                return GroupTree.Find(ID);
+                return groupTree.Find(ID);
             }
 
             if (!filter.RecurseSubgroups)
@@ -114,7 +122,7 @@ namespace Electricity.Infrastructure.DataSource
                 throw new NotImplementedException();
             }
 
-            return GroupInfoUtil.CloneGroupInfo(GroupTree);
+            return GroupInfoUtil.CloneGroupInfo(groupTree);
         }
 
         public override List<Group> GetUserGroups(Guid user, IDisposable connection, IDisposable transaction)
@@ -134,7 +142,9 @@ namespace Electricity.Infrastructure.DataSource
 
         public override RowCollection GetRows(Guid groupID, byte arch, DateRange range, Quantity[] quantities, uint aggregation, IDisposable connection, IDisposable transaction, EEnergyAggType energyAggType = KMB.DataSource.EEnergyAggType.Cumulative)
         {
-            var groupArray = GroupTree.GetUserRecordGroupInfos();
+            var groupTree = _currentUser.GroupTree;
+
+            var groupArray = groupTree.GetUserRecordGroupInfos();
             var groupIndex = Array.FindIndex(groupArray, g => g.ID == groupID);
             if (groupIndex == -1)
             {

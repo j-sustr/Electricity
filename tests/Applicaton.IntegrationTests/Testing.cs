@@ -105,12 +105,7 @@ public class Testing
             d.ServiceType == typeof(IDataSourceFactory));
         services.Remove(dsFactoryDescriptor);
 
-        var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
-        var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
-        var range = new DateRange(start.ToUniversalTime(), end.ToUniversalTime());
-
         _dataSourceFactory = new FakeDataSourceFactory(0);
-        _dataSourceFactory.SetRange(range);
         services.AddSingleton<IDataSourceFactory>(provider => _dataSourceFactory);
     }
 
@@ -193,7 +188,7 @@ public class Testing
 
     public static async Task<string> RunAsDefaultUserAsync()
     {
-        return RunAsUser("test@local", "Testing1234!", new string[] { });
+        return RunAsUser("TestUser1", "1", new string[] { });
     }
 
     public static string RunAsUser(string userName, string password, string[] roles)
@@ -209,9 +204,19 @@ public class Testing
         return _currentUserId;
     }
 
+    public static GroupInfo GetGroupTree()
+    {
+        var user = Array.Find(_dataSourceFactory.Users, user => user.UserId.ToString() == _currentUserId);
+        if (user == null)
+            throw new Exception("no current user");
+
+        return user.GroupTree;
+    }
+
     public static string GetRecordGroupIdByName(string name)
     {
-        var recordGroups = _dataSourceFactory.GroupTree.GetUserRecordGroupInfos();
+        var groupTree = GetGroupTree();
+        var recordGroups = groupTree.GetUserRecordGroupInfos();
         var g = Array.Find(recordGroups, g => g.Name == name);
         if (g == null)
         {
@@ -220,14 +225,10 @@ public class Testing
         return g.ID.ToString();
     }
 
-    public static GroupInfo GetGroupTree()
-    {
-        return _dataSourceFactory.GroupTree;
-    }
-
     public static int GetRecordGroupCount()
     {
-        return _dataSourceFactory.GroupTree.GetUserRecordGroupInfos().Length;
+        var groupTree = GetGroupTree();
+        return groupTree.GetUserRecordGroupInfos().Length;
     }
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
