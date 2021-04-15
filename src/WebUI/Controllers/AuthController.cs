@@ -26,7 +26,7 @@ namespace Electricity.WebUI.Controllers
             var guid = _authService.Login(username, password);
             if (guid == Guid.Empty)
             {
-                return BadRequest();
+                return BadRequest("Unknown user");
             }
 
             var claims = new List<Claim>

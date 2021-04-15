@@ -35,7 +35,19 @@ namespace Electricity.Application.Common.Services
         {
             InitializeOperation();
 
-            return _dataSource.Login(username, password, _connection, _transaction);
+            try
+            {
+                return _dataSource.Login(username, password, _connection, _transaction);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Bad User")
+                {
+                    return Guid.Empty;
+                }
+
+                throw ex;
+            }
         }
 
         public KMB.DataSource.DataSource GetDataSource(out IDisposable connection, out IDisposable transaction)

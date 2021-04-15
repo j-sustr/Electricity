@@ -1,14 +1,8 @@
-﻿using Electricity.Application.Common.Models;
-using Finbuckle.MultiTenant;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 using FluentAssertions;
 using System;
-using Moq;
-using Microsoft.AspNetCore.Http;
-using Electricity.Application.Common.Abstractions;
 using Electricity.Application.Common.Interfaces;
 
 namespace Electricity.Application.IntegrationTests.DataSource.Command
@@ -30,6 +24,21 @@ namespace Electricity.Application.IntegrationTests.DataSource.Command
 
             tenant.DataSourceId.Should().NotBe(Guid.Empty);
             tenant.DBConnectionParams.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task ShouldReturnEmptyGuidOnBadLogin()
+        {
+            using var scope = CreateServiceScope();
+            await CreateHttpContext(scope);
+            await OpenFakeDataSourceAsync();
+            await CreateHttpContext(scope);
+
+            var authService = scope.ServiceProvider.GetService<IAuthenticationService>();
+
+            var guid = authService.Login("Invalid name", "Invalid password");
+
+            guid.Should().Be(Guid.Empty);
         }
     }
 }
