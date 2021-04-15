@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
@@ -109,6 +110,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             {
                 Type = PowerQuantityType.PAvg3P
             });
+            var peakDemandValues = peakDemand.Select(pd => pd.Value).ToArray();
 
             var items = new List<CostlyQuantitiesDetailItem>();
             for (int i = 0; i < activeEnergy.Size; i++)
@@ -121,7 +123,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
                     ActiveEnergy = activeEnergy.ValueAt(i),
                     ReactiveEnergy = reactiveEnergyL.ValueAt(i),
-                    PeakDemand = peakDemand.ValueAt(i)
+                    PeakDemand = peakDemandValues[i]
                 };
                 items.Add(item);
             }

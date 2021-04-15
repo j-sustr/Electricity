@@ -8,6 +8,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
     {
         public string GroupId { get; set; }
         public string GroupName { get; set; }
+
+        public DateTime Month { get; set; }
         public DateTime PeakDemandTime { get; set; }
         public float PeakDemandValue { get; set; }
     }

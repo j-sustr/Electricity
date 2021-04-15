@@ -131,6 +131,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     Type = PowerQuantityType.PAvg3P,
                     Phase = Phase.Main
                 });
+                var peakDemandValues = peakDemand.Select(pd => pd.Value);
 
                 return new CostlyQuantitiesOverviewItem
                 {
@@ -139,7 +140,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                     ActiveEnergyInMonths = activeEnergy.Values().ToArray(),
                     ReactiveEnergyInMonths = reactiveEnergyL.Values().ToArray(),
-                    PeakDemandInMonths = peakDemand.Values().ToArray()
+                    PeakDemandInMonths = peakDemandValues.ToArray()
                 };
             });
 

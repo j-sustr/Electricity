@@ -1,4 +1,5 @@
 ﻿using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Models.TimeSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,13 @@ namespace Electricity.Application.Common.Services
             var start = _rows.First().Item1;
             var end = _rows.Last().Item1;
             return new Interval(start, end);
+        }
+
+        public Tuple<DateTime, float>[] GetSeries(TQuantity quantity)
+        {
+            // var series = new VariableIntervalTimeSeries<float[]>(_rows);
+            int idx = GetIndexOfQuantity(quantity);
+            return _rows.Select(r => Tuple.Create(r.Item1, r.Item2[idx])).ToArray();
         }
 
         public bool HasQuantity(TQuantity quantity)

@@ -85,16 +85,17 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                     Phase = Phase.Main
                 });
 
-                var peakDemand = peakDemandInMonths.Entries()
-                    .MaxBy(ent => ent.Item2).Take(1).FirstOrDefault();
+                var peakDemand = peakDemandInMonths
+                    .MaxBy(ent => ent.Value).Take(1).FirstOrDefault();
 
                 return new PeakDemandOverviewItem
                 {
                     GroupId = g.ID.ToString(),
                     GroupName = g.Name,
 
-                    PeakDemandTime = peakDemand.Item1,
-                    PeakDemandValue = peakDemand.Item2
+                    Month = peakDemand.IntervalStart,
+                    PeakDemandTime = peakDemand.Start,
+                    PeakDemandValue = peakDemand.Value
                 };
             });
 
