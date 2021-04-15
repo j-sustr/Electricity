@@ -6,7 +6,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 {
     public class PeakDemandDetailData
     {
-        public (DateTime, float)[] DemandSeries { get; set; }
+        public object[][] DemandSeries { get; set; }
     }
 
     public class PeakDemandDetailDto

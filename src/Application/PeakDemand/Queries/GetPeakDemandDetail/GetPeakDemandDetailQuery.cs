@@ -90,7 +90,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             return new PeakDemandDetailData
             {
                 DemandSeries = demandSeries.Entries().Select(ent => {
-                    return (ent.Item1, ent.Item2);
+                    return new object[2] { ent.Item1, ent.Item2 };
                 }).ToArray()
             };
         }
