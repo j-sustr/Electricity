@@ -27,11 +27,17 @@ namespace Electricity.Infrastructure.DataSource
 
         public bool TryRemove(Guid id)
         {
-            return _cache.TryRemove(id, out var _);
+            var success = _cache.TryRemove(id, out var ds);
+            ds.Dispose();
+            return success;
         }
 
         public void Clear()
         {
+            foreach (var ds in _cache.Values)
+            {
+                ds.Dispose();
+            }
             _cache.Clear();
         }
     }
