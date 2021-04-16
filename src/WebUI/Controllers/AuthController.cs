@@ -8,16 +8,23 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Electricity.Application.Common.Models.Dtos;
+using NJsonSchema.Annotations;
+using Electricity.Application.Common.Interfaces;
 
 namespace Electricity.WebUI.Controllers
 {
     public class AuthController : ApiController
     {
         private readonly Application.Common.Interfaces.IAuthenticationService _authService;
+        private readonly ITenantProvider _tenantProvider;
 
-        public AuthController(Application.Common.Interfaces.IAuthenticationService authService)
+        public AuthController(
+            Application.Common.Interfaces.IAuthenticationService authService,
+            ITenantProvider tenantProvider
+            )
         {
             _authService = authService;
+            _tenantProvider = tenantProvider;
         }
 
         [HttpPost("login")]
@@ -76,6 +83,29 @@ namespace Electricity.WebUI.Controllers
             await HttpContext.SignOutAsync();
 
             return Ok();
+        }
+
+        [return: CanBeNull]
+        [HttpGet("current-user")]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var tenant = _tenantProvider.GetTenant();
+            if (tenant == null)
+            {
+                await HttpContext.SignOutAsync();
+                return null;
+            }
+
+            var user = HttpContext.User;
+            if (user?.Identity.IsAuthenticated != true)
+            {
+                return null;
+            }
+
+            return Ok(new UserDto
+            {
+                Username = user.FindFirstValue("username")
+            });
         }
     }
 }
