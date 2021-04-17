@@ -41,7 +41,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public bool TryGetDataSource(Guid id, out KMB.DataSource.DataSource ds)
         {
-            Update(id);
+            // Update(id);
 
             var success = _items.TryGetValue(id, out var item);
             ds = item?.dataSource;
@@ -50,7 +50,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public bool TryRemove(Guid id)
         {
-            Update(id);
+            // Update(id);
 
             var success = _items.TryRemove(id, out var item);
             item?.dataSource.Dispose();
