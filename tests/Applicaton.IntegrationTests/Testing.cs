@@ -87,9 +87,9 @@ public class Testing
         _dataSourceCache = serviceProvider.GetService<IDataSourceCache>();
     }
 
-    public static async Task OpenFakeDataSourceAsync()
+    public static async Task<DataSourceInfoDto> OpenFakeDataSourceAsync()
     {
-        await SendAsync(new OpenDataSourceCommand
+        return await SendAsync(new OpenDataSourceCommand
         {
             Tenant = new TenantDto
             {

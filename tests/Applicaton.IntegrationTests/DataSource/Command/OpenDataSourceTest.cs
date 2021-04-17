@@ -16,11 +16,14 @@ namespace Electricity.Application.IntegrationTests.DataSource.Command
         {
             using var scope = CreateServiceScope();
             await CreateHttpContext(scope);
-            await OpenFakeDataSourceAsync();
+            var dsInfo = await OpenFakeDataSourceAsync();
             await CreateHttpContext(scope);
 
             var tenantService = scope.ServiceProvider.GetService<ITenantProvider>();
             var tenant = tenantService.GetTenant();
+
+            dsInfo.Should().NotBeNull();
+            dsInfo.Name.Should().NotBeNullOrWhiteSpace();
 
             tenant.DataSourceId.Should().NotBe(Guid.Empty);
             tenant.DBConnectionParams.Should().NotBeNull();

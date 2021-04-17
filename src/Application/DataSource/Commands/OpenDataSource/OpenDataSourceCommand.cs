@@ -55,27 +55,12 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 DBConnectionParams = request.Tenant.DBConnectionParams,
             };
 
-            var existingTenant = _tenantProvider.GetTenant();
-            if (existingTenant != null)
-            {
-                TryDeleteDataSource();
-                tenant.Id = existingTenant.Id;
-                tenant.Identifier = existingTenant.Identifier;
-                await UpdateTenant(tenant);
-            } 
-            else
-            {
-                await AddTenant(tenant);
-            }
-
-
             IDisposable connection = null;
             try
             {
                 var (dsId, ds) = _dsManager.CreateDataSource(tenant.DataSourceCreationParams);
                 connection = ds.NewConnection();
                 tenant.DataSourceId = dsId;
-                return null;
             }
             catch (NotFoundException ex)
             {
@@ -85,25 +70,33 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
             {
                 throw ex;
             }
-            finally
-            {
-                connection?.Dispose();
-            }
 
-
-            string name;
-            if (request.Tenant.DataSourceType == DataSourceType.DB)
+            var existingTenant = _tenantProvider.GetTenant();
+            if (existingTenant != null)
             {
-                name = request.Tenant.DBConnectionParams.DBName;
+                TryDeleteDataSource();
+                tenant.Id = existingTenant.Id;
+                tenant.Identifier = existingTenant.Identifier;
+                await UpdateTenant(tenant);
             }
             else
             {
-                name = request.Tenant.CEAFileName;
+                await AddTenant(tenant);
+            }
+
+            string dsName;
+            if (request.Tenant.DataSourceType == DataSourceType.DB)
+            {
+                dsName = request.Tenant.DBConnectionParams.DBName;
+            }
+            else
+            {
+                dsName = request.Tenant.CEAFileName;
             }
 
             return new DataSourceInfoDto
             {
-                Name = name
+                Name = dsName
             };
         }
 
