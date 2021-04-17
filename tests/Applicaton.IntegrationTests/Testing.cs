@@ -21,6 +21,7 @@ using Electricity.Application.IntegrationTests;
 using Electricity.Infrastructure.DataSource.Abstractions;
 using Electricity.Application.Common.Extensions;
 using KMB.DataSource;
+using Electricity.Application.Common.Abstractions;
 
 [SetUpFixture]
 public class Testing
@@ -36,6 +37,8 @@ public class Testing
     private static string _currentUserId;
 
     private static FakeDataSourceFactory _dataSourceFactory;
+
+    private static IDataSourceCache _dataSourceCache;
 
     public static IServiceScope ServiceScope { get; set; }
     public static string UserId { get { return _currentUserId; } }
@@ -78,7 +81,10 @@ public class Testing
         EnsureHttpContextAccessor(services);
         EnsureMultiTenantContextAccessor(services);
 
-        _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
+        var serviceProvider = services.BuildServiceProvider();
+        _scopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+
+        _dataSourceCache = serviceProvider.GetService<IDataSourceCache>();
     }
 
     public static async Task OpenFakeDataSourceAsync()
@@ -258,5 +264,7 @@ public class Testing
         _fakeHttpContext = null;
         _fakeSession = null;
         _currentUserId = null;
+
+        _dataSourceCache.Clear();
     }
 }
