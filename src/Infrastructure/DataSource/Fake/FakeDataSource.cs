@@ -27,7 +27,7 @@ namespace Electricity.Infrastructure.DataSource
 
         public override void Dispose()
         {
-            throw new NotImplementedException();
+            
         }
 
         private int GuidToHash(Guid guid)
