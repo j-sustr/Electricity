@@ -28,7 +28,7 @@ namespace Electricity.Infrastructure.DataSource
         public bool TryRemove(Guid id)
         {
             var success = _cache.TryRemove(id, out var ds);
-            ds.Dispose();
+            ds?.Dispose();
             return success;
         }
 
