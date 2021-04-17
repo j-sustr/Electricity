@@ -21,6 +21,8 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
 
     public class OpenDataSourceCommandHandler : IRequestHandler<OpenDataSourceCommand, DataSourceInfoDto>
     {
+        private readonly ITenantProvider _tenantProvider;
+
         private readonly IDataSourceManager _dsManager;
 
         private readonly ITenantService _tenantService;
@@ -28,11 +30,13 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
         private readonly IMultiTenantStore<Tenant> _tenantStore;
 
         public OpenDataSourceCommandHandler(
+            ITenantProvider tenantProvider,
             IDataSourceManager dsManager,
             ITenantService tenantService,
             IMultiTenantStore<Tenant> tenantStore
             )
         {
+            _tenantProvider = tenantProvider;
             _dsManager = dsManager;
             _tenantService = tenantService;
             _tenantStore = tenantStore;
@@ -51,13 +55,19 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 DBConnectionParams = request.Tenant.DBConnectionParams,
             };
 
-            var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
-            if (!result) 
-                throw new Exception();
+            var existingTenant = _tenantProvider.GetTenant();
+            if (existingTenant != null)
+            {
+                TryDeleteDataSource();
+                tenant.Id = existingTenant.Id;
+                tenant.Identifier = existingTenant.Identifier;
+                await UpdateTenant(tenant);
+            } 
+            else
+            {
+                await AddTenant(tenant);
+            }
 
-            result = await _tenantStore.TryAddAsync(tenant);
-            if (!result)
-                throw new Exception();
 
             IDisposable connection = null;
             try
@@ -95,6 +105,33 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
             {
                 Name = name
             };
+        }
+
+        public async Task UpdateTenant(Tenant tenant)
+        {
+            var result = await _tenantStore.TryUpdateAsync(tenant);
+            if (!result)
+                throw new Exception("update tenant failed");
+        }
+
+        public async Task AddTenant(Tenant tenant)
+        {
+            var result = _tenantService.SetTenantIdentifier(tenant.Identifier);
+            if (!result)
+                throw new Exception("set tenant identifier failed");
+
+            result = await _tenantStore.TryAddAsync(tenant);
+            if (!result)
+                throw new Exception("add tenant failed");
+        }
+
+        public void TryDeleteDataSource()
+        {
+            try
+            {
+                _dsManager.DeleteDataSource();
+            }
+            catch (UnknownTenantException ex) {}
         }
     }
 }
