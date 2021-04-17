@@ -34,11 +34,9 @@ namespace Electricity.WebUI.Controllers
         // ------
 
         [HttpPost("open")]
-        public async Task<ActionResult> OpenAsync([FromBody] OpenDataSourceCommand query)
+        public async Task<DataSourceInfoDto> OpenAsync([FromBody] OpenDataSourceCommand command)
         {
-            await Mediator.Send(query);
-
-            return Ok();
+            return await Mediator.Send(command);
         }
 
         [HttpDelete("cache")]
