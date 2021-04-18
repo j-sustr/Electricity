@@ -47,7 +47,15 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.PeakDemandValue.Should().BePositive();
+                item.PeakDemands.Should().NotBeEmpty();
+
+                foreach (var pd in item.PeakDemands)
+                {
+                    pd.Start.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
+                    pd.Start.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
+
+                    pd.Value.Should().BePositive();
+                }
             }
         }
 
@@ -70,10 +78,13 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.PeakDemandTime.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
-                item.PeakDemandTime.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
+                foreach (var pd in item.PeakDemands)
+                {
+                    pd.Start.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
+                    pd.Start.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
 
-                item.PeakDemandValue.Should().BePositive();
+                    pd.Value.Should().BePositive();
+                }
             }
         }
 
@@ -98,10 +109,13 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 item.GroupId.Should().NotBeNullOrWhiteSpace();
                 item.GroupName.Should().NotBeNullOrWhiteSpace();
 
-                item.PeakDemandTime.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
-                item.PeakDemandTime.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
+                foreach (var pd in item.PeakDemands)
+                {
+                    pd.Start.Should().BeOnOrAfter(query.Interval1.Start ?? DateTime.MinValue);
+                    pd.Start.Should().BeOnOrBefore(query.Interval1.End ?? DateTime.MaxValue);
 
-                item.PeakDemandValue.Should().BePositive();
+                    pd.Value.Should().BePositive();
+                }
             }
         }
     }

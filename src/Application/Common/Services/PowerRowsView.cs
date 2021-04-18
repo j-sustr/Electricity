@@ -19,7 +19,28 @@ namespace Electricity.Application.Common.Services
         {
         }
 
-        public IEnumerable<PeakDemandItem> GetPeakDemandInMonths(PowerQuantity quantity)
+        public IEnumerable<PeakDemandItem> GetPeakDemands(PowerQuantity quantity)
+        {
+            var i = GetIndexOfQuantity(quantity);
+            var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
+            var avgValues = series.AggregateQuarterHours((rows) =>
+            {
+                var sum = rows.Aggregate<float[], float>(0, (acc, row) => acc + row[i]);
+                return sum / rows.Count();
+            });
+            return avgValues.Entries()
+                .MaxBy((ent) => ent.Item2)
+                .Select(ent =>
+            {
+                return new PeakDemandItem
+                {
+                    Start = ent.Item1,
+                    Value = ent.Item2
+                };
+            });
+        }
+
+        public IEnumerable<PeakDemandInMonth> GetPeakDemandInMonths(PowerQuantity quantity)
         {
             var i = GetIndexOfQuantity(quantity);
             var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
@@ -31,9 +52,9 @@ namespace Electricity.Application.Common.Services
                     return sum / rows.Count();
                 });
                 var maxEntry = avgValues.Entries().MaxBy((ent) => ent.Item2).First();
-                return new PeakDemandItem
+                return new PeakDemandInMonth
                 {
-                    IntervalStart = ch.StartTime.FloorMonth(),
+                    MonthStart = ch.StartTime.FloorMonth(),
                     Start = maxEntry.Item1,
                     Value = maxEntry.Item2
                 };

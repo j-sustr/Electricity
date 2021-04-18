@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Electricity.Application.Common.Models.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,10 +9,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
     {
         public string GroupId { get; set; }
         public string GroupName { get; set; }
-
-        public DateTime Month { get; set; }
-        public DateTime PeakDemandTime { get; set; }
-        public float PeakDemandValue { get; set; }
+        public PeakDemandItemDto[] PeakDemands { get; set; }
     }
 
     public class PeakDemandOverviewDto

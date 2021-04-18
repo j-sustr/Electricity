@@ -23,10 +23,16 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
+
+        public int MaxGroups { get; set; }
+
+        // public int? TopNPeakDemands { get; set; }
     }
 
     public class GetPeakDemandDetailQueryHandler : IRequestHandler<GetPeakDemandOverviewQuery, PeakDemandOverviewDto>
     {
+        const int TOP_N_PEAK_DEMANDS = 3;
+
         private readonly PowerService _powerService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
@@ -79,23 +85,24 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                     throw new IntervalOutOfRangeException(intervalName);
                 }
 
-                var peakDemandInMonths = powView.GetPeakDemandInMonths(new PowerQuantity
+                var peakDemands = powView.GetPeakDemands(new PowerQuantity
                 {
                     Type = PowerQuantityType.PAvg3P,
                     Phase = Phase.Main
                 });
 
-                var peakDemand = peakDemandInMonths
-                    .MaxBy(ent => ent.Value).Take(1).FirstOrDefault();
+                var topNPeakDemands = peakDemands
+                    .MaxBy(ent => ent.Value).Take(TOP_N_PEAK_DEMANDS)
+                    .ToArray();
+
+                var peakDemandDtos = _mapper.Map<PeakDemandItemDto[]>(topNPeakDemands);
 
                 return new PeakDemandOverviewItem
                 {
                     GroupId = g.ID.ToString(),
                     GroupName = g.Name,
 
-                    Month = peakDemand.IntervalStart,
-                    PeakDemandTime = peakDemand.Start,
-                    PeakDemandValue = peakDemand.Value
+                    PeakDemands = peakDemandDtos
                 };
             });
 
