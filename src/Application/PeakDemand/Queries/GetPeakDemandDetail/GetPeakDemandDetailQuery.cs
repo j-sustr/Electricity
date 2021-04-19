@@ -4,11 +4,13 @@ using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
+using Electricity.Application.Common.Models.TimeSeries;
 using Electricity.Application.Common.Services;
 using Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview;
 using KMB.DataSource;
 using MediatR;
 using MoreLinq;
+using MoreLinq.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
+
+        public int Aggregation { get; set; } // 0 - none, 1 - 1hour, 2 - 6hours, 3 - 12hours,  4 - 24hours, 5 - 7days
 
     }
 
@@ -52,17 +56,17 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             var groupInfo = _groupService.GetGroupInfo(request.GroupId);
             if (groupInfo == null) return null;
 
-            var data1 = GetDataForInterval(groupInfo, interval1, nameof(request.Interval1));
-            var data2 = GetDataForInterval(groupInfo, interval2, nameof(request.Interval2));
+            var demandSeries1 = GetDemandSeriesForInterval(groupInfo, interval1, nameof(request.Interval1), request.Aggregation);
+            var demandSeries2 = GetDemandSeriesForInterval(groupInfo, interval2, nameof(request.Interval2), request.Aggregation);
 
             return Task.FromResult(new PeakDemandDetailDto
             {
-                Data1 = data1,
-                Data2 = data2,
+                DemandSeries1 = demandSeries1,
+                DemandSeries2 = demandSeries2
             });
         }
 
-        private PeakDemandDetailData GetDataForInterval(GroupInfo group, Interval interval, string intervalName)
+        private DemandSeriesDto GetDemandSeriesForInterval(GroupInfo group, Interval interval, string intervalName, int aggregation)
         {
             if (interval == null) return null;
 
@@ -79,20 +83,44 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             {
                 throw new IntervalOutOfRangeException(intervalName);
             }
+            var resultInterval = powView.GetInterval();
 
             var q = new PowerQuantity
             {
                 Type = PowerQuantityType.PAvg3P,
                 Phase = Phase.Main
             };
-            var demandSeries = powView.GetDemandSeries(q);
-
-            return new PeakDemandDetailData
+            var seriesMain = powView.GetDemandSeries(q);
+            if (aggregation > 0)
             {
-                DemandSeries = demandSeries.Entries().Select(ent => {
-                    return new object[2] { ent.Item1, ent.Item2 };
-                }).ToArray()
+                seriesMain = AggregateSeries(seriesMain, aggregation);
+            }
+
+            var valuesMain = seriesMain.Values().ToArray();
+
+            return new DemandSeriesDto
+            {
+                TimeRange = _mapper.Map<IntervalDto>(resultInterval),
+                TimeStep = (int)TimeSpan.FromMinutes(15).TotalMilliseconds, // get timestep from request.Aggregation
+                ValuesMain = valuesMain
             };
+        }
+
+        public FixedIntervalTimeSeries<float> AggregateSeries(FixedIntervalTimeSeries<float> series, int aggregation)
+        {
+            int chunkSize;
+            switch (aggregation)
+            {
+                case 1:
+                    chunkSize = 4;
+                    break;
+                default:
+                    return series;
+            }
+
+            throw new NotImplementedException();
+
+            return series;
         }
     }
 }
