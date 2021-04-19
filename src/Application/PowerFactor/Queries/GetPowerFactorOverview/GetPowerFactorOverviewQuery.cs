@@ -26,6 +26,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
         public IntervalDto? Interval2 { get; set; }
 
         public Guid[] GroupIds { get; set; }
+
+        public int? MaxGroups { get; set; }
     }
 
     public class GetPowerFactorOverviewQueryHandler : IRequestHandler<GetPowerFactorOverviewQuery, PowerFactorOverviewDto>
@@ -49,11 +51,15 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var userRecordGroups = _groupService.GetUserRecordGroupInfos();
-            if (userRecordGroups.Length == 0) return null;
+            var recordGroupInfos = _groupService.GetUserRecordGroupInfos();
+            if (recordGroupInfos.Length == 0) return null;
+            if (request.MaxGroups is int max)
+            {
+                recordGroupInfos = recordGroupInfos.Take(max).ToArray();
+            }
 
-            var items1 = GetItemsForInterval(userRecordGroups, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(userRecordGroups, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(recordGroupInfos, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(recordGroupInfos, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new PowerFactorOverviewDto
             {

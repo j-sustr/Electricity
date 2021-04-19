@@ -49,15 +49,15 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var userGroupInfos = _groupService.GetUserRecordGroupInfos();
-            if (userGroupInfos.Length == 0) return null;
+            var recordGroupInfos = _groupService.GetUserRecordGroupInfos();
+            if (recordGroupInfos.Length == 0) return null;
             if (request.MaxGroups is int max)
             {
-                userGroupInfos = userGroupInfos.Take(max).ToArray();
+                recordGroupInfos = recordGroupInfos.Take(max).ToArray();
             }
 
-            var items1 = GetItemsForInterval(userGroupInfos, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(userGroupInfos, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(recordGroupInfos, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(recordGroupInfos, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new CostsOverviewDto
             {
