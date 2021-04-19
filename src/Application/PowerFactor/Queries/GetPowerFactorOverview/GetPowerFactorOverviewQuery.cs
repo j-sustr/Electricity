@@ -25,8 +25,6 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 
         public IntervalDto? Interval2 { get; set; }
 
-        public Guid[] GroupIds { get; set; }
-
         public int? MaxGroups { get; set; }
     }
 
