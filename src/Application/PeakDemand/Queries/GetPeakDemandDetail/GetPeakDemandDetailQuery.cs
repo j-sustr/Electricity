@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
+using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
@@ -28,7 +29,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
         public IntervalDto? Interval2 { get; set; }
 
-        public int Aggregation { get; set; } // 0 - none, 1 - 1hour, 2 - 6hours, 3 - 12hours,  4 - 24hours, 5 - 7days
+        public DemandAggregation Aggregation { get; set; }
 
     }
 
@@ -66,7 +67,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             });
         }
 
-        private DemandSeriesDto GetDemandSeriesForInterval(GroupInfo group, Interval interval, string intervalName, int aggregation)
+        private DemandSeriesDto GetDemandSeriesForInterval(GroupInfo group, Interval interval, string intervalName, DemandAggregation aggregation)
         {
             if (interval == null) return null;
 
@@ -91,7 +92,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
                 Phase = Phase.Main
             };
             var seriesMain = powView.GetDemandSeries(q);
-            if (aggregation > 0)
+            if (aggregation != DemandAggregation.None)
             {
                 seriesMain = AggregateSeries(seriesMain, aggregation);
             }
@@ -101,26 +102,55 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             return new DemandSeriesDto
             {
                 TimeRange = _mapper.Map<IntervalDto>(resultInterval),
-                TimeStep = (int)TimeSpan.FromMinutes(15).TotalMilliseconds, // get timestep from request.Aggregation
+                TimeStep = (int)TimeSpan.FromMinutes(15 * (int)aggregation).TotalMilliseconds, // get timestep from request.Aggregation
                 ValuesMain = valuesMain
             };
         }
 
-        public FixedIntervalTimeSeries<float> AggregateSeries(FixedIntervalTimeSeries<float> series, int aggregation)
+        public FixedIntervalTimeSeries<float> AggregateSeries(FixedIntervalTimeSeries<float> series, DemandAggregation aggregation)
         {
-            int chunkSize;
+            DateTime startTime;
+            TimeSpan offsetDuration;
             switch (aggregation)
             {
-                case 1:
-                    chunkSize = 4;
+                case DemandAggregation.OneHour:
+                    startTime = series.StartTime.FloorHour();
+                    offsetDuration = series.StartTime.CeilHour() - series.StartTime;
+                    break;
+                case DemandAggregation.SixHours:
+                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
+                    offsetDuration -= TimeSpan.FromHours(((int)offsetDuration.TotalHours / 6) * 6);
+                    startTime = series.StartTime + offsetDuration - TimeSpan.FromHours(6);
+                    break;
+                case DemandAggregation.TwelveHours:
+                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
+                    offsetDuration -= TimeSpan.FromHours(((int)offsetDuration.TotalHours / 12) * 12);
+                    startTime = series.StartTime + offsetDuration - TimeSpan.FromHours(12);
+                    break;
+                case DemandAggregation.OneDay:
+                    startTime = series.StartTime.FloorDay();
+                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
+                    break;
+                case DemandAggregation.OneWeek:
+                    startTime = series.StartTime.FloorWeek();
+                    offsetDuration = series.StartTime.CeilWeek() - series.StartTime;
                     break;
                 default:
                     return series;
             }
 
-            throw new NotImplementedException();
+            int chunkSize = (int)aggregation;
+            int offset = (int)(offsetDuration / TimeSpan.FromMinutes(15));
 
-            return series;
+            var aggregatedValues = series.Values()
+                .Chunk(chunkSize, offset)
+                .Select(chunk => {
+                    return chunk.Max();
+                })
+                .ToArray();
+
+            var interval = chunkSize * TimeSpan.FromMinutes(15);
+            return new FixedIntervalTimeSeries<float>(aggregatedValues, startTime, interval);
         }
     }
 }

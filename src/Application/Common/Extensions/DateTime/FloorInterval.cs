@@ -18,6 +18,21 @@ namespace Electricity.Application.Common.Extensions
             return d.AddDays(-source.Day + 1);
         }
 
+        public static DateTime FloorWeek(this DateTime source, bool mondayFirst = true)
+        {
+            var d = source.FloorDay();
+            int dayOfWeek = (int)d.DayOfWeek;
+            if (mondayFirst)
+            {
+                dayOfWeek--;
+                if (dayOfWeek == -1)
+                {
+                    dayOfWeek = 6;
+                }
+            }
+            return d.AddDays(-dayOfWeek);
+        }
+
         public static DateTime FloorDay(this DateTime source)
         {
             var d = source.FloorHour();

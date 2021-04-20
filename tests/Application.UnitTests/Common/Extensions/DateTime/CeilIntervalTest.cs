@@ -39,6 +39,26 @@ namespace Electricity.Application.UnitTests.Common.Extensions
             data.Source.CeilMonth().Should().Be(data.ExpectedResult);
         }
 
+
+        private static TestData[] _weekTestData = new[]{
+            new TestData(){
+                Source = new DateTime(2021,4,19,0,0,0),
+                ExpectedResult = new DateTime(2021,4,19,0,0,0)
+            },
+            new TestData(){
+                Source = new DateTime(2021,4,19,0,1,0),
+                ExpectedResult = new DateTime(2021,4,26,0,0,0)
+            }
+        };
+
+        [Test]
+        public void ShouldCeilWeek([ValueSource("_weekTestData")] TestData data)
+        {
+            data.Source.CeilWeek(true).Should().Be(data.ExpectedResult);
+        }
+
+
+
         private static TestData[] _dayTestData = new[]{
             new TestData(){
                 Source = new DateTime(2021,1,2,3,4,5,6),

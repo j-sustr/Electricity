@@ -16,6 +16,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             RuleFor(x => x.Interval1)
                .NotNull()
                .WithMessage("Interval1 is required.");
+
+            RuleFor(x => x.Aggregation).IsInEnum();
         }
     }
 }
