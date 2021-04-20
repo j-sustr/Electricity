@@ -147,14 +147,14 @@ namespace Electricity.WebUI.Filters
         {
             var details = new ProblemDetails
             {
-                Status = StatusCodes.Status404NotFound,
+                Status = StatusCodes.Status401Unauthorized,
                 Title = "Unknown tenant",
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4"
             };
 
             context.Result = new ObjectResult(details)
             {
-                StatusCode = StatusCodes.Status404NotFound
+                StatusCode = StatusCodes.Status401Unauthorized
             };
 
             context.ExceptionHandled = true;
