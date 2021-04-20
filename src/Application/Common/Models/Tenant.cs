@@ -12,6 +12,7 @@ namespace Electricity.Application.Common.Models
         public string ConnectionString { get; set; }
 
         public Guid DataSourceId { get; set; }
+        public string DataSourceName { get; set; }
         public DataSourceType DataSourceType { get; set; }
         public DBConnectionParams DBConnectionParams { get; set; }
         public string CEAFileName { get; set; }

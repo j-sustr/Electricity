@@ -44,11 +44,14 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
 
         public async Task<DataSourceInfoDto> Handle(OpenDataSourceCommand request, CancellationToken cancellationToken)
         {
+            string dsName = CreateDataSourceName(request.Tenant);
+
             var tenant = new Tenant
             {
                 Id = Guid.NewGuid().ToString(),
                 Identifier = Guid.NewGuid().ToString(),
                 Name = "(empty)",
+                DataSourceName = dsName,
                 DataSourceType = request.Tenant.DataSourceType,
                 ConnectionString = "(empty)",
                 CEAFileName = request.Tenant.CEAFileName,
@@ -84,16 +87,6 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 await AddTenant(tenant);
             }
 
-            string dsName;
-            if (request.Tenant.DataSourceType == DataSourceType.DB)
-            {
-                dsName = request.Tenant.DBConnectionParams.DBName;
-            }
-            else
-            {
-                dsName = request.Tenant.CEAFileName;
-            }
-
             return new DataSourceInfoDto
             {
                 Name = dsName
@@ -125,6 +118,20 @@ namespace Electricity.Application.DataSource.Commands.OpenDataSource
                 _dsManager.DeleteDataSource();
             }
             catch (UnknownTenantException ex) {}
+        }
+
+        public string CreateDataSourceName(TenantDto tenant)
+        {
+            string dsName;
+            if (tenant.DataSourceType == DataSourceType.DB)
+            {
+                dsName = tenant.DBConnectionParams.DBName;
+            }
+            else
+            {
+                dsName = tenant.CEAFileName;
+            }
+            return dsName;
         }
     }
 }
