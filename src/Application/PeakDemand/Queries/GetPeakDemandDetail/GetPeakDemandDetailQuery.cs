@@ -55,7 +55,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
             var groupInfo = _groupService.GetGroupInfo(request.GroupId);
-            if (groupInfo == null) return null;
+            if (groupInfo == null)
+                throw new NotFoundException("group not found");
 
             var demandSeries1 = GetDemandSeriesForInterval(groupInfo, interval1, nameof(request.Interval1), request.Aggregation);
             var demandSeries2 = GetDemandSeriesForInterval(groupInfo, interval2, nameof(request.Interval2), request.Aggregation);

@@ -55,9 +55,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
-            {
-                throw new NotFoundException("Invalid GroupId");
-            }
+                throw new NotFoundException("group not found");
 
             var items1 = GetItemsForInterval(group, interval1, phases, nameof(request.Interval1));
             var items2 = GetItemsForInterval(group, interval2, phases, nameof(request.Interval2));
