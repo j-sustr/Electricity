@@ -53,7 +53,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
             var recordGroupInfos = _groupService.GetUserRecordGroupInfos();
-            if (recordGroupInfos.Length == 0) return null;
+            if (recordGroupInfos.Length == 0)
+                return Task.FromResult<PeakDemandOverviewDto>(null);
             if (request.MaxGroups is int max)
             {
                 recordGroupInfos = recordGroupInfos.Take(max).ToArray();
