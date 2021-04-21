@@ -32,16 +32,16 @@ namespace Electricity.Application.Common.Services
 
         unsafe public IEnumerable<Tuple<DateTime, float[]>> GetRows(GetArchiveRowsQuery query)
         {
-            if (query.Interval == null)
+            if (query.Range == null)
             {
-                throw new ArgumentNullException(nameof(query.Interval));
+                throw new ArgumentNullException(nameof(query.Range));
             }
 
             var quants = query.Quantities;
             int rowLen = quants.Length;
 
             var entries = new List<Tuple<DateTime, float[]>>();
-            var dateRange = query.Interval.ToDateRange();
+            var dateRange = query.Range.ToDateRange();
             float[] arr;
             using (var rc = _source.GetRows(_groupId, _arch, dateRange, quants, query.Aggregation, _connection, _transaction, query.EnergyAggType))
             {
@@ -65,9 +65,9 @@ namespace Electricity.Application.Common.Services
                 }
             }
 
-            if (query.Interval.IsHalfBounded)
+            if (query.Range.IsHalfBounded)
             {
-                return Slice(entries, query.Interval);
+                return Slice(entries, query.Range);
             }
 
             return entries;

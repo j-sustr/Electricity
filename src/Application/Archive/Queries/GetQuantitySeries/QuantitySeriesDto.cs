@@ -6,6 +6,6 @@ namespace Electricity.Application.Archive.Queries.GetQuantitySeries
 {
     public class QuantitySeriesDto
     {
-        public IList<Tuple<DateTime, float>> Entries { get; set; }
+        public object[][] Entries { get; set; }
     }
 }

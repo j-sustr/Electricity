@@ -35,7 +35,7 @@ namespace Electricity.Application.Archive.Queries.GetQuantities
             var arch = _repo.GetArchive(request.GroupId, request.Arch);
             if (arch == null)
             {
-                throw new NotFoundException($"Archive ({request.GroupId}, {request.Arch})");
+                throw new NotFoundException($"archive not found");
             }
 
             Quantity[] quants = arch.GetQuantities(null);

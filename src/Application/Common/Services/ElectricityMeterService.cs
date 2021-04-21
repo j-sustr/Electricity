@@ -26,7 +26,7 @@ namespace Electricity.Application.Common.Services
 
             var rows = archive.GetRows(new GetArchiveRowsQuery
             {
-                Interval = interval,
+                Range = interval,
                 Quantities = q
             });
 
