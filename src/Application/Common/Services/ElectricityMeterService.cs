@@ -37,10 +37,5 @@ namespace Electricity.Application.Common.Services
 
             return new ElectricityMeterRowsView(quantities, rows);
         }
-
-        public Interval GetIntervalOverlap(Interval interval)
-        {
-            return base.GetIntervalOverlap(interval, (byte)Arch.ElectricityMeter);
-        }
     }
 }
