@@ -25,39 +25,6 @@ namespace Electricity.Application.Common.Services
             _transaction = transaction;
         }
 
-        unsafe public Interval GetInterval()
-        {
-            DateTime? start = null;
-            DateTime end = new DateTime();
-
-            var quants = new Quantity[]
-            {
-                new Quantity("", "")
-            };
-
-            using (var rc = _source.GetRows(_groupId, _arch, null, quants, 0, _connection, _transaction))
-            {
-                if (rc == null)
-                {
-                    return null;
-                }
-
-                fixed (byte* p = rc.Buffer)
-                {
-                    rc.SetPointer(p);
-                    foreach (RowInfo row in rc)
-                    {
-                        if (start == null)
-                            start = row.TimeLocal;
-                        else
-                            end = row.TimeLocal;
-                    }
-                }
-            }
-
-            return new Interval(start, end);
-        }
-
         public Quantity[] GetQuantities(DateRange range)
         {
             return _source.GetQuantities(_groupId, _arch, range, _connection, _transaction);
