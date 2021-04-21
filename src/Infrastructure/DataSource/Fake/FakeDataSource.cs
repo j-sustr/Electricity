@@ -93,8 +93,10 @@ namespace Electricity.Infrastructure.DataSource
             return user.UserId;
         }
 
-        public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction)
+        public override GroupInfo GetGroupInfos(Guid ID, InfoFilter filter, IDisposable connection, IDisposable transaction, out List<User> users)
         {
+            users = new List<User>();
+
             var groupTree = _currentUser.GroupTree;
 
             if (filter.IDisGroup)

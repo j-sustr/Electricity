@@ -31,19 +31,23 @@ namespace Electricity.Application.Common.Services
             var group = _dataSource.GetGroupInfos(id, new InfoFilter {
                 RecurseSubgroups = false,
                 IDisGroup = true,
-            }, _connection, _transaction);
+            }, _connection, _transaction, out List<User> _);
 
             return group;
         }
 
         public GroupInfo GetUserGroupInfoTree(Guid userId)
         {
-            return _dataSource.GetGroupInfos(userId, new InfoFilter() { IDisGroup = false }, _connection, _transaction);
+            return _dataSource.GetGroupInfos(userId, new InfoFilter() { 
+                IDisGroup = false 
+            }, _connection, _transaction, out List<User> _);
         }
 
         public GroupInfo[] GetUserRecordGroupInfos(Guid userId)
         {
-            GroupInfo groupInfo = _dataSource.GetGroupInfos(userId, new InfoFilter() { IDisGroup = false }, _connection, _transaction);
+            GroupInfo groupInfo = _dataSource.GetGroupInfos(userId, new InfoFilter() { 
+                IDisGroup = false 
+            }, _connection, _transaction, out List<User> _);
 
             return groupInfo.GetUserRecordGroupInfos();
         }
