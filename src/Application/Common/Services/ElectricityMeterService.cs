@@ -20,11 +20,11 @@ namespace Electricity.Application.Common.Services
 
         public ElectricityMeterRowsView GetRowsView(Guid groupId, Interval interval, ElectricityMeterQuantity[] quantities)
         {
-            var table = _archiveRepository.GetArchive(groupId, (byte)Arch.ElectricityMeter);
+            var archive = _archiveRepository.GetArchive(groupId, (byte)Arch.ElectricityMeter);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
-            var rows = table.GetRows(new GetArchiveRowsQuery
+            var rows = archive.GetRows(new GetArchiveRowsQuery
             {
                 Interval = interval,
                 Quantities = q

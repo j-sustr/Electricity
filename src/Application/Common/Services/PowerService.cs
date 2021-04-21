@@ -19,11 +19,11 @@ namespace Electricity.Application.Common.Services
 
         public PowerRowsView GetRowsView(Guid groupId, Interval interval, PowerQuantity[] quantities)
         {
-            var table = _archiveRepository.GetArchive(groupId, (byte)Arch.Main);
+            var archive = _archiveRepository.GetArchive(groupId, (byte)Arch.Main);
 
             var q = quantities.Select(q => q.ToQuantity()).ToArray();
 
-            var rows = table.GetRows(new Models.Queries.GetArchiveRowsQuery
+            var rows = archive.GetRows(new Models.Queries.GetArchiveRowsQuery
             {
                 Interval = interval,
                 Quantities = q
