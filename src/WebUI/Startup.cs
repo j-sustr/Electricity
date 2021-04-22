@@ -1,5 +1,5 @@
-using AutoMapper;
 using Electricity.Application;
+using Electricity.Application.Common.Abstractions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Infrastructure;
@@ -7,16 +7,21 @@ using Electricity.WebUI.Filters;
 using Electricity.WebUI.Middleware;
 using Electricity.WebUI.Services;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Electricity.WebUI
 {
@@ -33,9 +38,7 @@ namespace Electricity.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<ITenantProvider, TenantProvider>();
+            services.AddRazorPages();
 
             services.AddAutoMapper(cfg =>
             {
@@ -46,6 +49,10 @@ namespace Electricity.WebUI
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<ITenantProvider, TenantService>();
+
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks();
@@ -54,12 +61,16 @@ namespace Electricity.WebUI
                 options.Filters.Add<ApiExceptionFilterAttribute>())
                     .AddFluentValidation();
 
-            services.AddRazorPages();
-
             // Customise default API behaviour
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true; // consent required
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
             // In production, the Angular files will be served from this directory
@@ -68,12 +79,25 @@ namespace Electricity.WebUI
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddMultiTenant<Tenant>()
-                    .WithConfigurationStore()
-                    .WithStaticStrategy("finbuckle");
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                });
 
-            services.AddMvcCore()
-                .AddApiExplorer();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            services.AddMultiTenant<Tenant>()
+                .WithInMemoryStore(options =>
+                {
+                    options.IsCaseSensitive = true;
+                })
+                .WithSessionStrategy();
 
             services.AddOpenApiDocument(configure =>
             {
@@ -93,14 +117,13 @@ namespace Electricity.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<AutoAuthorizeMiddleware>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
                 app.UseCors(builder =>
-                    builder.WithOrigins("http://localhost:4200"));
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
             }
             else
             {
@@ -108,8 +131,6 @@ namespace Electricity.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // app.UseMiddleware<MissingTenantMiddleware>(Configuration["MissingTenantLocation"]);
 
             app.UseHealthChecks("/health");
             app.UseHttpsRedirection();
@@ -127,6 +148,8 @@ namespace Electricity.WebUI
             });
 
             app.UseRouting();
+
+            app.UseSession();
             app.UseMultiTenant();
 
             app.UseAuthentication();
@@ -149,7 +172,7 @@ namespace Electricity.WebUI
                 if (env.IsDevelopment())
                 {
                     // spa.UseAngularCliServer(npmScript: "start");
-                    // spa.UseProxyToSpaDevelopmentServer(Configuration["SpaBaseUrl"] ?? "http://localhost:4200");
+                    spa.UseProxyToSpaDevelopmentServer(Configuration["SpaBaseUrl"] ?? "http://localhost:4200");
                 }
             });
         }

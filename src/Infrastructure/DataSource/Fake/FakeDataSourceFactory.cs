@@ -1,11 +1,10 @@
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Utils;
-using System;
 using System.Collections.Generic;
-
-using DS = DataSource;
+using Electricity.Infrastructure.DataSource.Abstractions;
+using Electricity.Infrastructure.DataSource.Util;
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {
@@ -13,26 +12,17 @@ namespace Electricity.Infrastructure.DataSource.Fake
     {
         private int _seed;
 
-        public List<Group> UserGroups = new List<Group>{
-            new Group(GuidUtil.IntToGuid(1), "group-1"),
-            new Group(GuidUtil.IntToGuid(2), "group-2"),
-            new Group(GuidUtil.IntToGuid(3), "group-3"),
-            new Group(GuidUtil.IntToGuid(4), "group-4"),
-            new Group(GuidUtil.IntToGuid(5), "group-5"),
-        };
+        public FakeUserData[] Users = FakeData.GetUsers();
 
-        private BoundedInterval _interval { get; set; }
-
-        public FakeDataSourceFactory(int seed, BoundedInterval interval)
+        public FakeDataSourceFactory(int seed)
         {
             _seed = seed;
-            _interval = interval;
         }
 
-        public DS.DataSource CreateDataSource(DataSourceConfig config)
+        public KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams creationParams)
         {
-            var ds = new FakeDataSource(_seed, _interval);
-            ds.Groups = UserGroups;
+            var ds = new FakeDataSource(_seed);
+            ds.Users = Users;
             return ds;
         }
     }

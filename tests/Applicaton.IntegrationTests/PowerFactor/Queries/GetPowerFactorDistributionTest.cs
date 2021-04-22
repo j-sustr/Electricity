@@ -10,12 +10,12 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 {
     using static Testing;
 
-    public class GetPowerFactorDistributionTest
+    public class GetPowerFactorDistributionTest : TestBase
     {
         [Test]
         public async Task ShouldRequireGroupId()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorDistributionQuery
             {
@@ -29,7 +29,7 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldRequirePhases()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorDistributionQuery
             {
@@ -43,11 +43,11 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhenUnboundedIntervalProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(null, null),
                 Phases = new Phases
                 {
@@ -74,11 +74,11 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhenInterval1Provided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
                 Phases = new Phases
                 {
@@ -105,11 +105,11 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
         [Test]
         public async Task ShouldReturnPowerFactorOverviewWhen2IntervalsProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetPowerFactorDistributionQuery
             {
-                GroupId = GetUserGroupIdByName("group-1"),
+                GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(new DateTime(2021, 1, 1), new DateTime(2021, 1, 10)),
                 Interval2 = new IntervalDto(new DateTime(2021, 1, 10), new DateTime(2021, 1, 20)),
                 Phases = new Phases

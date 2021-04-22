@@ -6,8 +6,7 @@ namespace Electricity.Application.Common.Enums
 {
     public enum DataSourceType
     {
-        None,
+        DB,
         File,
-        DB
     }
 }

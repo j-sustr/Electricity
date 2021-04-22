@@ -7,22 +7,21 @@ namespace Electricity.Application.Common.Models
     public class Tenant : ITenantInfo
     {
         public string Id { get; set; }
-
         public string Identifier { get; set; }
         public string Name { get; set; }
         public string ConnectionString { get; set; }
 
         public Guid DataSourceId { get; set; }
-
+        public string DataSourceName { get; set; }
         public DataSourceType DataSourceType { get; set; }
         public DBConnectionParams DBConnectionParams { get; set; }
         public string CEAFileName { get; set; }
 
-        public DataSourceConfig DataSourceConfig
+        public DataSourceCreationParams DataSourceCreationParams
         {
             get
             {
-                return new DataSourceConfig
+                return new DataSourceCreationParams
                 {
                     DataSourceType = DataSourceType,
                     CEAFileName = CEAFileName,
@@ -30,6 +29,5 @@ namespace Electricity.Application.Common.Models
                 };
             }
         }
-
     }
 }

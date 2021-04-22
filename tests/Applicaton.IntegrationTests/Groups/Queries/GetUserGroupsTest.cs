@@ -1,31 +1,30 @@
-﻿using Electricity.Application.Groups.Queries.GetUserGroups;
+﻿using Electricity.Application.Groups.Queries.GetUserGroupInfoTree;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Electricity.Application.IntegrationTests.Groups.Queries
 {
     using static Testing;
 
-    public class GetUserGroupsTest
+    public class GetUserGroupsTest : TestBase
     {
         [Test]
         public async Task ShouldReturnUserGroups()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
-            var query = new GetUserGroupsQuery();
+            var query = new GetUserGroupInfoTreeQuery();
 
             var result = await SendAsync(query);
 
-            result.Groups.Should().HaveCount(GetUserGroupCount());
+            var tree = GetGroupTree();
 
-            foreach (var g in result.Groups)
+            result.Subgroups.Should().HaveCount(tree.Subgroups.Count);
+
+            foreach (var g in result.Subgroups)
             {
-                g.Id.Should().NotBeEmpty();
+                g.ID.Should().NotBeEmpty();
                 g.Name.Should().NotBeNullOrWhiteSpace();
             }
         }

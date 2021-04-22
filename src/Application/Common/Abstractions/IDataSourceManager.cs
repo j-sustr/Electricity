@@ -1,17 +1,16 @@
 using System;
 using Electricity.Application.Common.Models;
-using DS = global::DataSource;
 
 namespace Electricity.Application.Common.Interfaces
 {
-    using DataSource;
+    using KMB.DataSource;
 
     public interface IDataSourceManager
     {
-        Guid CreateDataSource(DataSourceConfig config);
+        (Guid, KMB.DataSource.DataSource) CreateDataSource(DataSourceCreationParams creationParams);
 
-        DS.DataSource GetDataSource(Guid id);
+        KMB.DataSource.DataSource GetDataSource();
 
-        bool DeleteDataSource(Guid id);
+        bool DeleteDataSource();
     }
 }

@@ -14,10 +14,14 @@ using Moq;
 using NUnit.Framework;
 using Finbuckle.MultiTenant;
 using Electricity.Application.Common.Models;
-using Finbuckle.MultiTenant.Core;
-using Electricity.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using CleanArchitecture.Infrastructure.Identity;
+using Electricity.Application.DataSource.Commands.OpenDataSource;
+using Electricity.Application.Common.Models.Dtos;
+using Electricity.Application.Common.Enums;
+using Electricity.Application.IntegrationTests;
+using Electricity.Infrastructure.DataSource.Abstractions;
+using Electricity.Application.Common.Extensions;
+using KMB.DataSource;
+using Electricity.Application.Common.Abstractions;
 
 [SetUpFixture]
 public class Testing
@@ -25,11 +29,20 @@ public class Testing
     private static IConfigurationRoot _configuration;
     private static IServiceScopeFactory _scopeFactory;
 
+    public static IMultiTenantContextAccessor<Tenant> Debug_MultiTenantContextAccessor;
+
+    private static int _fakeHttpContextTraceIdentifier = 0;
+    private static HttpContext _fakeHttpContext;
+    private static FakeSession _fakeSession;
     private static string _currentUserId;
 
     private static FakeDataSourceFactory _dataSourceFactory;
 
-    private static FakeIdentityService _fakeIdentityService;
+    private static IDataSourceCache _dataSourceCache;
+
+    public static IServiceScope ServiceScope { get; set; }
+    public static string UserId { get { return _currentUserId; } }
+    public static HttpContext HttpContext { get { return _fakeHttpContext; } }
 
     [OneTimeSetUp]
     public void RunBeforeAnyTests()
@@ -64,119 +77,153 @@ public class Testing
         services.AddTransient(provider =>
             Mock.Of<ICurrentUserService>(s => s.UserId == _currentUserId));
 
-        EnsureHttpContext(services);
-        EnsureDataSource(services);
-        AddFakeIdentityService(services);
+        EnsureDataSourceFactory(services);
+        EnsureHttpContextAccessor(services);
+        EnsureMultiTenantContextAccessor(services);
 
-        _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>();
+        var serviceProvider = services.BuildServiceProvider();
+        _scopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+
+        _dataSourceCache = serviceProvider.GetService<IDataSourceCache>();
     }
 
-    public static void EnsureDataSource(ServiceCollection services)
+    public static async Task<DataSourceInfoDto> OpenFakeDataSourceAsync()
+    {
+        return await SendAsync(new OpenDataSourceCommand
+        {
+            Tenant = new TenantDto
+            {
+                DataSourceType = DataSourceType.DB,
+                DBConnectionParams = new DBConnectionParams
+                {
+                    Server = "server",
+                    DBName = "db-name",
+                    Password = "pass",
+                    Username = "user"
+                },
+            }
+        });
+    }
+
+    public static void EnsureDataSourceFactory(ServiceCollection services)
     {
         var dsFactoryDescriptor = services.FirstOrDefault(d =>
             d.ServiceType == typeof(IDataSourceFactory));
-
         services.Remove(dsFactoryDescriptor);
 
-        var start = DateTime.SpecifyKind(new DateTime(2021, 1, 1), DateTimeKind.Local);
-        var end = DateTime.SpecifyKind(new DateTime(2021, 3, 1), DateTimeKind.Local);
-        var interval = new BoundedInterval(start.ToUniversalTime(), end.ToUniversalTime());
-
-        _dataSourceFactory = new FakeDataSourceFactory(0, interval);
+        _dataSourceFactory = new FakeDataSourceFactory(0);
         services.AddSingleton<IDataSourceFactory>(provider => _dataSourceFactory);
     }
 
-    public static void EnsureHttpContext(ServiceCollection services)
+    public static void EnsureHttpContextAccessor(ServiceCollection services)
     {
         var httpContextAccessorDescriptor = services.FirstOrDefault(d =>
             d.ServiceType == typeof(IHttpContextAccessor));
-
         services.Remove(httpContextAccessorDescriptor);
 
-        var ti = new Tenant { Id = "test-tenant-id" };
-        var tc = new MultiTenantContext<Tenant>();
-        tc.TenantInfo = ti;
+        var mockAccessor = new Mock<IHttpContextAccessor>();
+        mockAccessor.SetupGet(a => a.HttpContext)
+            .Returns(() => _fakeHttpContext);
 
-        var requestServices = new ServiceCollection();
-        requestServices.AddTransient<IMultiTenantContextAccessor<Tenant>>(_ =>
-            new MultiTenantContextAccessor<Tenant> { MultiTenantContext = tc });
-        var sp = requestServices.BuildServiceProvider();
+        services.AddSingleton(mockAccessor.Object);
 
-        // var claimsIdentiy = new ClaimsIdentity(new Claim[] {
-        //     new Claim(ClaimTypes.NameIdentifier, "test-user-id")
-        // });
-        // var claimsPrincipal = new ClaimsPrincipal();
-        // claimsPrincipal.AddIdentity(new ClaimsIdentity())
+        //services.AddSingleton(provider =>
+        //    Mock.Of<IHttpContextAccessor>(a =>
+        //        a.HttpContext == _fakeHttpContext));
+    }
+
+    public static void EnsureMultiTenantContextAccessor(ServiceCollection services)
+    {
+        // mocking MultiTenantContextAccessor because it uses AsyncLocal<T>
+
+        var descriptor = services.FirstOrDefault(d =>
+            d.ServiceType == typeof(IMultiTenantContextAccessor<Tenant>));
+        services.Remove(descriptor);
+
+        var mockAccessor = new Mock<IMultiTenantContextAccessor<Tenant>>();
+        mockAccessor.SetupProperty(a => a.MultiTenantContext, null);
+
+        services.AddSingleton(mockAccessor.Object);
+    }
+
+    public static void CreateSession()
+    {
+        _fakeSession = new FakeSession();
+    }
+
+    public static async Task CreateHttpContext(IServiceScope scope)
+    {
+        // using var scope = CreateServiceScope();
+        var serviceProvider = scope.ServiceProvider;
 
         var mockHttpContext = Mock.Of<HttpContext>(c =>
-            c.RequestServices == sp
-            );
+            c.RequestServices == serviceProvider &&
+            c.Session == _fakeSession
+        );
+        mockHttpContext.TraceIdentifier = (_fakeHttpContextTraceIdentifier++).ToString();
 
-        services.AddScoped(provider =>
-            Mock.Of<IHttpContextAccessor>(a =>
-                a.HttpContext == mockHttpContext));
+        await CreateMultiTenantContext(mockHttpContext);
+
+        _fakeHttpContext = mockHttpContext;
     }
 
-    public static void AddFakeIdentityService(ServiceCollection services)
+    public static async Task CreateMultiTenantContext(HttpContext context)
     {
-        var idensityServiceDescriptor = services.FirstOrDefault(d =>
-            d.ServiceType == typeof(IIdentityService));
+        // substitude for MultiTenantMiddleware.Invoke(HttpContext context)
 
-        services.Remove(idensityServiceDescriptor);
+        var accessor = context.RequestServices.GetRequiredService<IMultiTenantContextAccessor<Tenant>>();
+        Debug_MultiTenantContextAccessor = accessor;
 
-        var identityService = new FakeIdentityService();
-        services.AddSingleton<IIdentityService>(provider => identityService);
+        if (accessor.MultiTenantContext == null)
+        {
+            var resolver = context.RequestServices.GetRequiredService<ITenantResolver<Tenant>>();
+            var multiTenantContext = (IMultiTenantContext<Tenant>)await resolver.ResolveAsync(context);
+            accessor.MultiTenantContext = multiTenantContext;
+        }
     }
 
-    public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    public static async Task RunAsDefaultTenantAndUser()
     {
-        using var scope = _scopeFactory.CreateScope();
+        CreateServiceScope();
+        await CreateHttpContext(ServiceScope);
+        await OpenFakeDataSourceAsync();
+        await CreateHttpContext(ServiceScope);
 
-        var mediator = scope.ServiceProvider.GetService<ISender>();
-
-        return await mediator.Send(request);
+        await RunAsDefaultUserAsync();
     }
 
     public static async Task<string> RunAsDefaultUserAsync()
     {
-        return await RunAsUserAsync("test@local", "Testing1234!", new string[] { });
+        return RunAsUser("TestUser1", "1", new string[] { });
     }
 
-    public static async Task<string> RunAsUserAsync(string userName, string password, string[] roles)
+    public static string RunAsUser(string userName, string password, string[] roles)
     {
         using var scope = _scopeFactory.CreateScope();
 
-        var identityService = scope.ServiceProvider.GetService<IIdentityService>();
+        var authService = scope.ServiceProvider.GetService<IAuthenticationService>();
 
-        var (result, userId) = await identityService.CreateUserAsync(userName, password);
+        var guid = authService.Login(userName, password);
 
-        // if (roles.Any())
-        // {
-        //     var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+        _currentUserId = guid.ToString();
 
-        //     foreach (var role in roles)
-        //     {
-        //         await roleManager.CreateAsync(new IdentityRole(role));
-        //     }
-
-        //     await userManager.AddToRolesAsync(user, roles);
-        // }
-
-        if (result.Succeeded)
-        {
-            _currentUserId = userId;
-
-            return _currentUserId;
-        }
-
-        var errors = string.Join(Environment.NewLine, result.Errors);
-
-        throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
+        return _currentUserId;
     }
 
-    public static string GetUserGroupIdByName(string name)
+    public static GroupInfo GetGroupTree()
     {
-        var g = _dataSourceFactory.UserGroups.Find(g => g.Name == name);
+        var user = Array.Find(_dataSourceFactory.Users, user => user.UserId.ToString() == _currentUserId);
+        if (user == null)
+            throw new Exception("no current user");
+
+        return user.GroupTree;
+    }
+
+    public static string GetRecordGroupIdByName(string name)
+    {
+        var groupTree = GetGroupTree();
+        var recordGroups = groupTree.GetUserRecordGroupInfos();
+        var g = Array.Find(recordGroups, g => g.Name == name);
         if (g == null)
         {
             return null;
@@ -184,8 +231,40 @@ public class Testing
         return g.ID.ToString();
     }
 
-    public static int GetUserGroupCount()
+    public static int GetRecordGroupCount()
     {
-        return _dataSourceFactory.UserGroups.Count;
+        var groupTree = GetGroupTree();
+        return groupTree.GetUserRecordGroupInfos().Length;
+    }
+
+    public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    {
+        // using var scope = _scopeFactory.CreateScope();
+        var scope = ServiceScope;
+
+        var mediator = scope.ServiceProvider.GetService<ISender>();
+
+        return await mediator.Send(request);
+    }
+
+    public static IServiceScope CreateServiceScope()
+    {
+        var scope = _scopeFactory.CreateScope();
+        ServiceScope = scope;
+        return scope;
+    }
+
+    public static void ResetState()
+    {
+        if (ServiceScope != null)
+            ServiceScope.Dispose();
+        ServiceScope = null;
+
+        _fakeHttpContextTraceIdentifier = 0;
+        _fakeHttpContext = null;
+        _fakeSession = null;
+        _currentUserId = null;
+
+        _dataSourceCache.Clear();
     }
 }

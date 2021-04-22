@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using DataSource;
-
-using DS = DataSource;
+using KMB.DataSource;
 
 namespace Electricity.Infrastructure.DataSource.Fake
 {
-    public class FakeRowCollection : DS.RowCollection
+    public class FakeRowCollection : RowCollection
     {
         private IEnumerable<RowInfo> _rows;
 
@@ -29,6 +27,11 @@ namespace Electricity.Infrastructure.DataSource.Fake
         public override IEnumerator<RowInfo> GetEnumerator()
         {
             return _rows.GetEnumerator();
+        }
+
+        public override unsafe void SetBufferAndPointer(byte[] Buffer, byte* BufferP)
+        {
+            throw new NotImplementedException();
         }
 
         public override unsafe void SetPointer(byte* BufferP)

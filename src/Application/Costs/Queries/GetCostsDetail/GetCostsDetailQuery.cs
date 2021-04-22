@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
@@ -26,19 +27,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
     public class GetCostsDetailQueryHandler : IRequestHandler<GetCostsDetailQuery, CostsDetailDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
-        private readonly IGroupService _groupService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsDetailQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
-            IGroupService groupService,
+            ArchiveRepositoryService archiveRepoService,
+            IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -48,11 +46,9 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var group = _groupService.GetGroupById(request.GroupId);
+            var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
-            {
-                throw new NotFoundException("Invalid GroupId");
-            }
+                throw new NotFoundException("group not found");
 
             var items1 = GetItemsForInterval(group, interval1, nameof(request.Interval1));
             var items2 = GetItemsForInterval(group, interval2, nameof(request.Interval2));
@@ -64,7 +60,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             });
         }
 
-        public CostlyQuantitiesDetailItem[] GetItemsForInterval(Group g, Interval interval, string intervalName)
+        public CostlyQuantitiesDetailItem[] GetItemsForInterval(GroupInfo g, Interval interval, string intervalName)
         {
             if (interval == null)
             {
@@ -88,12 +84,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                     }
                 };
 
-            var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-            var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
-            if (emView == null || powView == null)
-            {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+            var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery {
+                GroupId = g.ID, 
+                Range = interval,
+                Quantities = emQuantities
+            });
+            var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery {
+                GroupId = g.ID,
+                Range = interval,
+                Quantities = powQuantities
+            });
 
             var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
             {
@@ -109,6 +109,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             {
                 Type = PowerQuantityType.PAvg3P
             });
+            var peakDemandValues = peakDemand.Select(pd => pd.Value).ToArray();
 
             var items = new List<CostlyQuantitiesDetailItem>();
             for (int i = 0; i < activeEnergy.Size; i++)
@@ -121,7 +122,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
                     ActiveEnergy = activeEnergy.ValueAt(i),
                     ReactiveEnergy = reactiveEnergyL.ValueAt(i),
-                    PeakDemand = peakDemand.ValueAt(i)
+                    PeakDemand = peakDemandValues[i]
                 };
                 items.Add(item);
             }

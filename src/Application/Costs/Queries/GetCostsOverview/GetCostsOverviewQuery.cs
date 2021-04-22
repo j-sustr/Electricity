@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
@@ -21,23 +21,22 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
         public IntervalDto Interval1 { get; set; }
 
         public IntervalDto? Interval2 { get; set; }
+
+        public int? MaxGroups { get; set; }
     }
 
     public class GetCostsOverviewQueryHandler : IRequestHandler<GetCostsOverviewQuery, CostsOverviewDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
-        private readonly IGroupService _groupService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsOverviewQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
-            IGroupService groupService,
+            ArchiveRepositoryService archiveRepoService,            
+            IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -47,11 +46,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
 
-            var userGroups = _groupService.GetUserGroups();
-            if (userGroups.Length == 0) return null;
+            var recordGroupInfos = _groupService.GetUserRecordGroupInfos();
+            if (recordGroupInfos.Length == 0) 
+                return Task.FromResult<CostsOverviewDto>(null);
+            if (request.MaxGroups is int max)
+            {
+                recordGroupInfos = recordGroupInfos.Take(max).ToArray();
+            }
 
-            var items1 = GetItemsForInterval(userGroups, interval1, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(userGroups, interval2, nameof(request.Interval2));
+            var items1 = GetItemsForInterval(recordGroupInfos, interval1, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(recordGroupInfos, interval2, nameof(request.Interval2));
 
             return Task.FromResult(new CostsOverviewDto
             {
@@ -60,12 +64,24 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
             });
         }
 
-        public CostlyQuantitiesOverviewItem[] GetItemsForInterval(Group[] groups, Interval interval, string intervalName)
+        public CostlyQuantitiesOverviewItem[] GetItemsForInterval(GroupInfo[] groupInfos, Interval interval, string intervalName)
         {
             if (interval == null) return null;
 
-            var items = groups.Select(g =>
+            var items = groupInfos.Select(g =>
             {
+                if (g.Archives[(int)Arch.Main] == null || g.Archives[(int)Arch.ElectricityMeter] == null)
+                {
+                    var message = $"Missing archives: ";
+                    message += (g.Archives[(int)Arch.Main] == null) ? (nameof(Arch.Main) + ", ") : "";
+                    message += (g.Archives[(int)Arch.ElectricityMeter] == null) ? (nameof(Arch.ElectricityMeter) + ", ") : "";
+
+                    return new CostlyQuantitiesOverviewItem
+                    {
+                        Message = message
+                    };
+                }
+
                 var emQuantities = new ElectricityMeterQuantity[] {
                     new ElectricityMeterQuantity{
                         Type = ElectricityMeterQuantityType.ActiveEnergy,
@@ -85,18 +101,18 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     }
                 };
 
-                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-                var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
-                if (emView == null || powView == null)
+                var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
                 {
-                    throw new IntervalOutOfRangeException(intervalName);
-                }
-                //var emInterval = emView.GetInterval();
-                //var powInterval = powView.GetInterval();
-                //if (!interval.Equals(emInterval) || !interval.Equals(powInterval))
-                //{
-                //    throw new IntervalOutOfRangeException(intervalName);
-                //}
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = emQuantities
+                });
+                var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
+                {
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = powQuantities
+                });
 
                 var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
                 {
@@ -113,6 +129,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     Type = PowerQuantityType.PAvg3P,
                     Phase = Phase.Main
                 });
+                var peakDemandValues = peakDemand.Select(pd => pd.Value);
 
                 return new CostlyQuantitiesOverviewItem
                 {
@@ -121,7 +138,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                     ActiveEnergyInMonths = activeEnergy.Values().ToArray(),
                     ReactiveEnergyInMonths = reactiveEnergyL.Values().ToArray(),
-                    PeakDemandInMonths = peakDemand.Values().ToArray()
+                    PeakDemandInMonths = peakDemandValues.ToArray()
                 };
             });
 

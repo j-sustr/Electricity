@@ -1,10 +1,9 @@
 using Electricity.Application.Common.Models;
-using DS = DataSource;
 
-namespace Electricity.Application.Common.Interfaces
+namespace Electricity.Infrastructure.DataSource.Abstractions
 {
     public interface IDataSourceFactory
     {
-        DS.DataSource CreateDataSource(DataSourceConfig config);
+        KMB.DataSource.DataSource CreateDataSource(DataSourceCreationParams config);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataSource;
+using KMB.DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
@@ -30,19 +30,16 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
     public class GetPowerFactorDistributionQueryHandler : IRequestHandler<GetPowerFactorDistributionQuery, PowerFactorDistributionDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
-        private readonly IGroupService _groupService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
+        private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetPowerFactorDistributionQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
-            IGroupService groupService,
+            ArchiveRepositoryService archiveRepoService,
+            IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -53,11 +50,9 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             var interval2 = _mapper.Map<Interval>(request.Interval2);
             var phases = request.Phases;
 
-            var group = _groupService.GetGroupById(request.GroupId);
+            var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
-            {
-                throw new NotFoundException("Invalid GroupId");
-            }
+                throw new NotFoundException("group not found");
 
             var items1 = GetItemsForInterval(group, interval1, phases, nameof(request.Interval1));
             var items2 = GetItemsForInterval(group, interval2, phases, nameof(request.Interval2));
@@ -70,7 +65,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             });
         }
 
-        public PowerFactorDistributionItem[] GetItemsForInterval(Group g, Interval interval, Phases phases, string intervalName)
+        public PowerFactorDistributionItem[] GetItemsForInterval(GroupInfo g, Interval interval, Phases phases, string intervalName)
         {
             if (interval == null)
             {
@@ -79,11 +74,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             var emQuantities = CreateQuantities(phases.ToArray());
 
-            var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-            if (emView == null)
+            var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
             {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+                GroupId = g.ID,
+                Range = interval,
+                Quantities = emQuantities
+            });
 
             var distributions = new Dictionary<Phase, Dictionary<string, int>>();
 

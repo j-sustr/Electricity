@@ -10,12 +10,12 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 {
     using static Testing;
 
-    public class GetCostsOverviewTest
+    public class GetCostsOverviewTest : TestBase
     {
         [Test]
         public async Task ShouldReturnCostsOverviewWhenInfiniteIntervalProvided()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetCostsOverviewQuery
             {
@@ -24,7 +24,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
 
             var result = await SendAsync(query);
 
-            result.Items1.Should().HaveCount(GetUserGroupCount());
+            result.Items1.Should().HaveCount(GetRecordGroupCount());
             result.Items2.Should().BeNull();
 
             foreach (var item in result.Items1)
@@ -41,7 +41,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
         [Test]
         public async Task ShouldThrowIntervalOutOfRangeException()
         {
-            var userId = await RunAsDefaultUserAsync();
+            await RunAsDefaultTenantAndUser();
 
             var query = new GetCostsOverviewQuery
             {

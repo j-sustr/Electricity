@@ -1,6 +1,6 @@
 using System;
 using Ardalis.GuardClauses;
-using DataSource;
+using KMB.DataSource;
 
 namespace Electricity.Application.Common.Extensions
 {
