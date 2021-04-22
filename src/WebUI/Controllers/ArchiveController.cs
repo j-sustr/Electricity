@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Electricity.Application.Archive.Queries.GetQuantities;
+using Electricity.Application.Archive.Queries.GetQuantitySeries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Electricity.WebUI.Controllers
@@ -16,5 +17,12 @@ namespace Electricity.WebUI.Controllers
                 Arch = arch
             });
         }
+
+        [HttpGet("series")]
+        public async Task<ActionResult<QuantitySeriesDto>> GetSeries([FromQuery] GetQuantitySeriesQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
     }
 }
