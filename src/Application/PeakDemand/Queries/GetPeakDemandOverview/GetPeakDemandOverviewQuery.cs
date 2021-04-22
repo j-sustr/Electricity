@@ -79,7 +79,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                 var powQuantities = new PowerQuantity[] {
                     new PowerQuantity
                     {
-                        Type = PowerQuantityType.PAvg3P,
+                        Type = PowerQuantityType.PAvg,
                         Phase = Phase.Main
                     }
                 };
@@ -93,7 +93,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 
                 var peakDemands = powView.GetPeakDemands(new PowerQuantity
                 {
-                    Type = PowerQuantityType.PAvg3P,
+                    Type = PowerQuantityType.PAvg,
                     Phase = Phase.Main
                 });
 

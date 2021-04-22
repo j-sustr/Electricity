@@ -75,7 +75,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             var powQuantities = new PowerQuantity[] {
                     new PowerQuantity
                     {
-                        Type = PowerQuantityType.PAvg3P,
+                        Type = PowerQuantityType.PAvg,
                         Phase = Phase.Main
                     }
                 };
@@ -88,12 +88,11 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             });
             var resultInterval = powView.GetInterval();
 
-            var q = new PowerQuantity
+            var seriesMain = powView.GetDemandSeries(new PowerQuantity
             {
-                Type = PowerQuantityType.PAvg3P,
+                Type = PowerQuantityType.PAvg,
                 Phase = Phase.Main
-            };
-            var seriesMain = powView.GetDemandSeries(q);
+            });
             if (aggregation != DemandAggregation.None)
             {
                 seriesMain = AggregateSeries(seriesMain, aggregation);
@@ -146,7 +145,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
             var aggregatedValues = series.Values()
                 .Chunk(chunkSize, offset)
-                .Select(chunk => {
+                .Select(chunk =>
+                {
                     return chunk.Max();
                 })
                 .ToArray();

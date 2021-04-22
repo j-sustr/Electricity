@@ -29,24 +29,24 @@ namespace Electricity.Application.Common.Services
             {
                 case ElectricityMeterQuantityType.ActiveEnergy:
                     if (Phase == Phase.Main)
-                        return new Quantity("3EP", "Wh");
+                        return new Quantity("3EP", null);
 
-                    return new Quantity($"EP{(int)Phase}", "Wh");
+                    return new Quantity($"EP{(int)Phase}", null);
 
                 case ElectricityMeterQuantityType.ReactiveEnergyL:
                     if (Phase == Phase.Main)
-                        return new Quantity("3EQL", "varh");
+                        return new Quantity("3EQL", null);
 
-                    return new Quantity($"EQL{(int)Phase}", "varh");
+                    return new Quantity($"EQL{(int)Phase}", null);
 
                 case ElectricityMeterQuantityType.ReactiveEnergyC:
                     if (Phase == Phase.Main)
-                        return new Quantity("3EQC", "varh");
+                        return new Quantity("3EQC", null);
 
-                    return new Quantity($"EQC{(int)Phase}", "varh");
+                    return new Quantity($"EQC{(int)Phase}", null);
 
                 default:
-                    throw new ArgumentException("invalid quantity");
+                    throw new Exception("invalid quantity");
             }
         }
     }

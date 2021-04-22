@@ -8,7 +8,7 @@ namespace Electricity.Application.Common.Services
 {
     public enum PowerQuantityType
     {
-        PAvg3P,
+        PAvg,
     }
 
     public class PowerQuantity : IEquatable<PowerQuantity>
@@ -25,11 +25,14 @@ namespace Electricity.Application.Common.Services
         {
             switch (this.Type)
             {
-                case PowerQuantityType.PAvg3P:
-                    return new Quantity("P_max_P3_C", "W");
+                case PowerQuantityType.PAvg:
+                    if (Phase == Phase.Main)
+                        return new Quantity("P_avg_3P", null);
+
+                    return new Quantity($"P_avg_P{(int)Phase}", null);
             }
 
-            throw new ArgumentException("invalid quantity");
+            throw new Exception("invalid quantity");
         }
     }
 }

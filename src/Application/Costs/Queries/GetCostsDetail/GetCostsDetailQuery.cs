@@ -80,7 +80,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
             var powQuantities = new PowerQuantity[] {
                     new PowerQuantity{
-                        Type = PowerQuantityType.PAvg3P
+                        Type = PowerQuantityType.PAvg,
+                        Phase = Phase.Main
                     }
                 };
 
@@ -107,7 +108,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             });
             var peakDemand = powView.GetPeakDemandInMonths(new PowerQuantity
             {
-                Type = PowerQuantityType.PAvg3P
+                Type = PowerQuantityType.PAvg,
+                Phase = Phase.Main
             });
             var peakDemandValues = peakDemand.Select(pd => pd.Value).ToArray();
 
