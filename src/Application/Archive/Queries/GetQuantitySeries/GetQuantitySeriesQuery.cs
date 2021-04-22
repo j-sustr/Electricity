@@ -10,6 +10,7 @@ using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Queries;
 using MediatR;
 using Electricity.Application.Common.Models.Dtos;
+using Electricity.Application.Common.Exceptions;
 
 namespace Electricity.Application.Archive.Queries.GetQuantitySeries
 {
@@ -46,6 +47,8 @@ namespace Electricity.Application.Archive.Queries.GetQuantitySeries
             var range = _mapper.Map<Interval>(request.Range);
 
             var archive = _archiveRepo.GetArchive(request.GroupId, request.Arch);
+            if (archive == null)
+                throw new NotFoundException("archive not found");
 
             var quantity = new Quantity(request.PropName, request.Unit ?? null);
 
