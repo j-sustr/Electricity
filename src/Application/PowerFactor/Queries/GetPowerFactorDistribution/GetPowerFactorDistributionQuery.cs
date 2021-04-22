@@ -30,19 +30,16 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
     public class GetPowerFactorDistributionQueryHandler : IRequestHandler<GetPowerFactorDistributionQuery, PowerFactorDistributionDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetPowerFactorDistributionQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
+            ArchiveRepositoryService archiveRepoService,
             IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -77,11 +74,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             var emQuantities = CreateQuantities(phases.ToArray());
 
-            var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-            if (emView == null)
+            var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
             {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+                GroupId = g.ID,
+                Range = interval,
+                Quantities = emQuantities
+            });
 
             var distributions = new Dictionary<Phase, Dictionary<string, int>>();
 

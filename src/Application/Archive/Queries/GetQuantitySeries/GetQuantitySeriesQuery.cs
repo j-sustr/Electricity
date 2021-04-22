@@ -7,7 +7,6 @@ using KMB.DataSource;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
-using Electricity.Application.Common.Models.Queries;
 using MediatR;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Exceptions;

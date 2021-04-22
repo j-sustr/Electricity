@@ -27,19 +27,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
     public class GetCostsDetailQueryHandler : IRequestHandler<GetCostsDetailQuery, CostsDetailDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsDetailQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
+            ArchiveRepositoryService archiveRepoService,
             IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -87,12 +84,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                     }
                 };
 
-            var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-            var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
-            if (emView == null || powView == null)
-            {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+            var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery {
+                GroupId = g.ID, 
+                Range = interval,
+                Quantities = emQuantities
+            });
+            var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery {
+                GroupId = g.ID,
+                Range = interval,
+                Quantities = powQuantities
+            });
 
             var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
             {

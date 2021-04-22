@@ -35,16 +35,16 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
     public class GetPeakDemandDetailQueryHandler : IRequestHandler<GetPeakDemandDetailQuery, PeakDemandDetailDto>
     {
-        private readonly PowerService _powerService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetPeakDemandDetailQueryHandler(
-            PowerService powerService,
+            ArchiveRepositoryService archiveRepoService,
             IGroupRepository groupService,
             IMapper mapper)
         {
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -80,11 +80,12 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
                     }
                 };
 
-            var powView = _powerService.GetRowsView(group.ID, interval, powQuantities);
-            if (powView == null)
+            var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
             {
-                throw new IntervalOutOfRangeException(intervalName);
-            }
+                GroupId = group.ID,
+                Range = interval,
+                Quantities = powQuantities
+            });
             var resultInterval = powView.GetInterval();
 
             var q = new PowerQuantity

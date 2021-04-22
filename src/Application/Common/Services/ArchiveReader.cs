@@ -4,7 +4,6 @@ using KMB.DataSource;
 using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
-using Electricity.Application.Common.Models.Queries;
 
 namespace Electricity.Application.Common.Services
 {

@@ -27,19 +27,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
     public class GetCostsOverviewQueryHandler : IRequestHandler<GetCostsOverviewQuery, CostsOverviewDto>
     {
-        private readonly ElectricityMeterService _electricityMeterService;
-        private readonly PowerService _powerService;
+        private readonly ArchiveRepositoryService _archiveRepoService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
 
         public GetCostsOverviewQueryHandler(
-            ElectricityMeterService electricityMeterService,
-            PowerService powerService,
+            ArchiveRepositoryService archiveRepoService,            
             IGroupRepository groupService,
             IMapper mapper)
         {
-            _electricityMeterService = electricityMeterService;
-            _powerService = powerService;
+            _archiveRepoService = archiveRepoService;
             _groupService = groupService;
             _mapper = mapper;
         }
@@ -104,18 +101,18 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     }
                 };
 
-                var emView = _electricityMeterService.GetRowsView(g.ID, interval, emQuantities);
-                var powView = _powerService.GetRowsView(g.ID, interval, powQuantities);
-                if (emView == null || powView == null)
+                var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
                 {
-                    throw new IntervalOutOfRangeException(intervalName);
-                }
-                //var emInterval = emView.GetInterval();
-                //var powInterval = powView.GetInterval();
-                //if (!interval.Equals(emInterval) || !interval.Equals(powInterval))
-                //{
-                //    throw new IntervalOutOfRangeException(intervalName);
-                //}
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = emQuantities
+                });
+                var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
+                {
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = powQuantities
+                });
 
                 var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
                 {

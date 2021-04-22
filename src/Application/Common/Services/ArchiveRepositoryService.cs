@@ -1,4 +1,5 @@
 ﻿using Electricity.Application.Common.Enums;
+using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using KMB.DataSource;
@@ -58,7 +59,7 @@ namespace Electricity.Application.Common.Services
 
             if (rows.Count() == 0)
             {
-                return null;
+                throw new IntervalOutOfRangeException(nameof(query.Range));
             }
 
             return new ElectricityMeterRowsView(query.Quantities, rows);
@@ -80,7 +81,7 @@ namespace Electricity.Application.Common.Services
 
             if (rows.Count() == 0)
             {
-                return null;
+                throw new IntervalOutOfRangeException(nameof(query.Range));
             }
 
             return new PowerRowsView(query.Quantities, rows);
