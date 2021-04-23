@@ -5,6 +5,7 @@ using FluentAssertions;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution;
+using Electricity.Application.Common.Models;
 
 namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 {
@@ -58,11 +59,12 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
             var result = await SendAsync(query);
 
             result.GroupName.Should().NotBeNullOrWhiteSpace();
-            result.Distribution1.Should().HaveCount(7);
+            result.Distribution1.Should().HaveCount(8);
 
             foreach (var item in result.Distribution1)
             {
-                item.Range.Should().NotBeNullOrWhiteSpace();
+                item.RangeName.Should().NotBeNullOrWhiteSpace();
+                item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
                 item.ValueL1.Should().BeNull();
@@ -89,11 +91,12 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
             var result = await SendAsync(query);
 
             result.GroupName.Should().NotBeNullOrWhiteSpace();
-            result.Distribution1.Should().HaveCount(7);
+            result.Distribution1.Should().HaveCount(8);
 
             foreach (var item in result.Distribution1)
             {
-                item.Range.Should().NotBeNullOrWhiteSpace();
+                item.RangeName.Should().NotBeNullOrWhiteSpace();
+                item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
                 item.ValueL1.Should().BeNull();
@@ -121,12 +124,13 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             var result = await SendAsync(query);
 
-            result.Distribution1.Should().HaveCount(7);
-            result.Distribution1.Should().HaveCount(7);
+            result.Distribution1.Should().HaveCount(8);
+            result.Distribution2.Should().HaveCount(8);
 
             foreach (var item in result.Distribution1)
             {
-                item.Range.Should().NotBeNullOrWhiteSpace();
+                item.RangeName.Should().NotBeNullOrWhiteSpace();
+                item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeNull();
                 item.ValueL1.Should().BeNull();
@@ -136,7 +140,8 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution2)
             {
-                item.Range.Should().NotBeNullOrWhiteSpace();
+                item.RangeName.Should().NotBeNullOrWhiteSpace();
+                item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeNull();
                 item.ValueL1.Should().BeNull();

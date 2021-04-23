@@ -26,10 +26,14 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
         public IntervalDto? Interval2 { get; set; }
 
         public Phases Phases { get; set; }
+        public float[] Thresholds { get; set; }
     }
 
     public class GetPowerFactorDistributionQueryHandler : IRequestHandler<GetPowerFactorDistributionQuery, PowerFactorDistributionDto>
     {
+        readonly float[] DEFAULT_THRESHOLDS = new float[] { 0.000f, 0.600f, 0.700f, 0.800f, 0.900f, 0.950f, 1.0f };
+
+
         private readonly ArchiveRepositoryService _archiveRepoService;
         private readonly IGroupRepository _groupService;
         private readonly IMapper _mapper;
@@ -46,16 +50,19 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
         public Task<PowerFactorDistributionDto> Handle(GetPowerFactorDistributionQuery request, CancellationToken cancellationToken)
         {
-            var interval1 = _mapper.Map<Interval>(request.Interval1);
-            var interval2 = _mapper.Map<Interval>(request.Interval2);
-            var phases = request.Phases;
-
             var group = _groupService.GetGroupInfo(request.GroupId);
             if (group == null)
                 throw new NotFoundException("group not found");
 
-            var items1 = GetItemsForInterval(group, interval1, phases, nameof(request.Interval1));
-            var items2 = GetItemsForInterval(group, interval2, phases, nameof(request.Interval2));
+            var interval1 = _mapper.Map<Interval>(request.Interval1);
+            var interval2 = _mapper.Map<Interval>(request.Interval2);
+            var phases = request.Phases;
+            var thresholds = request.Thresholds;
+            if (thresholds == null)
+                thresholds = DEFAULT_THRESHOLDS;
+
+            var items1 = GetItemsForInterval(group, interval1, phases, thresholds, nameof(request.Interval1));
+            var items2 = GetItemsForInterval(group, interval2, phases, thresholds, nameof(request.Interval2));
 
             return Task.FromResult(new PowerFactorDistributionDto
             {
@@ -65,12 +72,10 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             });
         }
 
-        public PowerFactorDistributionItem[] GetItemsForInterval(GroupInfo g, Interval interval, Phases phases, string intervalName)
+        public PowerFactorDistributionItem[] GetItemsForInterval(
+            GroupInfo g, Interval interval, Phases phases, float[] thresholds, string intervalName)
         {
-            if (interval == null)
-            {
-                return null;
-            }
+            if (interval == null) return null;
 
             var emQuantities = CreateQuantities(phases.ToArray());
 
@@ -81,36 +86,40 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 Quantities = emQuantities
             });
 
-            var distributions = new Dictionary<Phase, Dictionary<string, int>>();
+            var distributions = new Dictionary<Phase, Tuple<string, int, DistributionRange>[]>();
 
             foreach (var phase in phases.ToArray())
             {
-                distributions[phase] = CalcPowerFactorDistributionForPhase(emView, phase);
+                var cosFi = CalcCosFiForPhase(emView, phase);
+                var bins = BinValues(cosFi, thresholds);
+                distributions[phase] = CreateDistributionTuples(bins, thresholds);
             }
 
             return DistributionToItems(distributions, phases);
         }
 
-        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<Phase, Dictionary<string, int>> distributions, Phases phases)
+        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<Phase, Tuple<string, int, DistributionRange>[]> distributions, Phases phases)
         {
             var items = new List<PowerFactorDistributionItem>();
 
-            var dist = distributions[phases.ToArray()[0]];
+            var entries = distributions[phases.ToArray()[0]];
 
-            foreach (var entry in dist)
+            for (int i = 0; i < entries.Length; i++)
             {
+                var entry = entries[i];
                 var item = new PowerFactorDistributionItem();
 
-                item.Range = entry.Key;
+                item.RangeName = entry.Item1;
+                item.Range = entry.Item3;
 
                 if (phases.Main == true)
-                    item.ValueMain = distributions[Phase.Main][entry.Key];
+                    item.ValueMain = distributions[Phase.Main][i].Item2;
                 if (phases.L1 == true)
-                    item.ValueL1 = distributions[Phase.L1][entry.Key];
+                    item.ValueL1 = distributions[Phase.L1][i].Item2;
                 if (phases.L2 == true)
-                    item.ValueL2 = distributions[Phase.L2][entry.Key];
+                    item.ValueL2 = distributions[Phase.L2][i].Item2;
                 if (phases.L3 == true)
-                    item.ValueL3 = distributions[Phase.L3][entry.Key];
+                    item.ValueL3 = distributions[Phase.L3][i].Item2;
 
                 items.Add(item);
             }
@@ -143,7 +152,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             return quanities.ToArray();
         }
 
-        public Dictionary<string, int> CalcPowerFactorDistributionForPhase(ElectricityMeterRowsView emView, Phase phase)
+        public float[] CalcCosFiForPhase(ElectricityMeterRowsView emView, Phase phase)
         {
             var activeEnergy = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
             {
@@ -171,10 +180,77 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 cosFi[i] = ElectricityUtil.CalcCosFi(ep[i], eqL[i] - eqC[i]);
             }
 
-            return CalcPowerFactorDistribution(cosFi);
+            return cosFi;
         }
 
-        public Dictionary<string, int> CalcPowerFactorDistribution(float[] cosFi)
+        public int[] BinValues(float[] values, float[] thresholds)
+        {
+            int n = thresholds.Length + 1;
+            var bins = new int[n];
+            Array.Fill(bins, 0);
+
+            foreach (var v in values)
+            {
+                int i = 0;
+                for (; i < (n - 2); i++)
+                {
+                    if (v < thresholds[i])
+                    {
+                        bins[i] += 1;
+                        break;
+                    }
+                }
+
+                // last threshold is inclusive
+                if (v <= thresholds[i])
+                {
+                    bins[i] += 1;
+                    continue;
+                }
+
+                bins[i + 1] += 1;
+            }
+
+            return bins;
+        }
+
+        public Tuple<string, int, DistributionRange>[] CreateDistributionTuples(int[] bins, float[] thresholds)
+        {
+            var items = new List<Tuple<string, int, DistributionRange>>();
+
+            items.Add(Tuple.Create("before", bins[0], new DistributionRange
+            {
+                Start = null,
+                End = thresholds[0]
+            }));
+
+            int i = 1;
+            for (; i < thresholds.Length; i++)
+            {
+                items.Add(Tuple.Create(CreateBinKey(thresholds[i - 1], thresholds[i]), bins[0], new DistributionRange
+                {
+                    Start = thresholds[i - 1],
+                    End = thresholds[i]
+                }));
+            }
+
+            items.Add(Tuple.Create("after", bins[0], new DistributionRange
+            {
+                Start = null,
+                End = thresholds[0]
+            }));
+
+            return items.ToArray();
+
+            string CreateBinKey(float start, float end)
+            {
+                const float RES = 0.001f;
+                return start.ToString("0.000") + "-" + (end - RES).ToString("0.000");
+            }
+        }
+
+
+        public Dictionary<string, int> CalcGeneralDistribution(float[] cosFi)
         {
             var counter = new Dictionary<string, int>();
             counter.Add("0.950-1.000", 0);
@@ -193,27 +269,21 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                     case var v when v <= 1 && v >= 0.95:
                         counter["0.950-1.000"] += 1;
                         break;
-
                     case var v when v >= 0.9:
                         counter["0.900-0.949"] += 1;
                         break;
-
                     case var v when v >= 0.8:
                         counter["0.800-0.899"] += 1;
                         break;
-
                     case var v when v >= 0.7:
                         counter["0.700-0.799"] += 1;
                         break;
-
                     case var v when v >= 0.6:
                         counter["0.600-0.699"] += 1;
                         break;
-
                     case var v when v >= 0:
                         counter["0.000-0.599"] += 1;
                         break;
-
                     default:
                         counter["outlier"] += 1;
                         break;
