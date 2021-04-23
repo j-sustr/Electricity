@@ -63,7 +63,6 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.RangeName.Should().NotBeNullOrWhiteSpace();
                 item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
@@ -95,7 +94,6 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.RangeName.Should().NotBeNullOrWhiteSpace();
                 item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeGreaterOrEqualTo(0);
@@ -129,7 +127,6 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution1)
             {
-                item.RangeName.Should().NotBeNullOrWhiteSpace();
                 item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeNull();
@@ -140,7 +137,6 @@ namespace Electricity.Application.IntegrationTests.PowerFactor.Queries
 
             foreach (var item in result.Distribution2)
             {
-                item.RangeName.Should().NotBeNullOrWhiteSpace();
                 item.Range.Should().NotBeNull();
 
                 item.ValueMain.Should().BeNull();

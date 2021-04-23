@@ -86,7 +86,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 Quantities = emQuantities
             });
 
-            var distributions = new Dictionary<Phase, Tuple<string, int, DistributionRange>[]>();
+            var distributions = new Dictionary<Phase, Tuple<BinRange, int>[]>();
 
             foreach (var phase in phases.ToArray())
             {
@@ -98,7 +98,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             return DistributionToItems(distributions, phases);
         }
 
-        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<Phase, Tuple<string, int, DistributionRange>[]> distributions, Phases phases)
+        public PowerFactorDistributionItem[] DistributionToItems(Dictionary<Phase, Tuple<BinRange, int>[]> distributions, Phases phases)
         {
             var items = new List<PowerFactorDistributionItem>();
 
@@ -109,8 +109,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 var entry = entries[i];
                 var item = new PowerFactorDistributionItem();
 
-                item.RangeName = entry.Item1;
-                item.Range = entry.Item3;
+                item.Range = entry.Item1;
 
                 if (phases.Main == true)
                     item.ValueMain = distributions[Phase.Main][i].Item2;
@@ -214,39 +213,39 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             return bins;
         }
 
-        public Tuple<string, int, DistributionRange>[] CreateDistributionTuples(int[] bins, float[] thresholds)
+        public Tuple<BinRange, int>[] CreateDistributionTuples(int[] bins, float[] thresholds)
         {
-            var items = new List<Tuple<string, int, DistributionRange>>();
+            var items = new List<Tuple<BinRange, int>>();
 
-            items.Add(Tuple.Create("before", bins[0], new DistributionRange
+            items.Add(Tuple.Create(new BinRange
             {
                 Start = null,
                 End = thresholds[0]
-            }));
+            }, bins[0]));
 
             int i = 1;
             for (; i < thresholds.Length; i++)
             {
-                items.Add(Tuple.Create(CreateBinKey(thresholds[i - 1], thresholds[i]), bins[0], new DistributionRange
+                items.Add(Tuple.Create(new BinRange
                 {
                     Start = thresholds[i - 1],
                     End = thresholds[i]
-                }));
+                }, bins[i]));
             }
 
-            items.Add(Tuple.Create("after", bins[0], new DistributionRange
+            items.Add(Tuple.Create(new BinRange
             {
                 Start = null,
                 End = thresholds[0]
-            }));
+            }, bins[i]));
 
             return items.ToArray();
+        }
 
-            string CreateBinKey(float start, float end)
-            {
-                const float RES = 0.001f;
-                return start.ToString("0.000") + "-" + (end - RES).ToString("0.000");
-            }
+        string CreateBinKey(float start, float end)
+        {
+            const float RES = 0.001f;
+            return start.ToString("0.000") + "-" + (end - RES).ToString("0.000");
         }
 
 
