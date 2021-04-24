@@ -7,7 +7,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 {
     public class PowerFactorDistributionItem
     {
-        public string Range { get; set; }
+        public BinRange Range { get; set; }
 
         public int? ValueMain { get; set; }
         public int? ValueL1 { get; set; }
