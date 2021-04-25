@@ -19,12 +19,6 @@ namespace Electricity.Infrastructure
             // });
             services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
             services.AddSingleton<IDataSourceCache, DataSourceCache>();
-            services.AddScoped<IDataSourceManager, DataSourceManager>();
-
-            services.AddScoped<ApplicationDataSource>(); // DEBUG
-            services.AddScoped<IGroupRepository, ApplicationDataSource>();
-            services.AddScoped<IArchiveRepository, ApplicationDataSource>();
-            services.AddScoped<IAuthenticationService, ApplicationDataSource>();
 
             return services;
         }

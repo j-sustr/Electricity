@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Electricity.Application.Common.Behaviours;
+using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Services;
 using FluentValidation;
 using MediatR;
@@ -17,7 +18,14 @@ namespace Electricity.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+
             services.AddTransient<ArchiveRepositoryService>();
+            services.AddScoped<IDataSourceManager, DataSourceManager>();
+
+            services.AddScoped<ApplicationDataSource>(); // DEBUG
+            services.AddScoped<IGroupRepository, ApplicationDataSource>();
+            services.AddScoped<IArchiveRepository, ApplicationDataSource>();
+            services.AddScoped<IAuthenticationService, ApplicationDataSource>();
 
             return services;
         }
