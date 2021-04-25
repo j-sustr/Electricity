@@ -27,7 +27,7 @@ namespace Electricity.WebUI.Controllers
         }
 
         [HttpGet("query-records")]
-        public ActionResult<ArchiveQueryRecord[]> GetQueries([FromQuery] GetQuantitySeriesQuery query)
+        public ActionResult<ArchiveQueryRecord[]> GetQueryRecords()
         {
             var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
 
