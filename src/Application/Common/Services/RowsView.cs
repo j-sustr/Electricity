@@ -34,11 +34,21 @@ namespace Electricity.Application.Common.Services
             return new Interval(start, end);
         }
 
-        public Tuple<DateTime, float>[] GetSeries(TQuantity quantity)
+        public IEnumerable<Tuple<DateTime, float>> GetSeries(TQuantity quantity)
         {
             // var series = new VariableIntervalTimeSeries<float[]>(_rows);
             int idx = GetIndexOfQuantity(quantity);
             return _rows.Select(r => Tuple.Create(r.Item1, r.Item2[idx])).ToArray();
+        }
+
+        public IEnumerable<Tuple<DateTime, float[]>> GetSeriesBundle(TQuantity[] quants)
+        {
+            int[] idxs = quants.Select(q => GetIndexOfQuantity(q)).ToArray();
+
+            return _rows.Select(r => {
+                float[] values = idxs.Select((idx) => r.Item2[idx]).ToArray();
+                return Tuple.Create(r.Item1, values);
+            });
         }
 
         public bool HasQuantity(TQuantity quantity)
