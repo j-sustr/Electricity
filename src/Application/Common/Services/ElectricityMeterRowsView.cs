@@ -12,11 +12,14 @@ namespace Electricity.Application.Common.Services
 {
     public class ElectricityMeterRowsView : RowsView<ElectricityMeterQuantity>
     {
+        public readonly EEnergyAggType AggType;
         public ElectricityMeterRowsView(
             ElectricityMeterQuantity[] quantities,
-            IEnumerable<Tuple<DateTime, float[]>> rows
+            IEnumerable<Tuple<DateTime, float[]>> rows,
+            EEnergyAggType aggType
             ) : base(quantities, rows)
         {
+            AggType = aggType;
         }
 
         public float GetDifference(ElectricityMeterQuantity quantity)

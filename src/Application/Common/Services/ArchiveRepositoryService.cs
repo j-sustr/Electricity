@@ -77,7 +77,7 @@ namespace Electricity.Application.Common.Services
                 throw new IntervalOutOfRangeException(nameof(query.Range));
             }
 
-            return new ElectricityMeterRowsView(query.Quantities, rows);
+            return new ElectricityMeterRowsView(query.Quantities, rows, query.EnergyAggType);
         }
 
         public PowerRowsView GetPowerRowsView(GetPowerRowsViewQuery query)
