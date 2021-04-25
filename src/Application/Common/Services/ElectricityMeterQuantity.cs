@@ -31,19 +31,19 @@ namespace Electricity.Application.Common.Services
                     if (Phase == Phase.Main)
                         return new Quantity("3EP", null);
 
-                    return new Quantity($"EP{(int)Phase}", null);
+                    return new Quantity($"Phase {(int)Phase}_EP{(int)Phase}", null);
 
                 case ElectricityMeterQuantityType.ReactiveEnergyL:
                     if (Phase == Phase.Main)
                         return new Quantity("3EQL", null);
 
-                    return new Quantity($"EQL{(int)Phase}", null);
+                    return new Quantity($"Phase {(int)Phase}_EQL{(int)Phase}", null);
 
                 case ElectricityMeterQuantityType.ReactiveEnergyC:
                     if (Phase == Phase.Main)
                         return new Quantity("3EQC", null);
 
-                    return new Quantity($"EQC{(int)Phase}", null);
+                    return new Quantity($"Phase {(int)Phase}_EQC{(int)Phase}", null);
 
                 default:
                     throw new Exception("invalid quantity");
