@@ -26,6 +26,7 @@ namespace Electricity.WebUI.Controllers
             return await Mediator.Send(query);
         }
 
+        // DEBUG
         [HttpGet("query-records")]
         public ActionResult<ArchiveQueryRecord[]> GetQueryRecords()
         {
