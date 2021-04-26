@@ -29,7 +29,7 @@ namespace Electricity.WebUI.Controllers
 
         // DEBUG
         [HttpGet("energy-series")]
-        public ActionResult<Tuple<string[], object[][]>> GetEnergySeries(Guid groupId, Phase[] phases, uint aggregation, EEnergyAggType EnergyAggType)
+        public ActionResult<Tuple<string[], object[][]>> GetEnergySeries(Guid groupId, [FromQuery]Phase[] phases, uint aggregation, EEnergyAggType EnergyAggType)
         {
             var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
 
@@ -55,5 +55,28 @@ namespace Electricity.WebUI.Controllers
 
             return Tuple.Create(colNames, rows);
         }
+
+
+        [HttpGet("cos-fi-series")]
+        public ActionResult<float[]> GetCosFiSeries(Guid groupId, Phase phase, uint aggregation, EEnergyAggType EnergyAggType)
+        {
+            var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
+
+            var quantities = PowerFactorDistribution.GetQuantities(new Phase[] { phase });
+
+            var emView = archiveRepo.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
+            {
+                GroupId = groupId,
+                Range = Interval.Unbounded,
+                Quantities = quantities,
+                Aggregation = aggregation,
+                EnergyAggType = EnergyAggType
+            });
+
+            var cosFi = PowerFactorDistribution.CalcCosFiForPhase(emView, phase);
+
+            return cosFi;
+        }
+
     }
 }
