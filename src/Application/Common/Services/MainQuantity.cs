@@ -36,7 +36,7 @@ namespace Electricity.Application.Common.Services
                     if (Phase == Phase.Main)
                         return new Quantity("Cos_3Cosφ", null);
 
-                    return new Quantity($"Cos_Cosφ3{(int)Phase}", null);
+                    return new Quantity($"Cos_Cosφ{(int)Phase}", null);
             }
 
             throw new Exception("invalid quantity");
