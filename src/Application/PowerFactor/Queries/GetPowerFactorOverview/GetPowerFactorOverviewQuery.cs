@@ -92,23 +92,23 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     Quantities = emQuantities
                 });
 
-                var activeEnergy = emView.GetDifference(new ElectricityMeterQuantity
+                var activeEnergy = emView.GetTotalDifference(new ElectricityMeterQuantity
                 {
                     Type = ElectricityMeterQuantityType.ActiveEnergy,
                     Phase = Phase.Main
                 });
-                var reactiveEnergyL = emView.GetDifference(new ElectricityMeterQuantity
+                var reactiveEnergyL = emView.GetTotalDifference(new ElectricityMeterQuantity
                 {
                     Type = ElectricityMeterQuantityType.ReactiveEnergyL,
                     Phase = Phase.Main
                 });
-                var reactiveEnergyC = emView.GetDifference(new ElectricityMeterQuantity
+                var reactiveEnergyC = emView.GetTotalDifference(new ElectricityMeterQuantity
                 {
                     Type = ElectricityMeterQuantityType.ReactiveEnergyC,
                     Phase = Phase.Main
                 });
 
-                var cosFi = ElectricityUtil.CalcCosFi(activeEnergy, reactiveEnergyL - reactiveEnergyC);
+                var cosFi = ElectricityUtil.CalcCosFi(activeEnergy, reactiveEnergyL);
 
                 return new PowerFactorOverviewItem
                 {

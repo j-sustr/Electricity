@@ -58,7 +58,7 @@ namespace Electricity.WebUI.Controllers
 
 
         [HttpGet("cos-fi-series")]
-        public ActionResult<float[]> GetCosFiSeries(Guid groupId, Phase phase, uint aggregation, EEnergyAggType EnergyAggType)
+        public ActionResult<float?[]> GetCosFiSeries(Guid groupId, Phase phase, uint aggregation, EEnergyAggType EnergyAggType)
         {
             var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
 

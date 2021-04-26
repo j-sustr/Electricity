@@ -35,45 +35,46 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             return quanities.ToArray();
         }
 
-        public static float[] CalcCosFiForPhase(ElectricityMeterRowsView emView, Phase phase)
+        public static float?[] CalcCosFiForPhase(ElectricityMeterRowsView emView, Phase phase)
         {
-            var activeEnergy = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
+            var activeEnergy = emView.GetDifference(new ElectricityMeterQuantity
             {
                 Type = ElectricityMeterQuantityType.ActiveEnergy,
                 Phase = phase,
             });
-            var reactiveEnergyL = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
+            var reactiveEnergyL = emView.GetDifference(new ElectricityMeterQuantity
             {
                 Type = ElectricityMeterQuantityType.ReactiveEnergyL,
-                Phase = phase,
-            });
-            var reactiveEnergyC = emView.GetDifferenceInQuarterHours(new ElectricityMeterQuantity
-            {
-                Type = ElectricityMeterQuantityType.ReactiveEnergyC,
                 Phase = phase,
             });
 
             var ep = activeEnergy.Values().ToArray();
             var eqL = reactiveEnergyL.Values().ToArray();
-            var eqC = reactiveEnergyC.Values().ToArray();
-            var cosFi = new float[ep.Length];
+            var cosFi = new float?[ep.Length];
 
             for (int i = 0; i < ep.Length; i++)
             {
-                cosFi[i] = ElectricityUtil.CalcCosFi(ep[i], eqL[i] - eqC[i]);
+                if (ep[i] == 0 && eqL[i] == 0)
+                {
+                    cosFi[i] = null;
+                    continue;
+                }
+
+                cosFi[i] = ElectricityUtil.CalcCosFi(ep[i], eqL[i]);
             }
 
             return cosFi;
         }
 
-        public static int[] BinValues(float[] values, float[] thresholds)
+        public static int[] BinValues(float?[] values, float[] thresholds)
         {
             int n = thresholds.Length + 1;
             var bins = new int[n];
             Array.Fill(bins, 0);
 
-            foreach (var v in values)
+            foreach (var val in values)
             {
+                float v = val ?? float.NaN;
                 int i = 0;
                 for (; i < (n - 2); i++)
                 {

@@ -85,7 +85,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             {
                 GroupId = g.ID,
                 Range = interval,
-                Quantities = emQuantities
+                Quantities = emQuantities,
+                Aggregation = (uint)TimeSpan.FromMinutes(15).TotalMilliseconds
             });
 
             var distributions = new Dictionary<Phase, Tuple<BinRange, int>[]>();

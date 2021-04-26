@@ -22,13 +22,25 @@ namespace Electricity.Application.Common.Services
             AggType = aggType;
         }
 
-        public float GetDifference(ElectricityMeterQuantity quantity)
+        public float GetTotalDifference(ElectricityMeterQuantity quantity)
         {
             var i = GetIndexOfQuantity(quantity);
             var firstRow = _rows.First();
             var lastRow = _rows.Last();
 
             return lastRow.Item2[i] - firstRow.Item2[i];
+        }
+
+        public VariableIntervalTimeSeries<float> GetDifference(ElectricityMeterQuantity quantity)
+        {
+            var i = GetIndexOfQuantity(quantity);
+            var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
+
+            var result = series.Entries().Zip(series.Entries().Skip(1), (current, next) => {
+                return Tuple.Create(next.Item1, next.Item2[i] - current.Item2[i]);
+            });
+
+            return new VariableIntervalTimeSeries<float>(result.ToArray());
         }
 
         public VariableIntervalTimeSeries<float> GetDifferenceInMonths(ElectricityMeterQuantity quantity)
