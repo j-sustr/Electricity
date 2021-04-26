@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Electricity.Application.Common.Utils;
 
 namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
@@ -70,15 +71,13 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
             var items = groupInfos.Select(g =>
             {
-                if (g.Archives[(int)Arch.Main] == null || g.Archives[(int)Arch.ElectricityMeter] == null)
+                bool hasMainArch = _archiveRepoService.HasArchive(g.ID, Arch.Main);
+                bool hasEMArch = _archiveRepoService.HasArchive(g.ID, Arch.ElectricityMeter);
+                if (!hasMainArch || !hasEMArch)
                 {
-                    var message = $"Missing archives: ";
-                    message += (g.Archives[(int)Arch.Main] == null) ? (nameof(Arch.Main) + ", ") : "";
-                    message += (g.Archives[(int)Arch.ElectricityMeter] == null) ? (nameof(Arch.ElectricityMeter) + ", ") : "";
-
                     return new CostlyQuantitiesOverviewItem
                     {
-                        Message = message
+                        Message = ArchiveUtils.CreateMissingArchivesMessage(!hasMainArch, !hasEMArch)
                     };
                 }
 

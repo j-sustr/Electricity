@@ -104,6 +104,19 @@ namespace Electricity.Application.Common.Services
             return new PowerRowsView(query.Quantities, rows);
         }
 
+        public bool HasArchive(Guid groupId, Arch arch)
+        {
+            var groupInfo = _groupRepository.GetGroupInfo(groupId.ToString());
+            try
+            {
+                return groupInfo.Archives[(int)arch] != null;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public bool HasInterval(Interval interval, byte arch)
         {
             return GetIntervalOverlap(interval, arch).Equals(interval);
