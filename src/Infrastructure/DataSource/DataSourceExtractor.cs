@@ -9,6 +9,17 @@ namespace Electricity.Infrastructure.DataSource
 {
     public class DataSourceExtractor
     {
+        private readonly string[] _mainQuantities = new string[] {
+            "P_avg_3P",
+            "P_avg_P1",
+            "P_avg_P2",
+            "P_avg_P3",
+        };
+
+        private readonly string[] emQuantities = new string[] {
+            
+        };
+
         private readonly IArchiveRepository _archiveRepo;
 
         public DataSourceExtractor(IArchiveRepository archiveRepo)
@@ -21,7 +32,9 @@ namespace Electricity.Infrastructure.DataSource
 
             var mainArch = _archiveRepo.GetArchive(guid, 0);
 
-            // mainArch.GetRows();
+            mainArch.GetRows(new GetArchiveRowsQuery { 
+            
+            });
         }
 
         private Guid ParseGuidFromString(string id, string name)
