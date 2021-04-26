@@ -92,10 +92,10 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     }
                 };
 
-                var powQuantities = new PowerQuantity[] {
-                    new PowerQuantity
+                var powQuantities = new MainQuantity[] {
+                    new MainQuantity
                     {
-                        Type = PowerQuantityType.PAvg,
+                        Type = MainQuantityType.PAvg,
                         Phase = Phase.Main
                     }
                 };
@@ -106,7 +106,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     Range = interval,
                     Quantities = emQuantities
                 });
-                var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
+                var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
                 {
                     GroupId = g.ID,
                     Range = interval,
@@ -123,9 +123,9 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     Type = ElectricityMeterQuantityType.ReactiveEnergyL,
                     Phase = Phase.Main
                 });
-                var peakDemand = powView.GetPeakDemandInMonths(new PowerQuantity
+                var peakDemand = powView.GetPeakDemandInMonths(new MainQuantity
                 {
-                    Type = PowerQuantityType.PAvg,
+                    Type = MainQuantityType.PAvg,
                     Phase = Phase.Main
                 });
                 var peakDemandValues = peakDemand.Select(pd => pd.Value);

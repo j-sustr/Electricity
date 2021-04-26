@@ -79,13 +79,13 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
         {
             if (interval == null) return null;
 
-            var emQuantities = GetQuantities(phases.ToArray());
+            var quantities = GetQuantities(phases.ToArray());
 
-            var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
+            var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = g.ID,
                 Range = interval,
-                Quantities = emQuantities,
+                Quantities = quantities,
                 Aggregation = (uint)TimeSpan.FromMinutes(15).TotalMilliseconds
             });
 
@@ -93,7 +93,10 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             foreach (var phase in phases.ToArray())
             {
-                var cosFi = CalcCosFiForPhase(emView, phase);
+                var cosFi = mainView.GetColumnValues(new MainQuantity { 
+                    Type = MainQuantityType.CosFi,
+                    Phase = phase
+                }).ToArray();
                 var bins = BinValues(cosFi, thresholds);
                 distributions[phase] = CreateDistributionTuples(bins, thresholds);
             }

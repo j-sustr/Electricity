@@ -76,24 +76,24 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 
             var items = groups.Select(g =>
             {
-                var powQuantities = new PowerQuantity[] {
-                    new PowerQuantity
+                var powQuantities = new MainQuantity[] {
+                    new MainQuantity
                     {
-                        Type = PowerQuantityType.PAvg,
+                        Type = MainQuantityType.PAvg,
                         Phase = Phase.Main
                     }
                 };
 
-                var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
+                var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
                 {
                     GroupId = g.ID,
                     Range = interval,
                     Quantities = powQuantities
                 });
 
-                var peakDemands = powView.GetPeakDemands(new PowerQuantity
+                var peakDemands = powView.GetPeakDemands(new MainQuantity
                 {
-                    Type = PowerQuantityType.PAvg,
+                    Type = MainQuantityType.PAvg,
                     Phase = Phase.Main
                 });
 

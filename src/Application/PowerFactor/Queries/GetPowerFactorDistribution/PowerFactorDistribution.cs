@@ -10,26 +10,17 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 {
     public static class PowerFactorDistribution
     {
-        public static ElectricityMeterQuantity[] GetQuantities(Phase[] phases)
+        public static MainQuantity[] GetQuantities(Phase[] phases)
         {
-            var emQuantityTypes = new ElectricityMeterQuantityType[] {
-                    ElectricityMeterQuantityType.ActiveEnergy,
-                    ElectricityMeterQuantityType.ReactiveEnergyL,
-                    ElectricityMeterQuantityType.ReactiveEnergyC,
-                };
+            var quanities = new List<MainQuantity>();
 
-            var quanities = new List<ElectricityMeterQuantity>();
-
-            foreach (var qt in emQuantityTypes)
+            foreach (var p in phases)
             {
-                foreach (var p in phases)
+                quanities.Add(new MainQuantity
                 {
-                    quanities.Add(new ElectricityMeterQuantity
-                    {
-                        Type = qt,
-                        Phase = p
-                    });
-                }
+                    Type = MainQuantityType.CosFi,
+                    Phase = p
+                });
             }
 
             return quanities.ToArray();
@@ -66,15 +57,14 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
             return cosFi;
         }
 
-        public static int[] BinValues(float?[] values, float[] thresholds)
+        public static int[] BinValues(float[] values, float[] thresholds)
         {
             int n = thresholds.Length + 1;
             var bins = new int[n];
             Array.Fill(bins, 0);
 
-            foreach (var val in values)
+            foreach (var v in values)
             {
-                float v = val ?? float.NaN;
                 int i = 0;
                 for (; i < (n - 2); i++)
                 {

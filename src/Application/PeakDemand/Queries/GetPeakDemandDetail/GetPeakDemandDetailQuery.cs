@@ -72,15 +72,15 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
         {
             if (interval == null) return null;
 
-            var powQuantities = new PowerQuantity[] {
-                    new PowerQuantity
+            var powQuantities = new MainQuantity[] {
+                    new MainQuantity
                     {
-                        Type = PowerQuantityType.PAvg,
+                        Type = MainQuantityType.PAvg,
                         Phase = Phase.Main
                     }
                 };
 
-            var powView = _archiveRepoService.GetPowerRowsView(new GetPowerRowsViewQuery
+            var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = group.ID,
                 Range = interval,
@@ -88,9 +88,9 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             });
             var resultInterval = powView.GetInterval();
 
-            var seriesMain = powView.GetDemandSeries(new PowerQuantity
+            var seriesMain = powView.GetDemandSeries(new MainQuantity
             {
-                Type = PowerQuantityType.PAvg,
+                Type = MainQuantityType.PAvg,
                 Phase = Phase.Main
             });
             if (aggregation != DemandAggregation.None)

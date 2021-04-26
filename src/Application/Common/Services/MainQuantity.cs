@@ -6,17 +6,18 @@ using System.Text;
 
 namespace Electricity.Application.Common.Services
 {
-    public enum PowerQuantityType
+    public enum MainQuantityType
     {
         PAvg,
+        CosFi
     }
 
-    public class PowerQuantity : IEquatable<PowerQuantity>
+    public class MainQuantity : IEquatable<MainQuantity>
     {
-        public PowerQuantityType Type { get; set; }
+        public MainQuantityType Type { get; set; }
         public Phase Phase { get; set; }
 
-        public bool Equals(PowerQuantity other)
+        public bool Equals(MainQuantity other)
         {
             return other.Type == Type && other.Phase == Phase;
         }
@@ -25,11 +26,17 @@ namespace Electricity.Application.Common.Services
         {
             switch (this.Type)
             {
-                case PowerQuantityType.PAvg:
+                case MainQuantityType.PAvg:
                     if (Phase == Phase.Main)
                         return new Quantity("P_avg_3P", null);
 
                     return new Quantity($"P_avg_P{(int)Phase}", null);
+
+                case MainQuantityType.CosFi:
+                    if (Phase == Phase.Main)
+                        return new Quantity("Cos_3Cosφ", null);
+
+                    return new Quantity($"Cos_Cosφ3{(int)Phase}", null);
             }
 
             throw new Exception("invalid quantity");

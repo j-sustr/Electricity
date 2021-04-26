@@ -19,9 +19,9 @@ namespace Electricity.Application.Common.Services
         public EEnergyAggType EnergyAggType { get; set; } = EEnergyAggType.Cumulative;
     }
 
-    public class GetPowerRowsViewQuery : GetRowsViewQueryBase
+    public class GetMainRowsViewQuery : GetRowsViewQueryBase
     {
-        public PowerQuantity[] Quantities { get; set; }
+        public MainQuantity[] Quantities { get; set; }
     }
 
     public class GetElectricityMeterRowsViewQuery : GetRowsViewQueryBase
@@ -56,6 +56,30 @@ namespace Electricity.Application.Common.Services
             _groupRepository = groupRepository;
         }
 
+        public MainRowsView GetMainRowsView(GetMainRowsViewQuery query)
+        {
+            AddArchiveQueryRecord(query, Arch.Main);
+
+            var archive = _archiveRepository.GetArchive(query.GroupId, (byte)Arch.Main);
+
+            var quantities = query.Quantities.Select(q => q.ToQuantity()).ToArray();
+
+            var rows = archive.GetRows(new GetArchiveRowsQuery
+            {
+                Range = query.Range,
+                Quantities = quantities,
+                Aggregation = query.Aggregation,
+                EnergyAggType = query.EnergyAggType
+            });
+
+            if (rows.Count() == 0)
+            {
+                throw new IntervalOutOfRangeException(nameof(query.Range));
+            }
+
+            return new MainRowsView(query.Quantities, rows);
+        }
+
         public ElectricityMeterRowsView GetElectricityMeterRowsView(GetElectricityMeterRowsViewQuery query)
         {
             AddArchiveQueryRecord(query, Arch.ElectricityMeter);
@@ -78,30 +102,6 @@ namespace Electricity.Application.Common.Services
             }
 
             return new ElectricityMeterRowsView(query.Quantities, rows, query.EnergyAggType);
-        }
-
-        public PowerRowsView GetPowerRowsView(GetPowerRowsViewQuery query)
-        {
-            AddArchiveQueryRecord(query, Arch.Main);
-
-            var archive = _archiveRepository.GetArchive(query.GroupId, (byte)Arch.Main);
-
-            var quantities = query.Quantities.Select(q => q.ToQuantity()).ToArray();
-
-            var rows = archive.GetRows(new GetArchiveRowsQuery
-            {
-                Range = query.Range,
-                Quantities = quantities,
-                Aggregation = query.Aggregation,
-                EnergyAggType = query.EnergyAggType
-            });
-
-            if (rows.Count() == 0)
-            {
-                throw new IntervalOutOfRangeException(nameof(query.Range));
-            }
-
-            return new PowerRowsView(query.Quantities, rows);
         }
 
         public bool HasArchive(Guid groupId, Arch arch)
@@ -148,9 +148,9 @@ namespace Electricity.Application.Common.Services
         private void AddArchiveQueryRecord(GetRowsViewQueryBase query, Arch arch)
         {
             Tuple<string, string>[] quantities = null;
-            if (query is GetPowerRowsViewQuery)
+            if (query is GetMainRowsViewQuery)
             {
-                quantities = ((GetPowerRowsViewQuery)query).Quantities
+                quantities = ((GetMainRowsViewQuery)query).Quantities
                     .Select(q => {
                         var name1 = q.Type.ToString() + "," + q.Phase.ToString();
                         var name2 = q.ToQuantity().ToString();

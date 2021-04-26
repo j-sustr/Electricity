@@ -29,13 +29,13 @@ namespace Electricity.WebUI.Controllers
 
         // DEBUG
         [HttpGet("energy-series")]
-        public ActionResult<Tuple<string[], object[][]>> GetEnergySeries(Guid groupId, [FromQuery]Phase[] phases, uint aggregation, EEnergyAggType EnergyAggType)
+        public ActionResult<Tuple<string[], object[][]>> GetEnergySeries(Guid groupId, [FromQuery] Phase[] phases, uint aggregation, EEnergyAggType EnergyAggType)
         {
             var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
 
             var quantities = PowerFactorDistribution.GetQuantities(phases);
 
-            var emView = archiveRepo.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
+            var rowsView = archiveRepo.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = groupId,
                 Range = Interval.Unbounded,
@@ -48,7 +48,7 @@ namespace Electricity.WebUI.Controllers
                 .Prepend("time")
                 .ToArray();
 
-            object[][] rows = emView.GetSeriesBundle(quantities).Select((entry) =>
+            object[][] rows = rowsView.GetSeriesBundle(quantities).Select((entry) =>
             {
                 return entry.Item2.Cast<object>().Prepend(entry.Item1).ToArray();
             }).ToArray();
@@ -58,13 +58,13 @@ namespace Electricity.WebUI.Controllers
 
 
         [HttpGet("cos-fi-series")]
-        public ActionResult<float?[]> GetCosFiSeries(Guid groupId, Phase phase, uint aggregation, EEnergyAggType EnergyAggType)
+        public ActionResult<float[]> GetCosFiSeries(Guid groupId, Phase phase, uint aggregation, EEnergyAggType EnergyAggType)
         {
             var archiveRepo = HttpContext.RequestServices.GetService<ArchiveRepositoryService>();
 
             var quantities = PowerFactorDistribution.GetQuantities(new Phase[] { phase });
 
-            var emView = archiveRepo.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
+            var rowsView = archiveRepo.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = groupId,
                 Range = Interval.Unbounded,
@@ -73,9 +73,11 @@ namespace Electricity.WebUI.Controllers
                 EnergyAggType = EnergyAggType
             });
 
-            var cosFi = PowerFactorDistribution.CalcCosFiForPhase(emView, phase);
-
-            return cosFi;
+            return rowsView.GetColumnValues(new MainQuantity
+            {
+                Type = MainQuantityType.CosFi,
+                Phase = phase
+            }).ToArray();
         }
 
     }
