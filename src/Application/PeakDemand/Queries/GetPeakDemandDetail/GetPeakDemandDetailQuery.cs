@@ -73,7 +73,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
         {
             if (interval == null) return null;
 
-            var powQuantities = new MainQuantity[] {
+            var mainQuantities = new MainQuantity[] {
                     new MainQuantity
                     {
                         Type = MainQuantityType.PAvg,
@@ -85,7 +85,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             {
                 GroupId = group.ID,
                 Range = interval,
-                Quantities = powQuantities,
+                Quantities = mainQuantities,
                 Aggregation = ApplicationConstants.MAIN_AGGREGATION
             });
             var resultInterval = mainView.GetInterval();
@@ -102,12 +102,11 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             }
 
             var valuesMain = seriesMain.Values().ToArray();
-            int timeStep = (int)TimeSpan.FromMinutes(ApplicationConstants.MAIN_AGGREGATION * (int)aggregation).TotalMilliseconds;
 
             return new DemandSeriesDto
             {
                 TimeRange = _mapper.Map<IntervalDto>(resultInterval),
-                TimeStep = timeStep,
+                TimeStep = ApplicationConstants.MAIN_AGGREGATION * (int)aggregation,
                 ValuesMain = valuesMain
             };
         }
@@ -151,7 +150,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
                 .Chunk(chunkSize, offset)
                 .Select(chunk =>
                 {
-                    return chunk.Max();
+                    return chunk.Select(value => MathF.Abs(value)).Max();
                 })
                 .ToArray();
 

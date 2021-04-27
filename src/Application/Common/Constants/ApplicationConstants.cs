@@ -6,6 +6,6 @@ namespace Electricity.Application.Common.Constants
 {
     class ApplicationConstants
     {
-        public const uint MAIN_AGGREGATION = 15 * 60 * 1000;
+        public const int MAIN_AGGREGATION = 15 * 60 * 1000;
     }
 }
