@@ -22,13 +22,15 @@ using System.Threading.Tasks;
 
 namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 {
+    using static PeakDemand;
+
     public class GetPeakDemandDetailQuery : IRequest<PeakDemandDetailDto>
     {
         public string GroupId { get; set; }
 
         public IntervalDto Interval1 { get; set; }
-
         public IntervalDto? Interval2 { get; set; }
+        public Phases Phases { get; set; }
 
         public DemandAggregation Aggregation { get; set; }
 
@@ -52,15 +54,16 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
         public Task<PeakDemandDetailDto> Handle(GetPeakDemandDetailQuery request, CancellationToken cancellationToken)
         {
-            var interval1 = _mapper.Map<Interval>(request.Interval1);
-            var interval2 = _mapper.Map<Interval>(request.Interval2);
-
             var groupInfo = _groupService.GetGroupInfo(request.GroupId);
             if (groupInfo == null)
                 throw new NotFoundException("group not found");
 
-            var demandSeries1 = GetDemandSeriesForInterval(groupInfo, interval1, nameof(request.Interval1), request.Aggregation);
-            var demandSeries2 = GetDemandSeriesForInterval(groupInfo, interval2, nameof(request.Interval2), request.Aggregation);
+            var interval1 = _mapper.Map<Interval>(request.Interval1);
+            var interval2 = _mapper.Map<Interval>(request.Interval2);
+            var phases = request.Phases;
+
+            var demandSeries1 = GetDemandSeriesForInterval(groupInfo, interval1, phases, request.Aggregation, nameof(request.Interval1));
+            var demandSeries2 = GetDemandSeriesForInterval(groupInfo, interval2, phases, request.Aggregation, nameof(request.Interval2));
 
             return Task.FromResult(new PeakDemandDetailDto
             {
@@ -69,93 +72,52 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
             });
         }
 
-        private DemandSeriesDto GetDemandSeriesForInterval(GroupInfo group, Interval interval, string intervalName, DemandAggregation aggregation)
+        private DemandSeriesDto GetDemandSeriesForInterval(
+            GroupInfo group, Interval interval, Phases phases, DemandAggregation aggregation, string intervalName)
         {
             if (interval == null) return null;
 
-            var mainQuantities = new MainQuantity[] {
-                    new MainQuantity
-                    {
-                        Type = MainQuantityType.PAvg,
-                        Phase = Phase.Main
-                    }
-                };
+            var quantities = GetQuantities(phases.ToArray());
 
             var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = group.ID,
                 Range = interval,
-                Quantities = mainQuantities,
+                Quantities = quantities,
                 Aggregation = ApplicationConstants.MAIN_AGGREGATION
             });
             var resultInterval = mainView.GetInterval();
 
-            var entriesMain = mainView.GetSeries(new MainQuantity
-            {
-                Type = MainQuantityType.PAvg,
-                Phase = Phase.Main
-            });
-            ITimeSeries<float> seriesMain = new VariableIntervalTimeSeries<float>(entriesMain.ToArray());
-            if (aggregation != DemandAggregation.None)
-            {
-                seriesMain = AggregateSeries(seriesMain, aggregation);
-            }
+            var demands = new Dictionary<Phase, float[]>();
+            demands.Add(Phase.Main, null);
+            demands.Add(Phase.L1, null);
+            demands.Add(Phase.L2, null);
+            demands.Add(Phase.L3, null);
 
-            var valuesMain = seriesMain.Values().ToArray();
+            foreach (var phase in phases.ToArray())
+            {
+                var entries = mainView.GetSeries(new MainQuantity
+                {
+                    Type = MainQuantityType.PAvg,
+                    Phase = phase
+                });
+                ITimeSeries<float> series = new VariableIntervalTimeSeries<float>(entries.ToArray());
+                if (aggregation != DemandAggregation.None)
+                {
+                    series = AggregateSeries(series, aggregation);
+                }
+                demands[phase] = series.Values().ToArray();
+            }
 
             return new DemandSeriesDto
             {
                 TimeRange = _mapper.Map<IntervalDto>(resultInterval),
                 TimeStep = ApplicationConstants.MAIN_AGGREGATION * (int)aggregation,
-                ValuesMain = valuesMain
+                ValuesMain = demands[Phase.Main],
+                ValuesL1 = demands[Phase.L1],
+                ValuesL2 = demands[Phase.L2],
+                ValuesL3 = demands[Phase.L3]
             };
-        }
-
-        public FixedIntervalTimeSeries<float> AggregateSeries(ITimeSeries<float> series, DemandAggregation aggregation)
-        {
-            DateTime startTime;
-            TimeSpan offsetDuration;
-            switch (aggregation)
-            {
-                case DemandAggregation.OneHour:
-                    startTime = series.StartTime.FloorHour();
-                    offsetDuration = series.StartTime.CeilHour() - series.StartTime;
-                    break;
-                case DemandAggregation.SixHours:
-                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
-                    offsetDuration -= TimeSpan.FromHours(((int)offsetDuration.TotalHours / 6) * 6);
-                    startTime = series.StartTime + offsetDuration - TimeSpan.FromHours(6);
-                    break;
-                case DemandAggregation.TwelveHours:
-                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
-                    offsetDuration -= TimeSpan.FromHours(((int)offsetDuration.TotalHours / 12) * 12);
-                    startTime = series.StartTime + offsetDuration - TimeSpan.FromHours(12);
-                    break;
-                case DemandAggregation.OneDay:
-                    startTime = series.StartTime.FloorDay();
-                    offsetDuration = series.StartTime.CeilDay() - series.StartTime;
-                    break;
-                case DemandAggregation.OneWeek:
-                    startTime = series.StartTime.FloorWeek();
-                    offsetDuration = series.StartTime.CeilWeek() - series.StartTime;
-                    break;
-                default:
-                    throw new ArgumentException("invalid aggregation", nameof(aggregation));
-            }
-
-            int chunkSize = (int)aggregation;
-            int offset = (int)(offsetDuration / TimeSpan.FromMinutes(15));
-
-            var aggregatedValues = series.Values()
-                .Chunk(chunkSize, offset)
-                .Select(chunk =>
-                {
-                    return chunk.Select(value => MathF.Abs(value)).Max();
-                })
-                .ToArray();
-
-            var interval = chunkSize * TimeSpan.FromMinutes(15);
-            return new FixedIntervalTimeSeries<float>(aggregatedValues, startTime, interval);
         }
     }
 }
