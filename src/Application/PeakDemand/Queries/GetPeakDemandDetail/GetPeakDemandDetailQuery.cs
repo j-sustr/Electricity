@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Electricity.Application.Common.Constants;
 using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Extensions;
@@ -80,35 +81,38 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
                     }
                 };
 
-            var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
+            var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
             {
                 GroupId = group.ID,
                 Range = interval,
-                Quantities = powQuantities
+                Quantities = powQuantities,
+                Aggregation = ApplicationConstants.MAIN_AGGREGATION
             });
-            var resultInterval = powView.GetInterval();
+            var resultInterval = mainView.GetInterval();
 
-            var seriesMain = powView.GetDemandSeries(new MainQuantity
+            var entriesMain = mainView.GetSeries(new MainQuantity
             {
                 Type = MainQuantityType.PAvg,
                 Phase = Phase.Main
             });
+            ITimeSeries<float> seriesMain = new VariableIntervalTimeSeries<float>(entriesMain.ToArray());
             if (aggregation != DemandAggregation.None)
             {
                 seriesMain = AggregateSeries(seriesMain, aggregation);
             }
 
             var valuesMain = seriesMain.Values().ToArray();
+            int timeStep = (int)TimeSpan.FromMinutes(ApplicationConstants.MAIN_AGGREGATION * (int)aggregation).TotalMilliseconds;
 
             return new DemandSeriesDto
             {
                 TimeRange = _mapper.Map<IntervalDto>(resultInterval),
-                TimeStep = (int)TimeSpan.FromMinutes(15 * (int)aggregation).TotalMilliseconds, // get timestep from request.Aggregation
+                TimeStep = timeStep,
                 ValuesMain = valuesMain
             };
         }
 
-        public FixedIntervalTimeSeries<float> AggregateSeries(FixedIntervalTimeSeries<float> series, DemandAggregation aggregation)
+        public FixedIntervalTimeSeries<float> AggregateSeries(ITimeSeries<float> series, DemandAggregation aggregation)
         {
             DateTime startTime;
             TimeSpan offsetDuration;
@@ -137,7 +141,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
                     offsetDuration = series.StartTime.CeilWeek() - series.StartTime;
                     break;
                 default:
-                    return series;
+                    throw new ArgumentException("invalid aggregation", nameof(aggregation));
             }
 
             int chunkSize = (int)aggregation;

@@ -42,7 +42,6 @@ namespace Electricity.Application.Common.Services
 
         public IEnumerable<Tuple<DateTime, float>> GetSeries(TQuantity quantity)
         {
-            // var series = new VariableIntervalTimeSeries<float[]>(_rows);
             int idx = GetIndexOfQuantity(quantity);
             return _rows.Select(r => Tuple.Create(r.Item1, r.Item2[idx]));
         }

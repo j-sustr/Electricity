@@ -23,19 +23,14 @@ namespace Electricity.Application.Common.Services
         {
             var i = GetIndexOfQuantity(quantity);
             var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
-            var avgValues = series.AggregateQuarterHours((rows) =>
-            {
-                var sum = rows.Aggregate<float[], float>(0, (acc, row) => acc + row[i]);
-                return sum / rows.Count();
-            });
-            return avgValues.Entries()
-                .MaxBy((ent) => ent.Item2)
+            return series.Entries()
+                .MaxBy((ent) => ent.Item2[i])
                 .Select(ent =>
             {
                 return new PeakDemandItem
                 {
                     Start = ent.Item1,
-                    Value = ent.Item2
+                    Value = ent.Item2[i]
                 };
             });
         }
@@ -46,20 +41,17 @@ namespace Electricity.Application.Common.Services
             var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
             return series.ChunkByMonth().Select(ch =>
             {
-                var avgValues = ch.AggregateQuarterHours((rows) =>
-                {
-                    var sum = rows.Aggregate<float[], float>(0, (acc, row) => acc + row[i]);
-                    return sum / rows.Count();
-                });
-                var maxEntry = avgValues.Entries().MaxBy((ent) => ent.Item2).First();
+                var maxEntry = ch.Entries().MaxBy((ent) => MathF.Abs(ent.Item2[i])).First();
                 return new PeakDemandInMonth
                 {
                     MonthStart = ch.StartTime.FloorMonth(),
                     Start = maxEntry.Item1,
-                    Value = maxEntry.Item2
+                    Value = maxEntry.Item2[i]
                 };
             });
         }
+
+        // --- DEAD CODE ---
 
         public FixedIntervalTimeSeries<float> GetDemandSeries(MainQuantity quantity)
         {

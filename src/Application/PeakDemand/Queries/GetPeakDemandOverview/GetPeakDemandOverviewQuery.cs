@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Electricity.Application.Common.Constants;
 
 namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 {
@@ -76,7 +77,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 
             var items = groups.Select(g =>
             {
-                var powQuantities = new MainQuantity[] {
+                var quantities = new MainQuantity[] {
                     new MainQuantity
                     {
                         Type = MainQuantityType.PAvg,
@@ -88,7 +89,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                 {
                     GroupId = g.ID,
                     Range = interval,
-                    Quantities = powQuantities
+                    Quantities = quantities,
+                    Aggregation = ApplicationConstants.MAIN_AGGREGATION
                 });
 
                 var peakDemands = powView.GetPeakDemands(new MainQuantity
@@ -98,7 +100,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                 });
 
                 var topNPeakDemands = peakDemands
-                    .MaxBy(ent => ent.Value).Take(TOP_N_PEAK_DEMANDS)
+                    .MaxBy(ent => ent.Value)
+                    .Take(TOP_N_PEAK_DEMANDS)
                     .ToArray();
 
                 var peakDemandDtos = _mapper.Map<PeakDemandItemDto[]>(topNPeakDemands);
