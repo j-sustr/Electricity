@@ -13,6 +13,12 @@ using Electricity.Application.Common.Interfaces;
 
 namespace Electricity.WebUI.Controllers
 {
+    public class LoginCredentials
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
     public class AuthController : ApiController
     {
         private readonly Application.Common.Interfaces.IAuthenticationService _authService;
@@ -28,8 +34,10 @@ namespace Electricity.WebUI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(string username, string password)
+        public async Task<ActionResult<UserDto>> Login(LoginCredentials credentials)
         {
+            var username = credentials.Username;
+            var password = credentials.Password;
             var guid = _authService.Login(username, password);
             if (guid == Guid.Empty)
             {
