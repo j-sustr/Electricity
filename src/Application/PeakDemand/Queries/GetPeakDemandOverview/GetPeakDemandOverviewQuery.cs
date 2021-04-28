@@ -83,6 +83,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                 {
                     return new PeakDemandOverviewItem
                     {
+                        GroupId = g.ID.ToString(),
+                        GroupName = g.Name,
                         Message = ArchiveUtils.CreateMissingArchivesMessage(!hasMainArch, false)
                     };
                 }

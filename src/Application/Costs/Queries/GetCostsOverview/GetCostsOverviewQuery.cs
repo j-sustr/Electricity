@@ -78,6 +78,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                 {
                     return new CostlyQuantitiesOverviewItem
                     {
+                        GroupId = g.ID.ToString(),
+                        GroupName = g.Name,
                         Message = ArchiveUtils.CreateMissingArchivesMessage(!hasMainArch, !hasEMArch)
                     };
                 }
