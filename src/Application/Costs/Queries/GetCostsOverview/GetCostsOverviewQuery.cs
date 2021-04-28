@@ -139,7 +139,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                 });
                 var cosFi = mainView.GetCosFiInMonths(new MainQuantity
                 {
-                    Type = MainQuantityType.PAvg,
+                    Type = MainQuantityType.CosFi,
                     Phase = Phase.Main
                 });
 
