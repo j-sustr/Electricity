@@ -13,6 +13,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
         public float ActiveEnergy { get; set; }
         public float ReactiveEnergy { get; set; }
         public float PeakDemand { get; set; }
+        public float CosFi { get; set; }
     }
 
     public class CostsDetailDto

@@ -78,11 +78,16 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                     }
                 };
 
-            var powQuantities = new MainQuantity[] {
+            var mainQuantities = new MainQuantity[] {
                     new MainQuantity{
                         Type = MainQuantityType.PAvg,
                         Phase = Phase.Main
-                    }
+                    },
+                    new MainQuantity
+                    {
+                        Type = MainQuantityType.CosFi,
+                        Phase = Phase.Main
+                    },
                 };
 
             var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery {
@@ -93,7 +98,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery {
                 GroupId = g.ID,
                 Range = interval,
-                Quantities = powQuantities
+                Quantities = mainQuantities
             });
 
             var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
@@ -111,7 +116,13 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                 Type = MainQuantityType.PAvg,
                 Phase = Phase.Main
             });
+            var cosFi = powView.GetCosFiInMonths(new MainQuantity
+            {
+                Type = MainQuantityType.CosFi,
+                Phase = Phase.Main
+            });
             var peakDemandValues = peakDemand.Select(pd => pd.Value).ToArray();
+            var cosFiValues = cosFi.Select(entry => entry.Item2).ToArray();
 
             var items = new List<CostlyQuantitiesDetailItem>();
             for (int i = 0; i < activeEnergy.Size; i++)
@@ -124,7 +135,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
                     ActiveEnergy = activeEnergy.ValueAt(i),
                     ReactiveEnergy = reactiveEnergyL.ValueAt(i),
-                    PeakDemand = peakDemandValues[i]
+                    PeakDemand = peakDemandValues[i],
+                    CosFi = cosFiValues[i]
                 };
                 items.Add(item);
             }
