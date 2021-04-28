@@ -10,6 +10,8 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
         public string GroupId { get; set; }
         public string GroupName { get; set; }
         public PeakDemandItemDto[] PeakDemands { get; set; }
+
+        public string Message { get; set; }
     }
 
     public class PeakDemandOverviewDto

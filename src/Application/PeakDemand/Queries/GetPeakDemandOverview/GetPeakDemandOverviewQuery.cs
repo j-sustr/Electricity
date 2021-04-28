@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Electricity.Application.Common.Constants;
+using Electricity.Application.Common.Utils;
 
 namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 {
@@ -77,6 +78,15 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 
             var items = groups.Select(g =>
             {
+                bool hasMainArch = _archiveRepoService.HasArchive(g.ID, Arch.Main);
+                if (!hasMainArch)
+                {
+                    return new PeakDemandOverviewItem
+                    {
+                        Message = ArchiveUtils.CreateMissingArchivesMessage(!hasMainArch, false)
+                    };
+                }
+
                 var quantities = new MainQuantity[] {
                     new MainQuantity
                     {
