@@ -66,7 +66,8 @@ namespace Electricity.Application.PeakDemand
                 .Chunk(chunkSize, offset)
                 .Select(chunk =>
                 {
-                    return chunk.Select(value => MathF.Abs(value)).Max();
+                    int indexOfMax = chunk.Select(value => MathF.Abs(value)).IndexOfMax();
+                    return chunk[indexOfMax];
                 })
                 .ToArray();
 

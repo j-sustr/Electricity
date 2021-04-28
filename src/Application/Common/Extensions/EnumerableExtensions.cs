@@ -6,65 +6,38 @@ namespace Electricity.Application.Common.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static int IndexOfMin<TSource>(this IEnumerable<TSource> source) where TSource : IComparable
+        public static int IndexOfMax<TSource>(
+            this IEnumerable<TSource> source, IComparer<TSource> comparer = null)
         {
             if (source == null)
-            {
                 throw new ArgumentNullException("source");
-            }
 
-            var minValue = source.FirstOrDefault();
-            int minIndex = -1;
-            int index = -1;
-
-            foreach (var value in source)
+            using (var enumerator = source.GetEnumerator())
             {
-                index++;
+                if (!enumerator.MoveNext())
+                    throw new InvalidOperationException("Sequence is empty.");
 
-                if (value.CompareTo(minValue) < 0)
+                if (comparer == null)
+                    comparer = Comparer<TSource>.Default;
+
+                int index = 0, maxIndex = 0;
+                var maxProjection = enumerator.Current;
+
+                while (enumerator.MoveNext())
                 {
-                    minValue = value;
-                    minIndex = index;
+                    index++;
+                    var projectedItem = enumerator.Current;
+
+                    if (comparer.Compare(projectedItem, maxProjection) > 0)
+                    {
+                        maxIndex = index;
+                        maxProjection = projectedItem;
+                    }
                 }
+                return maxIndex;
             }
-
-            if (index == -1)
-            {
-                throw new InvalidOperationException("Sequence was empty");
-            }
-
-            return minIndex;
         }
 
-        public static int IndexOfMax<TSource>(this IEnumerable<TSource> source) where TSource : IComparable
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            var maxValue = source.FirstOrDefault();
-            int minIndex = -1;
-            int index = -1;
-
-            foreach (var value in source)
-            {
-                index++;
-
-                if (value.CompareTo(maxValue) > 0)
-                {
-                    maxValue = value;
-                    minIndex = index;
-                }
-            }
-
-            if (index == -1)
-            {
-                throw new InvalidOperationException("Sequence was empty");
-            }
-
-            return minIndex;
-        }
 
     }
 }
