@@ -14,6 +14,7 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
         public float CosFi { get; set; }
 
         public Interval Interval { get; set; }
+        public string Message { get; set; }
     }
 
     public class PowerFactorOverviewDto

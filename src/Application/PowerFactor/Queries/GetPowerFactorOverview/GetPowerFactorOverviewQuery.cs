@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Electricity.Application.Common.Constants;
 
 namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 {
@@ -72,6 +73,24 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 
             var items = groups.Select(g =>
             {
+                bool hasMainArch = _archiveRepoService.HasArchive(g.ID, Arch.Main);
+                bool hasEMArch = _archiveRepoService.HasArchive(g.ID, Arch.ElectricityMeter);
+                if (!hasMainArch || !hasEMArch)
+                {
+                    return new PowerFactorOverviewItem
+                    {
+                        Message = ArchiveUtils.CreateMissingArchivesMessage(!hasMainArch, !hasEMArch)
+                    };
+                }
+
+                var mainQuantities = new MainQuantity[]
+                {
+                    new MainQuantity
+                    {
+                        Type = MainQuantityType.CosFi,
+                        Phase = Phase.Main
+                    }
+                };
                 var emQuantities = new ElectricityMeterQuantity[] {
                     new ElectricityMeterQuantity{
                         Type = ElectricityMeterQuantityType.ActiveEnergy,
@@ -84,12 +103,21 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     new ElectricityMeterQuantity{
                         Type = ElectricityMeterQuantityType.ReactiveEnergyC,
                         Phase = Phase.Main
-                    }
+                    },
                 };
+                var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
+                {
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = mainQuantities,
+                    Aggregation = ApplicationConstants.MAIN_AGGREGATION
+                });
                 var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery {
                     GroupId = g.ID,
                     Range = interval,
-                    Quantities = emQuantities
+                    Quantities = emQuantities,
+                    Aggregation = ApplicationConstants.EM_AGGREGATION,
+                    EnergyAggType = EEnergyAggType.Cumulative
                 });
 
                 var activeEnergy = emView.GetTotalDifference(new ElectricityMeterQuantity
@@ -107,8 +135,13 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     Type = ElectricityMeterQuantityType.ReactiveEnergyC,
                     Phase = Phase.Main
                 });
-
-                var cosFi = ElectricityUtil.CalcCosFi(activeEnergy, reactiveEnergyL);
+                var cosFi = mainView.GetColumnValues(new MainQuantity
+                {
+                    Type = MainQuantityType.CosFi,
+                    Phase = Phase.Main
+                })
+                .ToArray()
+                .Average();
 
                 return new PowerFactorOverviewItem
                 {
