@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Electricity.Application.Common.Utils;
+using Electricity.Application.Common.Constants;
 
 namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {
@@ -81,6 +82,18 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     };
                 }
 
+                var mainQuantities = new MainQuantity[] {
+                    new MainQuantity
+                    {
+                        Type = MainQuantityType.CosFi,
+                        Phase = Phase.Main
+                    },
+                    new MainQuantity
+                    {
+                        Type = MainQuantityType.PAvg,
+                        Phase = Phase.Main
+                    }
+                };
                 var emQuantities = new ElectricityMeterQuantity[] {
                     new ElectricityMeterQuantity{
                         Type = ElectricityMeterQuantityType.ActiveEnergy,
@@ -92,26 +105,22 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     }
                 };
 
-                var powQuantities = new MainQuantity[] {
-                    new MainQuantity
-                    {
-                        Type = MainQuantityType.PAvg,
-                        Phase = Phase.Main
-                    }
-                };
-
+                var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
+                {
+                    GroupId = g.ID,
+                    Range = interval,
+                    Quantities = mainQuantities,
+                    Aggregation = ApplicationConstants.MAIN_AGGREGATION,
+                });
                 var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery
                 {
                     GroupId = g.ID,
                     Range = interval,
-                    Quantities = emQuantities
+                    Quantities = emQuantities,
+                    Aggregation = ApplicationConstants.EM_AGGREGATION,
+                    EnergyAggType = EEnergyAggType.Cumulative
                 });
-                var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery
-                {
-                    GroupId = g.ID,
-                    Range = interval,
-                    Quantities = powQuantities
-                });
+                
 
                 var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
                 {
@@ -123,12 +132,19 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
                     Type = ElectricityMeterQuantityType.ReactiveEnergyL,
                     Phase = Phase.Main
                 });
-                var peakDemand = powView.GetPeakDemandInMonths(new MainQuantity
+                var peakDemand = mainView.GetPeakDemandInMonths(new MainQuantity
                 {
                     Type = MainQuantityType.PAvg,
                     Phase = Phase.Main
                 });
+                var cosFi = mainView.GetCosFiInMonths(new MainQuantity
+                {
+                    Type = MainQuantityType.PAvg,
+                    Phase = Phase.Main
+                });
+
                 var peakDemandValues = peakDemand.Select(pd => pd.Value);
+                var cosFiValues = cosFi.Select(entry => entry.Item2);
 
                 return new CostlyQuantitiesOverviewItem
                 {
@@ -137,7 +153,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
 
                     ActiveEnergyInMonths = activeEnergy.Values().ToArray(),
                     ReactiveEnergyInMonths = reactiveEnergyL.Values().ToArray(),
-                    PeakDemandInMonths = peakDemandValues.ToArray()
+                    PeakDemandInMonths = peakDemandValues.ToArray(),
+                    CosFiInMonths = cosFiValues.ToArray()
                 };
             });
 

@@ -35,6 +35,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
                 item.ActiveEnergyInMonths.Should().OnlyContain(x => x > 0);
                 item.ReactiveEnergyInMonths.Should().OnlyContain(x => x > 0);
                 item.PeakDemandInMonths.Should().OnlyContain(x => x > 0);
+                item.CosFiInMonths.Should().OnlyContain(x => x > 0);
             }
         }
 

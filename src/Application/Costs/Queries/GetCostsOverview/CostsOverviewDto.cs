@@ -10,11 +10,11 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
         public string GroupId { get; set; }
         public string GroupName { get; set; }
 
+
         public float[] ActiveEnergyInMonths { get; set; }
-
         public float[] ReactiveEnergyInMonths { get; set; }
-
         public float[] PeakDemandInMonths { get; set; }
+        public float[] CosFiInMonths { get; set; }
 
         public string Message { get; set; }
     }

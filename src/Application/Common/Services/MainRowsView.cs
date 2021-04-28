@@ -51,6 +51,17 @@ namespace Electricity.Application.Common.Services
             });
         }
 
+        public IEnumerable<Tuple<DateTime, float>> GetCosFiInMonths(MainQuantity quantity)
+        {
+            var i = GetIndexOfQuantity(quantity);
+            var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
+            return series.ChunkByMonth().Select(ch =>
+            {
+                var avg = ch.Values().Select(row => row[i]).Average();
+                return Tuple.Create(ch.StartTime.FloorMonth(), avg);
+            });
+        }
+
         // --- DEAD CODE ---
 
         public FixedIntervalTimeSeries<float> GetDemandSeries(MainQuantity quantity)

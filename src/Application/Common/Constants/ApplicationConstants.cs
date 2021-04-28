@@ -7,5 +7,7 @@ namespace Electricity.Application.Common.Constants
     class ApplicationConstants
     {
         public const int MAIN_AGGREGATION = 15 * 60 * 1000;
+
+        public const int EM_AGGREGATION = 15 * 60 * 1000;
     }
 }
