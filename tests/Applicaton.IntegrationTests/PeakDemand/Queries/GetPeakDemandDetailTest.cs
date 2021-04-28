@@ -1,5 +1,6 @@
 ﻿using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Exceptions;
+using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail;
 using FluentAssertions;
@@ -53,6 +54,10 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(null, null),
                 Aggregation = DemandAggregation.None,
+                Phases = new Phases
+                {
+                    Main = true
+                }
             };
 
             var result = await SendAsync(query);
@@ -76,6 +81,10 @@ namespace Electricity.Application.IntegrationTests.PeakDemand.Queries
                 GroupId = GetRecordGroupIdByName("Mistnost101"),
                 Interval1 = new IntervalDto(null, null),
                 Aggregation = DemandAggregation.OneDay,
+                Phases = new Phases
+                {
+                    Main = true
+                }
             };
 
             var result = await SendAsync(query);
