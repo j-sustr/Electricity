@@ -81,6 +81,10 @@ namespace Electricity.Application.Common.Models
 
         public static Interval FromDateRange(DateRange dateRange)
         {
+            if (dateRange == null)
+            {
+                throw new ArgumentNullException(nameof(dateRange));
+            }
             return new Interval(dateRange.DateMin, dateRange.DateMax);
         }
     }

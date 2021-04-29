@@ -9,6 +9,7 @@ namespace Electricity.Application.Costs.Queries.GetCostsOverview
     {
         public string GroupId { get; set; }
         public string GroupName { get; set; }
+        public IntervalDto Interval { get; set; }
 
 
         public float[] ActiveEnergyInMonths { get; set; }

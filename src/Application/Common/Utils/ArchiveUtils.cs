@@ -14,5 +14,13 @@ namespace Electricity.Application.Common.Utils
             message += missingEM ? (nameof(Arch.ElectricityMeter) + ", ") : "";
             return message;
         }
+
+        public static string CreateArchivesDoNotHaveDataOnRangeMessage(bool noDataMain, bool noDataEM)
+        {
+            string message = $"Archives have no data on specified range: ";
+            message += noDataMain ? (nameof(Arch.Main) + ", ") : "";
+            message += noDataEM ? (nameof(Arch.ElectricityMeter) + ", ") : "";
+            return message;
+        }
     }
 }

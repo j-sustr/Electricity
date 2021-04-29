@@ -117,26 +117,82 @@ namespace Electricity.Application.Common.Services
             }
         }
 
-        public bool HasInterval(Interval interval, byte arch)
+        public Interval GetRangeOverlapWithMain(Guid groupId, Interval interval)
         {
-            return GetIntervalOverlap(interval, arch).Equals(interval);
+            return GetRangeOverlapWithArchives(groupId, interval, new Arch[] {
+                Arch.Main
+            });
         }
 
-        public Interval GetIntervalOverlap(Interval interval, byte arch)
+        public Interval GetRangeOverlapWithElectrityMeter(Guid groupId, Interval interval)
         {
-            var infos = _groupRepository.GetUserRecordGroupInfos();
+            return GetRangeOverlapWithArchives(groupId, interval, new Arch[] { 
+                Arch.Main, Arch.ElectricityMeter
+            });
+        }
 
-            var overlap = Interval.Unbounded;
+        public Interval GetRangeOverlapWithArchives(Guid groupId, Interval interval, Arch[] archives)
+        {
+            var overlap = interval;
 
-            foreach (var info in infos)
+            foreach (var arch in archives)
             {
-                var archInfo = info.GetArchiveInfo(arch);
+                var range = GetRangeForArchive(groupId, arch);
 
-                overlap = Interval.FromDateRange(archInfo.Range).GetOverlap(overlap);
+                overlap = overlap.GetOverlap(range);
             }
 
             return overlap;
         }
+
+        public Interval GetRangeForArchive(Guid groupId, Arch arch)
+        {
+            var groupInfo = _groupRepository.GetGroupInfo(groupId.ToString());
+            DateRange range = null;
+            try
+            {
+                range = groupInfo.Archives[(int)arch].Range;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            if (range == null) return null;
+
+            return Interval.FromDateRange(range);
+        }
+
+
+
+        public bool HasDataOnRange(Guid groupId, Interval interval, Arch arch)
+        {
+            var groupInfo = _groupRepository.GetGroupInfo(groupId.ToString());
+            ArchiveInfo archInfo = null;
+            try
+            {
+                archInfo = groupInfo.Archives[(int)arch];
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            if (archInfo == null)
+                return false;
+
+            var range = Interval.FromDateRange(archInfo.Range);
+
+            var overlap = interval.GetOverlap(range);
+            if (overlap == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        // --- DEBUG ---
 
         public ArchiveQueryRecord[] GetQueryRecords()
         {

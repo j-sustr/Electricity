@@ -89,6 +89,19 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                     };
                 }
 
+                var subinterval = _archiveRepoService.GetRangeOverlapWithMain(g.ID, interval);
+                if (subinterval == null)
+                {
+                    bool hasDataMain = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.Main);
+                    return new PeakDemandOverviewItem
+                    {
+                        GroupId = g.ID.ToString(),
+                        GroupName = g.Name,
+                        Message = ArchiveUtils.CreateArchivesDoNotHaveDataOnRangeMessage(!hasDataMain, false)
+                    };
+                }
+                interval = subinterval;
+
                 var quantities = new MainQuantity[] {
                     new MainQuantity
                     {
@@ -122,6 +135,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                 {
                     GroupId = g.ID.ToString(),
                     GroupName = g.Name,
+                    Interval = _mapper.Map<IntervalDto>(interval),
 
                     PeakDemands = peakDemandDtos
                 };

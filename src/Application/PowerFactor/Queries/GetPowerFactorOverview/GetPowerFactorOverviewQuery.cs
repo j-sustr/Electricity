@@ -85,6 +85,20 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     };
                 }
 
+                var subinterval = _archiveRepoService.GetRangeOverlapWithElectrityMeter(g.ID, interval);
+                if (subinterval == null)
+                {
+                    bool hasDataMain = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.Main);
+                    bool hasDataEM = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.ElectricityMeter);
+                    return new PowerFactorOverviewItem
+                    {
+                        GroupId = g.ID.ToString(),
+                        GroupName = g.Name,
+                        Message = ArchiveUtils.CreateArchivesDoNotHaveDataOnRangeMessage(!hasDataMain, !hasDataEM)
+                    };
+                }
+                interval = subinterval;
+
                 var mainQuantities = new MainQuantity[]
                 {
                     new MainQuantity
@@ -149,11 +163,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                 {
                     GroupId = g.ID.ToString(),
                     GroupName = g.Name,
+                    Interval = _mapper.Map<IntervalDto>(interval),
+
                     ActiveEnergy = activeEnergy,
                     ReactiveEnergyL = reactiveEnergyL,
                     ReactiveEnergyC = reactiveEnergyC,
                     CosFi = cosFi,
-                    Interval = emView.GetInterval()
                 };
             });
 
