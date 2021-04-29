@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Electricity.Application.Common.Constants;
 
 namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
@@ -93,12 +94,15 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             var emView = _archiveRepoService.GetElectricityMeterRowsView(new GetElectricityMeterRowsViewQuery {
                 GroupId = g.ID, 
                 Range = interval,
-                Quantities = emQuantities
+                Quantities = emQuantities,
+                Aggregation = ApplicationConstants.EM_AGGREGATION,
+                EnergyAggType = EEnergyAggType.Cumulative
             });
-            var powView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery {
+            var mainView = _archiveRepoService.GetMainRowsView(new GetMainRowsViewQuery {
                 GroupId = g.ID,
                 Range = interval,
-                Quantities = mainQuantities
+                Quantities = mainQuantities,
+                Aggregation = ApplicationConstants.MAIN_AGGREGATION
             });
 
             var activeEnergy = emView.GetDifferenceInMonths(new ElectricityMeterQuantity
@@ -111,12 +115,12 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
                 Type = ElectricityMeterQuantityType.ReactiveEnergyL,
                 Phase = Phase.Main
             });
-            var peakDemand = powView.GetPeakDemandInMonths(new MainQuantity
+            var peakDemand = mainView.GetPeakDemandInMonths(new MainQuantity
             {
                 Type = MainQuantityType.PAvg,
                 Phase = Phase.Main
             });
-            var cosFi = powView.GetCosFiInMonths(new MainQuantity
+            var cosFi = mainView.GetCosFiInMonths(new MainQuantity
             {
                 Type = MainQuantityType.CosFi,
                 Phase = Phase.Main
