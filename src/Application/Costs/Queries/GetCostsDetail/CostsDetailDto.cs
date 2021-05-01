@@ -22,5 +22,8 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
 
         public CostlyQuantitiesDetailItem[] Items1 { get; set; }
         public CostlyQuantitiesDetailItem[] Items2 { get; set; }
+
+        public IntervalDto Interval1 { get; set; }
+        public IntervalDto? Interval2 { get; set; }
     }
 }

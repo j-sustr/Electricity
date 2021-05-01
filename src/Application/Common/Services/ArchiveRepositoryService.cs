@@ -163,8 +163,6 @@ namespace Electricity.Application.Common.Services
             return Interval.FromDateRange(range);
         }
 
-
-
         public bool HasDataOnRange(Guid groupId, Interval interval, Arch arch)
         {
             var groupInfo = _groupRepository.GetGroupInfo(groupId.ToString());

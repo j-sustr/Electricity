@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Electricity.Application.Common.Constants;
+using Electricity.Application.Common.Utils;
 
 namespace Electricity.Application.Costs.Queries.GetCostsDetail
 {
@@ -51,6 +52,11 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             if (group == null)
                 throw new NotFoundException("group not found");
 
+            var requiredArchives = new Arch[] { Arch.Main, Arch.ElectricityMeter };
+            ArchiveUtils.MustHaveArchives(group, requiredArchives);
+            interval1 = ArchiveUtils.MustGetSubintervalWithData(group, interval1, nameof(interval1), requiredArchives);
+            interval2 = ArchiveUtils.MustGetSubintervalWithData(group, interval2, nameof(interval2), requiredArchives);
+
             var items1 = GetItemsForInterval(group, interval1, nameof(request.Interval1));
             var items2 = GetItemsForInterval(group, interval2, nameof(request.Interval2));
 
@@ -58,15 +64,14 @@ namespace Electricity.Application.Costs.Queries.GetCostsDetail
             {
                 Items1 = items1,
                 Items2 = items2,
+                Interval1 = _mapper.Map<IntervalDto>(interval1),
+                Interval2 = _mapper.Map<IntervalDto>(interval2)
             });
         }
 
         public CostlyQuantitiesDetailItem[] GetItemsForInterval(GroupInfo g, Interval interval, string intervalName)
         {
-            if (interval == null)
-            {
-                return null;
-            }
+            if (interval == null) return null;
 
             var emQuantities = new ElectricityMeterQuantity[] {
                     new ElectricityMeterQuantity{
