@@ -66,6 +66,8 @@ namespace Electricity.Application.Common.Utils
 
         public static Interval GetRangeOverlapWithArchives(GroupInfo groupInfo, Interval interval, Arch[] archives)
         {
+            if (interval == null) return null;
+
             var overlap = interval;
 
             foreach (var arch in archives)
@@ -73,6 +75,8 @@ namespace Electricity.Application.Common.Utils
                 var range = GetRangeForArchive(groupInfo, arch);
 
                 overlap = overlap.GetOverlap(range);
+
+                if (overlap == null) return null;
             }
 
             return overlap;

@@ -78,7 +78,7 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
 
             var items = groups.Select(g =>
             {
-                bool hasMainArch = _archiveRepoService.HasArchive(g.ID, Arch.Main);
+                bool hasMainArch = ArchiveUtils.HasArchive(g, Arch.Main);
                 if (!hasMainArch)
                 {
                     return new PeakDemandOverviewItem
@@ -89,10 +89,10 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview
                     };
                 }
 
-                var subinterval = _archiveRepoService.GetRangeOverlapWithMain(g.ID, interval);
+                var subinterval = ArchiveUtils.GetRangeOverlapWithMain(g, interval);
                 if (subinterval == null)
                 {
-                    bool hasDataMain = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.Main);
+                    bool hasDataMain = ArchiveUtils.HasDataOnRange(g, interval, Arch.Main);
                     return new PeakDemandOverviewItem
                     {
                         GroupId = g.ID.ToString(),

@@ -73,8 +73,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
 
             var items = groups.Select(g =>
             {
-                bool hasMainArch = _archiveRepoService.HasArchive(g.ID, Arch.Main);
-                bool hasEMArch = _archiveRepoService.HasArchive(g.ID, Arch.ElectricityMeter);
+                bool hasMainArch = ArchiveUtils.HasArchive(g, Arch.Main);
+                bool hasEMArch = ArchiveUtils.HasArchive(g, Arch.ElectricityMeter);
                 if (!hasMainArch || !hasEMArch)
                 {
                     return new PowerFactorOverviewItem
@@ -85,11 +85,11 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorOverview
                     };
                 }
 
-                var subinterval = _archiveRepoService.GetRangeOverlapWithElectrityMeter(g.ID, interval);
+                var subinterval = ArchiveUtils.GetRangeOverlapWithElectrityMeter(g, interval);
                 if (subinterval == null)
                 {
-                    bool hasDataMain = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.Main);
-                    bool hasDataEM = _archiveRepoService.HasDataOnRange(g.ID, interval, Arch.ElectricityMeter);
+                    bool hasDataMain = ArchiveUtils.HasDataOnRange(g, interval, Arch.Main);
+                    bool hasDataEM = ArchiveUtils.HasDataOnRange(g, interval, Arch.ElectricityMeter);
                     return new PowerFactorOverviewItem
                     {
                         GroupId = g.ID.ToString(),

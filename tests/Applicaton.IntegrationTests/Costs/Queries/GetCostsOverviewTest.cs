@@ -40,7 +40,7 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
         }
 
         [Test]
-        public async Task ShouldThrowIntervalOutOfRangeException()
+        public async Task ShouldReturnEmptyResult()
         {
             await RunAsDefaultTenantAndUser();
 
@@ -49,8 +49,18 @@ namespace Electricity.Application.IntegrationTests.Costs.Queries
                 Interval1 = new IntervalDto(new DateTime(2010, 1, 1), new DateTime(2012, 1, 1))
             };
 
-            FluentActions.Invoking(async () => await SendAsync(query))
-                .Should().Throw<IntervalOutOfRangeException>();
+            var result = await SendAsync(query);
+
+            result.Should().NotBeNull();
+            result.Items1.Should().HaveCount(GetRecordGroupCount());
+
+            foreach (var item in result.Items1)
+            {
+                item.GroupId.Should().NotBeNullOrWhiteSpace();
+                item.GroupName.Should().NotBeNullOrWhiteSpace();
+
+                item.Message.Should().Be("Archives have no data on specified range: Main, ElectricityMeter, ");
+            }
         }
     }
 }
