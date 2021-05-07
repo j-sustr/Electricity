@@ -35,13 +35,22 @@ namespace Electricity.Application.Common.Services
             });
         }
 
-        public IEnumerable<PeakDemandInMonth> GetPeakDemandInMonths(MainQuantity quantity)
+        public IEnumerable<PeakDemandInMonth> GetPeakDemandInMonths(MainQuantity quantity, bool abs = true)
         {
             var i = GetIndexOfQuantity(quantity);
             var series = new VariableIntervalTimeSeries<float[]>(_rows.ToArray());
             return series.ChunkByMonth().Select(ch =>
             {
-                var maxEntry = ch.Entries().MaxBy((ent) => MathF.Abs(ent.Item2[i])).First();
+                Tuple<DateTime, float[]> maxEntry;
+                if (abs)
+                {
+                    maxEntry = ch.Entries().MaxBy((ent) => MathF.Abs(ent.Item2[i])).First();
+                }
+                else
+                {
+                    maxEntry = ch.Entries().MaxBy((ent) => ent.Item2[i]).First();
+                }
+
                 return new PeakDemandInMonth
                 {
                     MonthStart = ch.StartTime.FloorMonth(),
