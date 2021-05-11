@@ -13,11 +13,11 @@ namespace Electricity.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            // services.AddSingleton<IDataSourceFactory>((provider) =>
-            // {
-            //     return new FakeDataSourceFactory(0);
-            // });
-            services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
+            services.AddSingleton<IDataSourceFactory>((provider) =>
+            {
+                return new FakeDataSourceFactory(0);
+            });
+            // services.AddSingleton<IDataSourceFactory, DataSourceFactory>();
             services.AddSingleton<IDataSourceCache, DataSourceCache>();
 
             return services;

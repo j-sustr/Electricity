@@ -112,8 +112,38 @@ namespace Electricity.Infrastructure.DataSource.Fake
                             CreateArchiveInfo(6, 0, null, null),
                         },
                         Subgroups = new List<GroupInfo>(),
+                    },
+                    new GroupInfo
+                    {
+                        ID = GuidUtil.IntToGuid(400),
+                        Name = "KarlovoDruheMereni",
+                        Archives = new ArchiveInfo[] {
+                            CreateArchiveInfo(0, 0, null, null),
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            CreateArchiveInfo(6, 0, null, null),
+                        },
+                        Subgroups = new List<GroupInfo>(),
+                    },
+                    new GroupInfo
+                    {
+                        ID = GuidUtil.IntToGuid(500),
+                        Name = "KarlovoTretiMereni",
+                        Archives = new ArchiveInfo[] {
+                            CreateArchiveInfo(0, 0, null, null),
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            CreateArchiveInfo(6, 0, null, null),
+                        },
+                        Subgroups = new List<GroupInfo>(),
                     }
-                }
+                },
             };
 
             return new FakeUserData[] { user1, user2 };
