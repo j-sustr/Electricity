@@ -66,7 +66,7 @@ namespace Electricity.Application.Common.Models.Quantities
             result = null;
 
             Regex rx;
-            rx = new Regex(@"3EP", RegexOptions.Compiled);
+            rx = new Regex(@"3EP");
             if (rx.IsMatch(quantity.PropName))
             {
                 result = new ElectricityMeterQuantity
@@ -76,7 +76,7 @@ namespace Electricity.Application.Common.Models.Quantities
                 };
                 return true;
             }
-            rx = new Regex(@"3EQL", RegexOptions.Compiled);
+            rx = new Regex(@"3EQL");
             if (rx.IsMatch(quantity.PropName))
             {
                 result = new ElectricityMeterQuantity
@@ -86,7 +86,7 @@ namespace Electricity.Application.Common.Models.Quantities
                 };
                 return true;
             }
-            rx = new Regex(@"3EQC", RegexOptions.Compiled);
+            rx = new Regex(@"3EQC");
             if (rx.IsMatch(quantity.PropName))
             {
                 result = new ElectricityMeterQuantity
@@ -96,7 +96,7 @@ namespace Electricity.Application.Common.Models.Quantities
                 };
                 return true;
             }
-            rx = new Regex(@"Phase (?<phase>\d)_EP\d", RegexOptions.Compiled);
+            rx = new Regex(@"Phase (?<phase>\d)_EP\d");
             if (rx.IsMatch(quantity.PropName))
             {
                 var m = rx.Match(quantity.PropName);
@@ -107,7 +107,7 @@ namespace Electricity.Application.Common.Models.Quantities
                 };
                 return true;
             }
-            rx = new Regex(@"Phase (?<phase>\d)_EQL\d", RegexOptions.Compiled);
+            rx = new Regex(@"Phase (?<phase>\d)_EQL\d");
             if (rx.IsMatch(quantity.PropName))
             {
                 var m = rx.Match(quantity.PropName);
@@ -118,7 +118,7 @@ namespace Electricity.Application.Common.Models.Quantities
                 };
                 return true;
             }
-            rx = new Regex(@"Phase (?<phase>\d)_EQC\d", RegexOptions.Compiled);
+            rx = new Regex(@"Phase (?<phase>\d)_EQC\d");
             if (rx.IsMatch(quantity.PropName))
             {
                 var m = rx.Match(quantity.PropName);
