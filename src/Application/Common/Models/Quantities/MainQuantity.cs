@@ -18,6 +18,17 @@ namespace Electricity.Application.Common.Models.Quantities
         public MainQuantityType Type { get; set; }
         public Phase Phase { get; set; }
 
+        public MainQuantity()
+        {
+
+        }
+
+        public MainQuantity(MainQuantityType type, Phase phase)
+        {
+            Type = type;
+            Phase = phase;
+        }
+
         public bool Equals(MainQuantity other)
         {
             return other.Type == Type && other.Phase == Phase;
@@ -45,13 +56,52 @@ namespace Electricity.Application.Common.Models.Quantities
 
         public static bool TryCreateFromQuantity(Quantity quantity, out MainQuantity result)
         {
-            throw new NotImplementedException();
-
-            Regex rx = new Regex(@"\b(?<word>\w+)\s+(\k<word>)\b", RegexOptions.Compiled);
-
-            var m = rx.Match(quantity.PropName);
-
             result = null;
+
+            Regex rx;
+            rx = new Regex(@"P_avg_3P");
+            if (rx.IsMatch(quantity.PropName))
+            {
+                result = new MainQuantity
+                {
+                    Type = MainQuantityType.PAvg,
+                    Phase = Phase.Main
+                };
+                return true;
+            }
+            rx = new Regex(@"Cos_3Cosφ");
+            if (rx.IsMatch(quantity.PropName))
+            {
+                result = new MainQuantity
+                {
+                    Type = MainQuantityType.CosFi,
+                    Phase = Phase.Main
+                };
+                return true;
+            }
+            rx = new Regex(@"P_avg_P(?<phase>\d)");
+            if (rx.IsMatch(quantity.PropName))
+            {
+                var m = rx.Match(quantity.PropName);
+                result = new MainQuantity
+                {
+                    Type = MainQuantityType.PAvg,
+                    Phase = (Phase)Int32.Parse(m.Groups["phase"].Value)
+                };
+                return true;
+            }
+            rx = new Regex(@"Cos_Cosφ(?<phase>\d)");
+            if (rx.IsMatch(quantity.PropName))
+            {
+                var m = rx.Match(quantity.PropName);
+                result = new MainQuantity
+                {
+                    Type = MainQuantityType.CosFi,
+                    Phase = (Phase)Int32.Parse(m.Groups["phase"].Value)
+                };
+                return true;
+            }
+
 
             return false;
         }
