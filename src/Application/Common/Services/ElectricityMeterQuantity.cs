@@ -3,6 +3,7 @@ using Electricity.Application.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Electricity.Application.Common.Services
 {
@@ -48,6 +49,19 @@ namespace Electricity.Application.Common.Services
                 default:
                     throw new Exception("invalid quantity");
             }
+        }
+
+        public static bool TryCreateFromQuantity(Quantity quantity, out ElectricityMeterQuantity result)
+        {
+            throw new NotImplementedException();
+
+            Regex rx = new Regex(@"\b(?<word>\w+)\s+(\k<word>)\b", RegexOptions.Compiled);
+
+            var m = rx.Match(quantity.PropName);
+
+            result = null;
+
+            return false;
         }
     }
 }

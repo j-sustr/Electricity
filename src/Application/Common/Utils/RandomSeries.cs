@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Electricity.Application.Common.Utils
@@ -6,15 +7,19 @@ namespace Electricity.Application.Common.Utils
     {
         private System.Random _random;
 
-        private float _nextValue;
+        public double Scale { get; set; } = 1;
+        public double Min { get; set; } = double.MinValue;
+        public double Max { get; set; } = double.MaxValue;
 
-        public bool Positive { get; set; } = true;
+        public double[] Distribution { get; set; } = new double[] { 0 };
+        public double MaxShift { get; set; } = 0;
+
         public bool Cumulative { get; set; } = false;
+        public double Accumulator { get; set; } = 0;
 
-        public RandomSeries(float start = 0, int? seed = null)
+
+        public RandomSeries(int? seed = null)
         {
-            _nextValue = start;
-
             if (seed is int valueOfSeed)
             {
                 _random = new System.Random(valueOfSeed);
@@ -25,27 +30,18 @@ namespace Electricity.Application.Common.Utils
             }
         }
 
-        public float Next()
+        public double Next()
         {
-            float value = _nextValue;
-            float next = 0;
-
-            if (Positive)
-            {
-                next = (float)_random.NextDouble();
-            }
-            else
-            {
-                next = (float)(_random.NextDouble() * 2 - 1);
-            }
+            int randomIndex = _random.Next(0, Distribution.Length);
+            double randomShift = (double)(_random.NextDouble() * 2 - 1) * MaxShift;
+            double value = Distribution[randomIndex] + randomShift;
+            value = Math.Clamp(value, Min, Max);
+            value = Scale * value;
 
             if (Cumulative)
             {
-                _nextValue += next;
-            }
-            else
-            {
-                _nextValue = next;
+                Accumulator += value;
+                value = Accumulator;
             }
 
             return value;

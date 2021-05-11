@@ -154,16 +154,13 @@ namespace Electricity.Infrastructure.DataSource
             }
             var group = groupArray[groupIndex];
 
-            bool cumulative = arch == (byte)Arch.ElectricityMeter;
-
             var generators = quantities.Select((quant) =>
             {
                 int groupIdHash = GuidToHash(groupID);
                 int rangeHash = range != null ? DateRangeToHash(range) : 0;
                 int quanityHash = QuantityToHash(quant);
                 var hashSeed = groupIdHash + rangeHash + quanityHash;
-                var g = new RandomSeries(0, _seed + hashSeed);
-                g.Cumulative = cumulative;
+                var g = FakeQuantity.GetQuantitySeries(quant, _seed + hashSeed);
                 return g;
             }).ToArray();
 
@@ -195,7 +192,7 @@ namespace Electricity.Infrastructure.DataSource
                     for (int i = 0; i < generators.Length; i++)
                     {
                         var propValue = quantities[i].Value as FakePropValueFloat;
-                        propValue.Value = generators[i].Next();
+                        propValue.Value = (float)generators[i].Next();
                     }
                     yield return new RowInfo(time, 0, null);
                     time += duration;
