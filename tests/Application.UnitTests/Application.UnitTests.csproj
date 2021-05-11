@@ -29,4 +29,13 @@
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="DataSource">
+      <HintPath>..\..\dll\DataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Resources">
+      <HintPath>..\..\dll\Resources.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

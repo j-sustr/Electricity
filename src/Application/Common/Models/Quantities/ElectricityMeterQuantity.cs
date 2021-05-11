@@ -19,6 +19,16 @@ namespace Electricity.Application.Common.Models.Quantities
         public ElectricityMeterQuantityType Type { get; set; }
         public Phase Phase { get; set; }
 
+        public ElectricityMeterQuantity()
+        {
+        }
+
+        public ElectricityMeterQuantity(ElectricityMeterQuantityType type, Phase phase)
+        {
+            Type = type;
+            Phase = phase;
+        }
+
         public bool Equals(ElectricityMeterQuantity other)
         {
             return other.Type == Type && other.Phase == Phase;
@@ -53,13 +63,72 @@ namespace Electricity.Application.Common.Models.Quantities
 
         public static bool TryCreateFromQuantity(Quantity quantity, out ElectricityMeterQuantity result)
         {
-            throw new NotImplementedException();
-
-            Regex rx = new Regex(@"\b(?<word>\w+)\s+(\k<word>)\b", RegexOptions.Compiled);
-
-            var m = rx.Match(quantity.PropName);
-
             result = null;
+
+            Regex rx;
+            rx = new Regex(@"3EP", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ActiveEnergy,
+                    Phase = Phase.Main
+                };
+                return true;
+            }
+            rx = new Regex(@"3EQL", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                    Phase = Phase.Main
+                };
+                return true;
+            }
+            rx = new Regex(@"3EQC", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyC,
+                    Phase = Phase.Main
+                };
+                return true;
+            }
+            rx = new Regex(@"Phase (?<phase>\d)_EP\d", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                var m = rx.Match(quantity.PropName);
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ActiveEnergy,
+                    Phase = (Phase)Int32.Parse(m.Groups["phase"].Value)
+                };
+                return true;
+            }
+            rx = new Regex(@"Phase (?<phase>\d)_EQL\d", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                var m = rx.Match(quantity.PropName);
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyL,
+                    Phase = (Phase)Int32.Parse(m.Groups["phase"].Value)
+                };
+                return true;
+            }
+            rx = new Regex(@"Phase (?<phase>\d)_EQC\d", RegexOptions.Compiled);
+            if (rx.IsMatch(quantity.PropName))
+            {
+                var m = rx.Match(quantity.PropName);
+                result = new ElectricityMeterQuantity
+                {
+                    Type = ElectricityMeterQuantityType.ReactiveEnergyC,
+                    Phase = (Phase)Int32.Parse(m.Groups["phase"].Value)
+                };
+                return true;
+            }
 
             return false;
         }
