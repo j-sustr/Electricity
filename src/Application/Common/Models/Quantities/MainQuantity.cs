@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Electricity.Application.Common.Services
+namespace Electricity.Application.Common.Models.Quantities
 {
     public enum MainQuantityType
     {

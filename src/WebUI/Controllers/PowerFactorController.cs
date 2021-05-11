@@ -10,6 +10,7 @@ using Electricity.Application.Common.Enums;
 using System.Linq;
 using System.Collections.Generic;
 using KMB.DataSource;
+using Electricity.Application.Common.Models.Quantities;
 
 namespace Electricity.WebUI.Controllers
 {

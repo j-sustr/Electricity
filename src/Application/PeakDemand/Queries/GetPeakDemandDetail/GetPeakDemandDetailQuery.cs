@@ -6,6 +6,7 @@ using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
+using Electricity.Application.Common.Models.Quantities;
 using Electricity.Application.Common.Models.TimeSeries;
 using Electricity.Application.Common.Services;
 using Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview;

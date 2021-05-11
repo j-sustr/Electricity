@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Electricity.Application.Common.Models.Quantities;
 
 namespace Electricity.Application.Common.Services
 {

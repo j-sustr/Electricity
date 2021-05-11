@@ -1,4 +1,5 @@
-﻿using Electricity.Application.Common.Services;
+﻿using Electricity.Application.Common.Models.Quantities;
+using Electricity.Application.Common.Services;
 using Electricity.Application.Common.Utils;
 using KMB.DataSource;
 using System;

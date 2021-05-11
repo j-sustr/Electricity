@@ -3,6 +3,7 @@ using Electricity.Application.Common.Exceptions;
 using Electricity.Application.Common.Interfaces;
 using Electricity.Application.Common.Models;
 using Electricity.Application.Common.Models.Dtos;
+using Electricity.Application.Common.Models.Quantities;
 using KMB.DataSource;
 using System;
 using System.Collections.Generic;

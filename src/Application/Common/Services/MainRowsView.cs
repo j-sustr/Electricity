@@ -1,6 +1,7 @@
 ﻿using Electricity.Application.Common.Extensions;
 using Electricity.Application.Common.Extensions.ITimeSeries;
 using Electricity.Application.Common.Models;
+using Electricity.Application.Common.Models.Quantities;
 using Electricity.Application.Common.Models.TimeSeries;
 using MoreLinq;
 using System;

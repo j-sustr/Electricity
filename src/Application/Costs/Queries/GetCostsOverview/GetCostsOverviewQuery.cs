@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Electricity.Application.Common.Utils;
 using Electricity.Application.Common.Constants;
+using Electricity.Application.Common.Models.Quantities;
 
 namespace Electricity.Application.Costs.Queries.GetCostsOverview
 {

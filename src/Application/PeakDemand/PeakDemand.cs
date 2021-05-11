@@ -1,5 +1,6 @@
 ﻿using Electricity.Application.Common.Enums;
 using Electricity.Application.Common.Extensions;
+using Electricity.Application.Common.Models.Quantities;
 using Electricity.Application.Common.Models.TimeSeries;
 using Electricity.Application.Common.Services;
 using System;
