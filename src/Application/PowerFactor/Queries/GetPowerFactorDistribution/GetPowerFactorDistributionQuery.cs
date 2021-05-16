@@ -60,6 +60,12 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
 
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
+
+            var requiredArchives = new Arch[] { Arch.Main };
+            ArchiveUtils.MustHaveArchives(group, requiredArchives);
+            interval1 = ArchiveUtils.MustGetSubintervalWithData(group, interval1, nameof(interval1), requiredArchives);
+            interval2 = ArchiveUtils.MustGetSubintervalWithData(group, interval2, nameof(interval2), requiredArchives);
+
             var phases = request.Phases;
             var thresholds = request.Thresholds;
             if (thresholds == null)
@@ -73,6 +79,8 @@ namespace Electricity.Application.PowerFactor.Queries.GetPowerFactorDistribution
                 GroupName = group.Name,
                 Distribution1 = items1,
                 Distribution2 = items2,
+                Interval1 = _mapper.Map<IntervalDto>(interval1),
+                Interval2 = _mapper.Map<IntervalDto>(interval2)
             });
         }
 

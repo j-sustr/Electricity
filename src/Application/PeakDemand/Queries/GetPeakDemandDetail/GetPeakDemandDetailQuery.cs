@@ -9,6 +9,7 @@ using Electricity.Application.Common.Models.Dtos;
 using Electricity.Application.Common.Models.Quantities;
 using Electricity.Application.Common.Models.TimeSeries;
 using Electricity.Application.Common.Services;
+using Electricity.Application.Common.Utils;
 using Electricity.Application.PeakDemand.Queries.GetPeakDemandOverview;
 using KMB.DataSource;
 using MediatR;
@@ -61,6 +62,12 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
             var interval1 = _mapper.Map<Interval>(request.Interval1);
             var interval2 = _mapper.Map<Interval>(request.Interval2);
+
+            var requiredArchives = new Arch[] { Arch.Main };
+            ArchiveUtils.MustHaveArchives(groupInfo, requiredArchives);
+            interval1 = ArchiveUtils.MustGetSubintervalWithData(groupInfo, interval1, nameof(interval1), requiredArchives);
+            interval2 = ArchiveUtils.MustGetSubintervalWithData(groupInfo, interval2, nameof(interval2), requiredArchives);
+
             var phases = request.Phases;
 
             var demandSeries1 = GetDemandSeriesForInterval(groupInfo, interval1, phases, request.Aggregation, nameof(request.Interval1));
@@ -68,8 +75,11 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
             return Task.FromResult(new PeakDemandDetailDto
             {
+                GroupName = groupInfo.Name,
                 DemandSeries1 = demandSeries1,
-                DemandSeries2 = demandSeries2
+                DemandSeries2 = demandSeries2,
+                Interval1 = _mapper.Map<IntervalDto>(interval1),
+                Interval2 = _mapper.Map<IntervalDto>(interval2)
             });
         }
 

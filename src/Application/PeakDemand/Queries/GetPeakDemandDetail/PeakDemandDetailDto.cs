@@ -17,7 +17,12 @@ namespace Electricity.Application.PeakDemand.Queries.GetPeakDemandDetail
 
     public class PeakDemandDetailDto
     {
+        public string GroupName { get; set; }
+
         public DemandSeriesDto DemandSeries1 { get; set; }
         public DemandSeriesDto DemandSeries2 { get; set; }
+
+        public IntervalDto Interval1 { get; set; }
+        public IntervalDto Interval2 { get; set; }
     }
 }
