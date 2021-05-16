@@ -182,10 +182,9 @@ namespace Electricity.Infrastructure.DataSource
                 }
             }
 
-            IEnumerable<RowInfo> GenerateRows()
+            IEnumerable<RowInfo> GenerateRows(TimeSpan step)
             {
                 DateTime time = interval.Start ?? archive.Range.DateMin;
-                TimeSpan duration = new TimeSpan(0, 0, 10);
                 while (time < interval.End)
                 {
                     var rowValues = generators.Select(g => g.Next()).ToArray();
@@ -195,11 +194,12 @@ namespace Electricity.Infrastructure.DataSource
                         propValue.Value = (float)generators[i].Next();
                     }
                     yield return new RowInfo(time, 0, null);
-                    time += duration;
+                    time += step;
                 }
             }
 
-            return new FakeRowCollection(GenerateRows());
+            TimeSpan step = aggregation == 0 ? TimeSpan.FromSeconds(10) : TimeSpan.FromMilliseconds(aggregation);
+            return new FakeRowCollection(GenerateRows(step));
         }
 
         protected override IList<UniConfig> GetConfs(int RecID, DateRange range, IDisposable connection, IDisposable transaction)
