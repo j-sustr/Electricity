@@ -22,14 +22,14 @@ namespace Electricity.Infrastructure.DataSource.Fake
         };
 
         readonly static double[] ActiveEnergyDistribution = new double[] {
-            5, 15, 20
+            90, 100, 120
         };
         readonly static double[] ReactiveEnergyLDistribution = new double[] {
-            5, 15, 20
+            5, 10, 15
         };
         readonly static double[] ReactiveEnergyCDistribution = new double[]
         {
-            5, 15, 20
+            5, 10, 15
         };
 
         public static RandomSeries GetMainQuantitySeries(MainQuantity quantity, int seed)
@@ -41,6 +41,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
             {
                 case MainQuantityType.PAvg:
                     series.MaxShift = 5;
+                    series.Scale = 1000;
                     series.Distribution = PAvgDistribution;
                     return series;
                 case MainQuantityType.CosFi:
@@ -57,7 +58,7 @@ namespace Electricity.Infrastructure.DataSource.Fake
         public static RandomSeries GetElectricityMeterQuantitySeries(ElectricityMeterQuantity quantity, int seed)
         {
             var series = new RandomSeries(seed);
-            series.Scale = 100000;
+            series.Scale = 10;
             series.Cumulative = true;
             series.Accumulator = 0;
 
